@@ -1,0 +1,59 @@
+/**
+ * BottomNav - شريط التنقل السفلي للجوال
+ * Design: Dark Luxury PWA - "الله يعافيك"
+ * الهدف: الوقاية من الإدمان
+ */
+import { Link, useLocation } from "wouter";
+import { Home, Shield, BookOpen, MessageCircle, User } from "lucide-react";
+import { motion } from "framer-motion";
+
+const navItems = [
+  { icon: Home, label: "الرئيسية", path: "/" },
+  { icon: Shield, label: "وقايتي", path: "/recovery" },
+  { icon: BookOpen, label: "التوعية", path: "/lectures" },
+  { icon: MessageCircle, label: "استشارة", path: "/chat" },
+  { icon: User, label: "حسابي", path: "/login" },
+];
+
+export default function BottomNav() {
+  const [location] = useLocation();
+
+  return (
+    <nav className="bottom-nav">
+      <div className="flex items-center justify-around px-2 py-2">
+        {navItems.map((item) => {
+          const isActive = location === item.path || (item.path !== "/" && location.startsWith(item.path));
+          return (
+            <Link key={item.path} href={item.path}>
+              <motion.div
+                whileTap={{ scale: 0.85 }}
+                className="flex flex-col items-center gap-1 px-3 py-1.5 rounded-2xl transition-all relative"
+              >
+                {isActive && (
+                  <motion.div
+                    layoutId="nav-active"
+                    className="absolute inset-0 rounded-2xl bg-[#00D4AA]/15"
+                    transition={{ type: "spring", bounce: 0.2, duration: 0.4 }}
+                  />
+                )}
+                <item.icon
+                  className={`w-5 h-5 transition-colors relative z-10 ${
+                    isActive ? "text-[#00D4AA]" : "text-white/35"
+                  }`}
+                  strokeWidth={isActive ? 2.5 : 1.8}
+                />
+                <span
+                  className={`text-[10px] font-bold transition-colors relative z-10 ${
+                    isActive ? "text-[#00D4AA]" : "text-white/30"
+                  }`}
+                >
+                  {item.label}
+                </span>
+              </motion.div>
+            </Link>
+          );
+        })}
+      </div>
+    </nav>
+  );
+}
