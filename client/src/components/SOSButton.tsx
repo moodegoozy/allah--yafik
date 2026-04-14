@@ -4,7 +4,14 @@
  * Style: Pulsing red button, modal overlay
  */
 import { useState } from "react";
-import { Phone, X, AlertTriangle, Heart, Wind, MessageCircle } from "lucide-react";
+import {
+  Phone,
+  X,
+  AlertTriangle,
+  Heart,
+  Wind,
+  MessageCircle,
+} from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const emergencySteps = [
@@ -36,8 +43,11 @@ export default function SOSButton() {
       {/* SOS Floating Button */}
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 left-6 z-40 w-14 h-14 rounded-full bg-[#EF4444] flex items-center justify-center shadow-lg hover:scale-110 transition-transform"
-        style={{ boxShadow: '0 0 0 0 rgba(239, 68, 68, 0.7)', animation: 'sos-pulse 2s infinite' }}
+        className="fixed bottom-24 left-4 z-[110] w-14 h-14 rounded-full bg-[#EF4444] flex items-center justify-center shadow-lg hover:scale-110 transition-transform"
+        style={{
+          boxShadow: "0 0 0 0 rgba(239, 68, 68, 0.7)",
+          animation: "sos-pulse 2s infinite",
+        }}
         title="مساعدة طارئة"
       >
         <AlertTriangle className="w-6 h-6 text-white" />
@@ -46,7 +56,10 @@ export default function SOSButton() {
       {/* SOS Modal */}
       {isOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-          <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={() => setIsOpen(false)} />
+          <div
+            className="absolute inset-0 bg-black/80 backdrop-blur-sm"
+            onClick={() => setIsOpen(false)}
+          />
           <div className="relative glass-card border border-[#EF4444]/30 p-6 max-w-md w-full z-10">
             <button
               onClick={() => setIsOpen(false)}
@@ -61,20 +74,35 @@ export default function SOSButton() {
               </div>
               <div>
                 <h3 className="text-white font-black text-lg">مساعدة فورية</h3>
-                <p className="text-white/50 text-xs">أنت لست وحدك - نحن هنا معك</p>
+                <p className="text-white/50 text-xs">
+                  أنت لست وحدك - نحن هنا معك
+                </p>
               </div>
             </div>
 
             {/* Emergency Steps */}
             <div className="space-y-3 mb-6">
               {emergencySteps.map((step, i) => (
-                <div key={i} className="flex items-start gap-3 p-3 rounded-xl bg-white/3 border border-white/5">
-                  <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: `${step.color}20` }}>
-                    <step.icon className="w-4 h-4" style={{ color: step.color }} />
+                <div
+                  key={i}
+                  className="flex items-start gap-3 p-3 rounded-xl bg-white/3 border border-white/5"
+                >
+                  <div
+                    className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
+                    style={{ background: `${step.color}20` }}
+                  >
+                    <step.icon
+                      className="w-4 h-4"
+                      style={{ color: step.color }}
+                    />
                   </div>
                   <div>
-                    <div className="text-white text-sm font-bold mb-0.5">{step.title}</div>
-                    <div className="text-white/50 text-xs leading-relaxed">{step.desc}</div>
+                    <div className="text-white text-sm font-bold mb-0.5">
+                      {step.title}
+                    </div>
+                    <div className="text-white/50 text-xs leading-relaxed">
+                      {step.desc}
+                    </div>
                   </div>
                 </div>
               ))}
@@ -90,31 +118,43 @@ export default function SOSButton() {
                 >
                   <Phone className="w-4 h-4 text-[#00D4AA]" />
                   <div>
-                    <div className="text-white text-xs font-bold">خط الدعم المباشر</div>
-                    <div className="text-[#00D4AA] text-xs font-numbers">0546192019</div>
+                    <div className="text-white text-xs font-bold">
+                      خط الدعم المباشر
+                    </div>
+                    <div className="text-[#00D4AA] text-xs font-numbers">
+                      0546192019
+                    </div>
                   </div>
                 </a>
                 <div className="grid grid-cols-2 gap-2">
-                <a
-                  href="tel:920033360"
-                  className="flex items-center gap-2 p-3 rounded-xl bg-[#EF4444]/10 border border-[#EF4444]/20 hover:bg-[#EF4444]/20 transition-all"
-                >
-                  <Phone className="w-4 h-4 text-[#EF4444]" />
-                  <div>
-                    <div className="text-white text-xs font-bold">خط الإدمان</div>
-                    <div className="text-[#EF4444] text-xs font-numbers">920033360</div>
-                  </div>
-                </a>
-                <a
-                  href="tel:911"
-                  className="flex items-center gap-2 p-3 rounded-xl bg-[#F59E0B]/10 border border-[#F59E0B]/20 hover:bg-[#F59E0B]/20 transition-all"
-                >
-                  <Phone className="w-4 h-4 text-[#F59E0B]" />
-                  <div>
-                    <div className="text-white text-xs font-bold">الطوارئ</div>
-                    <div className="text-[#F59E0B] text-xs font-numbers">911</div>
-                  </div>
-                </a>
+                  <a
+                    href="tel:920033360"
+                    className="flex items-center gap-2 p-3 rounded-xl bg-[#EF4444]/10 border border-[#EF4444]/20 hover:bg-[#EF4444]/20 transition-all"
+                  >
+                    <Phone className="w-4 h-4 text-[#EF4444]" />
+                    <div>
+                      <div className="text-white text-xs font-bold">
+                        خط الإدمان
+                      </div>
+                      <div className="text-[#EF4444] text-xs font-numbers">
+                        920033360
+                      </div>
+                    </div>
+                  </a>
+                  <a
+                    href="tel:911"
+                    className="flex items-center gap-2 p-3 rounded-xl bg-[#F59E0B]/10 border border-[#F59E0B]/20 hover:bg-[#F59E0B]/20 transition-all"
+                  >
+                    <Phone className="w-4 h-4 text-[#F59E0B]" />
+                    <div>
+                      <div className="text-white text-xs font-bold">
+                        الطوارئ
+                      </div>
+                      <div className="text-[#F59E0B] text-xs font-numbers">
+                        911
+                      </div>
+                    </div>
+                  </a>
                 </div>
               </div>
             </div>

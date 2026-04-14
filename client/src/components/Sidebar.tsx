@@ -23,10 +23,13 @@ import {
   UserPlus,
   MessageCircle,
   LogIn,
+  LogOut,
   FileText,
   Lightbulb,
+  User,
 } from "lucide-react";
 import { useState } from "react";
+import { useLocation as useNavLocation } from "wouter";
 import { cn } from "@/lib/utils";
 
 const CONTACT_PHONE = "0546192019";
@@ -62,14 +65,12 @@ const navGroups = [
   },
   {
     label: "التواصل",
-    items: [
-      { icon: MessageCircle, label: "استشارة مباشرة", path: "/chat" },
-      { icon: Bell, label: "التذكيرات اليومية", path: "/notifications" },
-    ],
+    items: [{ icon: Bell, label: "التذكيرات اليومية", path: "/notifications" }],
   },
   {
     label: "الحساب",
     items: [
+      { icon: User, label: "حسابي", path: "/account" },
       { icon: LogIn, label: "تسجيل الدخول", path: "/login" },
       { icon: Shield, label: "لوحة الإدارة", path: "/admin" },
     ],
@@ -78,7 +79,15 @@ const navGroups = [
 
 export default function Sidebar() {
   const [location] = useLocation();
-  const [collapsed, setCollapsed] = useState(false);
+  const [, navigate] = useNavLocation();
+  const [collapsed, setCollapsed] = useState(
+    () => typeof window !== "undefined" && window.innerWidth < 1024
+  );
+
+  const handleLogout = () => {
+    localStorage.removeItem("allah_yafik_current_user");
+    navigate("/login");
+  };
 
   return (
     <>
@@ -104,8 +113,12 @@ export default function Sidebar() {
           </div>
           {!collapsed && (
             <div className="flex-1 min-w-0">
-              <h1 className="text-white font-black text-sm leading-tight">الله يعافيك</h1>
-              <p className="text-[#00D4AA] text-xs opacity-80">برنامج الوقاية من الإدمان</p>
+              <h1 className="text-white font-black text-sm leading-tight">
+                الله يعافيك
+              </h1>
+              <p className="text-[#00D4AA] text-xs opacity-80">
+                برنامج الوقاية من الإدمان
+              </p>
             </div>
           )}
           <button
@@ -122,11 +135,13 @@ export default function Sidebar() {
             <div key={gi}>
               {!collapsed && (
                 <div className="px-3 mb-2">
-                  <span className="text-white/25 text-xs font-bold uppercase tracking-widest">{group.label}</span>
+                  <span className="text-white/25 text-xs font-bold uppercase tracking-widest">
+                    {group.label}
+                  </span>
                 </div>
               )}
               <div className="space-y-0.5">
-                {group.items.map((item) => {
+                {group.items.map(item => {
                   const isActive = location === item.path;
                   return (
                     <Link key={item.path} href={item.path}>
@@ -141,12 +156,16 @@ export default function Sidebar() {
                         <item.icon
                           className={cn(
                             "flex-shrink-0 transition-all",
-                            isActive ? "text-[#00D4AA]" : "group-hover:text-white"
+                            isActive
+                              ? "text-[#00D4AA]"
+                              : "group-hover:text-white"
                           )}
                           size={18}
                         />
                         {!collapsed && (
-                          <span className="text-sm font-medium">{item.label}</span>
+                          <span className="text-sm font-medium">
+                            {item.label}
+                          </span>
                         )}
                         {isActive && !collapsed && (
                           <div className="mr-auto w-1.5 h-1.5 rounded-full bg-[#00D4AA] animate-pulse" />
@@ -171,29 +190,49 @@ export default function Sidebar() {
                 <Phone className="w-3.5 h-3.5 text-[#060B18]" />
               </div>
               <div>
-                <div className="text-[#00D4AA] font-black text-xs font-numbers">{CONTACT_PHONE}</div>
-                <div className="text-white/30 text-xs">خط الاستشارة الوقائية</div>
+                <div className="text-[#00D4AA] font-black text-xs font-numbers">
+                  {CONTACT_PHONE}
+                </div>
+                <div className="text-white/30 text-xs">
+                  خط الاستشارة الوقائية
+                </div>
               </div>
             </a>
           </div>
         )}
 
-        {/* User Profile */}
-        <div className="p-3 border-t border-white/5">
-          <div className={cn(
-            "flex items-center gap-3 px-3 py-3 rounded-xl",
-            "bg-white/3 border border-white/5"
-          )}>
+        {/* User Profile + Logout */}
+        <div className="p-3 border-t border-white/5 space-y-2">
+          <div
+            className={cn(
+              "flex items-center gap-3 px-3 py-3 rounded-xl",
+              "bg-white/3 border border-white/5"
+            )}
+          >
             <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#00D4AA] to-[#0EA5E9] flex items-center justify-center flex-shrink-0">
               <Shield className="w-4 h-4 text-[#060B18]" />
             </div>
             {!collapsed && (
               <div className="flex-1 min-w-0">
-                <p className="text-white text-sm font-bold truncate">مستخدم محمي</p>
+                <p className="text-white text-sm font-bold truncate">
+                  مستخدم محمي
+                </p>
                 <p className="text-[#00D4AA] text-xs">مستوى الوقاية: ممتاز ✦</p>
               </div>
             )}
           </div>
+          <button
+            onClick={handleLogout}
+            className={cn(
+              "flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 w-full",
+              "text-red-400/70 hover:text-red-400 hover:bg-red-500/10"
+            )}
+          >
+            <LogOut className="flex-shrink-0" size={18} />
+            {!collapsed && (
+              <span className="text-sm font-medium">تسجيل الخروج</span>
+            )}
+          </button>
         </div>
       </aside>
 
@@ -201,7 +240,7 @@ export default function Sidebar() {
       <button
         onClick={() => setCollapsed(false)}
         className={cn(
-          "fixed top-4 right-4 z-20 p-2 rounded-xl bg-[#0A0F1E] border border-white/10 text-white",
+          "fixed top-4 left-4 z-[60] p-2 rounded-xl bg-[#0A0F1E] border border-white/10 text-white",
           "lg:hidden",
           !collapsed && "hidden"
         )}

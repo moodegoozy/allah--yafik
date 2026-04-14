@@ -5,20 +5,39 @@
  */
 import { useState } from "react";
 import {
-  LayoutDashboard, Users, Building2, MessageSquare,
-  TrendingUp, BarChart3, Bell, Settings, Shield,
-  CheckCircle2, XCircle, Clock, Eye, Trash2,
-  Download, Filter, Search, Phone, Mail,
-  Star, Heart, BookOpen, AlertTriangle, Sparkles,
-  ChevronDown, RefreshCw, UserCheck, UserX
+  LayoutDashboard,
+  Users,
+  Building2,
+  MessageSquare,
+  TrendingUp,
+  BarChart3,
+  Bell,
+  Settings,
+  Shield,
+  CheckCircle2,
+  XCircle,
+  Clock,
+  Eye,
+  Trash2,
+  Download,
+  Filter,
+  Search,
+  Phone,
+  Mail,
+  Star,
+  Heart,
+  BookOpen,
+  AlertTriangle,
+  Sparkles,
+  ChevronDown,
+  RefreshCw,
+  UserCheck,
+  UserX,
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { toast } from "sonner";
 import { Link } from "wouter";
-import {
-  AreaChart, Area, BarChart, Bar, XAxis, YAxis,
-  CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell
-} from "recharts";
+// Recharts imports removed — mock chart data cleared (see git history to restore)
 
 const CONTACT_PHONE = "0546192019";
 
@@ -31,67 +50,71 @@ const adminSections = [
   { id: "alerts", icon: Bell, label: "التنبيهات" },
 ];
 
-const statsData = [
-  { month: "أكتوبر", users: 120, active: 98, recovered: 45 },
-  { month: "نوفمبر", users: 185, active: 142, recovered: 67 },
-  { month: "ديسمبر", users: 240, active: 198, recovered: 89 },
-  { month: "يناير", users: 310, active: 265, recovered: 112 },
-  { month: "فبراير", users: 398, active: 334, recovered: 145 },
-  { month: "مارس", users: 487, active: 412, recovered: 178 },
-];
+// Mock data removed — see git history to restore
+const statsData: {
+  month: string;
+  users: number;
+  active: number;
+  recovered: number;
+}[] = [];
 
-const addictionTypes = [
-  { name: "مخدرات", value: 35, color: "#EF4444" },
-  { name: "تدخين", value: 28, color: "#F59E0B" },
-  { name: "رقمي", value: 20, color: "#3B82F6" },
-  { name: "سلوكي", value: 12, color: "#8B5CF6" },
-  { name: "أخرى", value: 5, color: "#10B981" },
-];
+// Mock data removed — see git history to restore
+const addictionTypes: { name: string; value: number; color: string }[] = [];
 
-const mockUsers = [
-  { id: "1", name: "أحمد محمد", phone: "0501234567", addictionType: "تدخين", soberDays: 47, status: "نشط", joinDate: "2026-01-15", riskLevel: "منخفض" },
-  { id: "2", name: "خالد العمري", phone: "0559876543", addictionType: "مخدرات", soberDays: 12, status: "نشط", joinDate: "2026-02-20", riskLevel: "مرتفع" },
-  { id: "3", name: "سارة الأحمد", phone: "0534567890", addictionType: "إدمان رقمي", soberDays: 89, status: "متعافٍ", joinDate: "2025-12-01", riskLevel: "منخفض" },
-  { id: "4", name: "محمد الزهراني", phone: "0512345678", addictionType: "كحول", soberDays: 3, status: "خطر", joinDate: "2026-03-01", riskLevel: "عالٍ جداً" },
-  { id: "5", name: "فاطمة السالم", phone: "0567891234", addictionType: "تدخين", soberDays: 156, status: "متعافٍ", joinDate: "2025-10-15", riskLevel: "منخفض جداً" },
-  { id: "6", name: "عبدالله الحارثي", phone: "0545678901", addictionType: "مخدرات", soberDays: 28, status: "نشط", joinDate: "2026-02-01", riskLevel: "متوسط" },
-];
+// Mock data removed — see git history to restore
+const mockUsers: {
+  id: string;
+  name: string;
+  phone: string;
+  addictionType: string;
+  soberDays: number;
+  status: string;
+  joinDate: string;
+  riskLevel: string;
+}[] = [];
 
-const partnerRequests = [
-  { id: "1", org: "مستشفى الملك فهد", type: "مستشفى", city: "الرياض", contact: "د. أحمد الشمري", phone: "0112345678", status: "pending", date: "2026-03-01" },
-  { id: "2", org: "جامعة الملك سعود", type: "جامعة", city: "الرياض", contact: "د. سارة المطيري", phone: "0113456789", status: "approved", date: "2026-02-20" },
-  { id: "3", org: "مدرسة النور الثانوية", type: "مدرسة", city: "جدة", contact: "أ. خالد العتيبي", phone: "0123456789", status: "pending", date: "2026-03-03" },
-  { id: "4", org: "مسجد الرحمة", type: "ديني", city: "مكة", contact: "الشيخ عبدالله", phone: "0125678901", status: "approved", date: "2026-02-15" },
-  { id: "5", org: "هيئة مكافحة المخدرات", type: "حكومي", city: "الرياض", contact: "العقيد محمد", phone: "0114567890", status: "pending", date: "2026-03-05" },
-];
+// Mock data removed — see git history to restore
+const partnerRequests: {
+  id: string;
+  org: string;
+  type: string;
+  city: string;
+  contact: string;
+  phone: string;
+  status: string;
+  date: string;
+}[] = [];
 
-const recentMessages = [
-  { id: "1", from: "أحمد محمد", msg: "أحتاج مساعدة عاجلة، أشعر بالإغراء الشديد", time: "منذ ٥ دقائق", urgent: true, read: false },
-  { id: "2", from: "خالد العمري", msg: "شكراً على المحاضرة الأخيرة، استفدت كثيراً", time: "منذ ٣٠ دقيقة", urgent: false, read: false },
-  { id: "3", from: "سارة الأحمد", msg: "هل يمكنني الحصول على شهادة إتمام البرنامج؟", time: "منذ ساعة", urgent: false, read: true },
-  { id: "4", from: "محمد الزهراني", msg: "أريد الانضمام لمجموعة دعم في الرياض", time: "منذ ٢ ساعة", urgent: false, read: true },
-];
+// Mock data removed — see git history to restore
+const recentMessages: {
+  id: string;
+  from: string;
+  msg: string;
+  time: string;
+  urgent: boolean;
+  read: boolean;
+}[] = [];
 
 const riskColors: Record<string, string> = {
   "منخفض جداً": "#10B981",
-  "منخفض": "#00D4AA",
-  "متوسط": "#F59E0B",
-  "مرتفع": "#EF4444",
+  منخفض: "#00D4AA",
+  متوسط: "#F59E0B",
+  مرتفع: "#EF4444",
   "عالٍ جداً": "#DC2626",
 };
 
 const statusColors: Record<string, string> = {
-  "نشط": "#00D4AA",
-  "متعافٍ": "#10B981",
-  "خطر": "#EF4444",
+  نشط: "#00D4AA",
+  متعافٍ: "#10B981",
+  خطر: "#EF4444",
 };
 
 export default function AdminDashboard() {
   const [activeSection, setActiveSection] = useState("overview");
   const [searchQuery, setSearchQuery] = useState("");
-  const [partnerStatuses, setPartnerStatuses] = useState<Record<string, string>>(
-    Object.fromEntries(partnerRequests.map(p => [p.id, p.status]))
-  );
+  const [partnerStatuses, setPartnerStatuses] = useState<
+    Record<string, string>
+  >(Object.fromEntries(partnerRequests.map(p => [p.id, p.status])));
 
   const approvePartner = (id: string) => {
     setPartnerStatuses(prev => ({ ...prev, [id]: "approved" }));
@@ -103,14 +126,16 @@ export default function AdminDashboard() {
     toast.error("تم رفض طلب الشراكة");
   };
 
-  const filteredUsers = mockUsers.filter(u =>
-    u.name.includes(searchQuery) || u.phone.includes(searchQuery)
+  const filteredUsers = mockUsers.filter(
+    u => u.name.includes(searchQuery) || u.phone.includes(searchQuery)
   );
 
-  const totalUsers = 487;
-  const activeUsers = 412;
-  const recoveredUsers = 178;
-  const pendingPartners = partnerRequests.filter(p => partnerStatuses[p.id] === "pending").length;
+  const totalUsers = 0;
+  const activeUsers = 0;
+  const recoveredUsers = 0;
+  const pendingPartners = partnerRequests.filter(
+    p => partnerStatuses[p.id] === "pending"
+  ).length;
 
   return (
     <div className="min-h-screen bg-[#060B18] text-white flex">
@@ -140,10 +165,14 @@ export default function AdminDashboard() {
               <sec.icon className="w-4 h-4 flex-shrink-0" />
               <span className="text-sm font-medium">{sec.label}</span>
               {sec.id === "partners" && pendingPartners > 0 && (
-                <span className="mr-auto px-1.5 py-0.5 rounded-md bg-[#EF4444] text-white text-xs font-numbers">{pendingPartners}</span>
+                <span className="mr-auto px-1.5 py-0.5 rounded-md bg-[#EF4444] text-white text-xs font-numbers">
+                  {pendingPartners}
+                </span>
               )}
               {sec.id === "messages" && (
-                <span className="mr-auto px-1.5 py-0.5 rounded-md bg-[#EF4444] text-white text-xs font-numbers">2</span>
+                <span className="mr-auto px-1.5 py-0.5 rounded-md bg-[#EF4444] text-white text-xs font-numbers">
+                  2
+                </span>
               )}
             </button>
           ))}
@@ -156,7 +185,10 @@ export default function AdminDashboard() {
               <span className="text-sm">العودة للتطبيق</span>
             </div>
           </Link>
-          <a href={`tel:${CONTACT_PHONE}`} className="flex items-center gap-2 px-3 py-2 rounded-xl bg-[#00D4AA]/8 border border-[#00D4AA]/20 text-[#00D4AA] text-xs font-numbers">
+          <a
+            href={`tel:${CONTACT_PHONE}`}
+            className="flex items-center gap-2 px-3 py-2 rounded-xl bg-[#00D4AA]/8 border border-[#00D4AA]/20 text-[#00D4AA] text-xs font-numbers"
+          >
             <Phone className="w-3.5 h-3.5" />
             {CONTACT_PHONE}
           </a>
@@ -174,10 +206,16 @@ export default function AdminDashboard() {
             <p className="text-white/35 text-xs">آخر تحديث: الآن</p>
           </div>
           <div className="flex items-center gap-3">
-            <button onClick={() => toast.success("تم تحديث البيانات")} className="p-2 rounded-xl glass-card border border-white/8 text-white/40 hover:text-white transition-colors">
+            <button
+              onClick={() => toast.success("تم تحديث البيانات")}
+              className="p-2 rounded-xl glass-card border border-white/8 text-white/40 hover:text-white transition-colors"
+            >
               <RefreshCw className="w-4 h-4" />
             </button>
-            <button onClick={() => toast.info("جاري تصدير التقرير...")} className="flex items-center gap-2 px-4 py-2 rounded-xl glass-card border border-white/8 text-white/50 hover:text-white text-sm font-bold transition-all">
+            <button
+              onClick={() => toast.info("جاري تصدير التقرير...")}
+              className="flex items-center gap-2 px-4 py-2 rounded-xl glass-card border border-white/8 text-white/50 hover:text-white text-sm font-bold transition-all"
+            >
               <Download className="w-4 h-4" />
               تصدير
             </button>
@@ -185,114 +223,105 @@ export default function AdminDashboard() {
         </div>
 
         <div className="p-8">
-
           {/* Overview Section */}
           {activeSection === "overview" && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
               {/* KPI Cards */}
               <div className="grid grid-cols-4 gap-4 mb-7">
                 {[
-                  { label: "إجمالي المستخدمين", value: totalUsers.toLocaleString("ar"), change: "+٨٩ هذا الشهر", icon: Users, color: "#00D4AA" },
-                  { label: "المستخدمون النشطون", value: activeUsers.toLocaleString("ar"), change: `${Math.round(activeUsers/totalUsers*100)}٪ من الإجمالي`, icon: UserCheck, color: "#10B981" },
-                  { label: "المتعافون", value: recoveredUsers.toLocaleString("ar"), change: "+٣٣ هذا الشهر", icon: Heart, color: "#F59E0B" },
-                  { label: "طلبات شراكة معلقة", value: pendingPartners.toString(), change: "تحتاج مراجعة", icon: Building2, color: "#EF4444" },
+                  {
+                    label: "إجمالي المستخدمين",
+                    value: totalUsers.toLocaleString("ar"),
+                    change: "+٨٩ هذا الشهر",
+                    icon: Users,
+                    color: "#00D4AA",
+                  },
+                  {
+                    label: "المستخدمون النشطون",
+                    value: activeUsers.toLocaleString("ar"),
+                    change: `${Math.round((activeUsers / totalUsers) * 100)}٪ من الإجمالي`,
+                    icon: UserCheck,
+                    color: "#10B981",
+                  },
+                  {
+                    label: "المتعافون",
+                    value: recoveredUsers.toLocaleString("ar"),
+                    change: "+٣٣ هذا الشهر",
+                    icon: Heart,
+                    color: "#F59E0B",
+                  },
+                  {
+                    label: "طلبات شراكة معلقة",
+                    value: pendingPartners.toString(),
+                    change: "تحتاج مراجعة",
+                    icon: Building2,
+                    color: "#EF4444",
+                  },
                 ].map((kpi, i) => (
                   <div key={i} className="glass-card p-5 border border-white/7">
                     <div className="flex items-start justify-between mb-3">
-                      <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: `${kpi.color}15` }}>
-                        <kpi.icon className="w-5 h-5" style={{ color: kpi.color }} />
+                      <div
+                        className="w-10 h-10 rounded-xl flex items-center justify-center"
+                        style={{ background: `${kpi.color}15` }}
+                      >
+                        <kpi.icon
+                          className="w-5 h-5"
+                          style={{ color: kpi.color }}
+                        />
                       </div>
                       <TrendingUp className="w-4 h-4 text-[#10B981]" />
                     </div>
-                    <div className="text-white font-black text-2xl font-numbers mb-1">{kpi.value}</div>
-                    <div className="text-white/50 text-xs mb-1">{kpi.label}</div>
-                    <div className="text-xs" style={{ color: kpi.color }}>{kpi.change}</div>
+                    <div className="text-white font-black text-2xl font-numbers mb-1">
+                      {kpi.value}
+                    </div>
+                    <div className="text-white/50 text-xs mb-1">
+                      {kpi.label}
+                    </div>
+                    <div className="text-xs" style={{ color: kpi.color }}>
+                      {kpi.change}
+                    </div>
                   </div>
                 ))}
               </div>
 
               {/* Charts Row */}
               <div className="grid grid-cols-3 gap-5 mb-7">
-                {/* Growth Chart */}
                 <div className="col-span-2 glass-card p-5 border border-white/7">
-                  <h3 className="text-white font-bold mb-4 text-sm">نمو المستخدمين</h3>
-                  <ResponsiveContainer width="100%" height={200}>
-                    <AreaChart data={statsData}>
-                      <defs>
-                        <linearGradient id="colorUsers" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="#00D4AA" stopOpacity={0.3} />
-                          <stop offset="95%" stopColor="#00D4AA" stopOpacity={0} />
-                        </linearGradient>
-                        <linearGradient id="colorRecovered" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="#F59E0B" stopOpacity={0.3} />
-                          <stop offset="95%" stopColor="#F59E0B" stopOpacity={0} />
-                        </linearGradient>
-                      </defs>
-                      <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                      <XAxis dataKey="month" tick={{ fill: "rgba(255,255,255,0.3)", fontSize: 11 }} axisLine={false} tickLine={false} />
-                      <YAxis tick={{ fill: "rgba(255,255,255,0.3)", fontSize: 11 }} axisLine={false} tickLine={false} />
-                      <Tooltip contentStyle={{ background: "#0A1628", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "12px", color: "white" }} />
-                      <Area type="monotone" dataKey="users" stroke="#00D4AA" fill="url(#colorUsers)" strokeWidth={2} name="المستخدمون" />
-                      <Area type="monotone" dataKey="recovered" stroke="#F59E0B" fill="url(#colorRecovered)" strokeWidth={2} name="المتعافون" />
-                    </AreaChart>
-                  </ResponsiveContainer>
+                  <h3 className="text-white font-bold mb-4 text-sm">
+                    نمو المستخدمين
+                  </h3>
+                  <div className="flex items-center justify-center h-[200px]">
+                    <div className="text-center">
+                      <BarChart3 className="w-10 h-10 text-white/10 mx-auto mb-2" />
+                      <p className="text-white/30 text-xs">
+                        لا توجد بيانات بعد
+                      </p>
+                    </div>
+                  </div>
                 </div>
-
-                {/* Addiction Types Pie */}
                 <div className="glass-card p-5 border border-white/7">
-                  <h3 className="text-white font-bold mb-4 text-sm">توزيع أنواع الإدمان</h3>
-                  <ResponsiveContainer width="100%" height={140}>
-                    <PieChart>
-                      <Pie data={addictionTypes} cx="50%" cy="50%" innerRadius={40} outerRadius={65} dataKey="value" paddingAngle={3}>
-                        {addictionTypes.map((entry, index) => (
-                          <Cell key={index} fill={entry.color} />
-                        ))}
-                      </Pie>
-                      <Tooltip contentStyle={{ background: "#0A1628", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "12px", color: "white" }} />
-                    </PieChart>
-                  </ResponsiveContainer>
-                  <div className="space-y-1.5 mt-2">
-                    {addictionTypes.map((t, i) => (
-                      <div key={i} className="flex items-center justify-between text-xs">
-                        <div className="flex items-center gap-1.5">
-                          <div className="w-2.5 h-2.5 rounded-full" style={{ background: t.color }} />
-                          <span className="text-white/60">{t.name}</span>
-                        </div>
-                        <span className="text-white/80 font-numbers">{t.value}٪</span>
-                      </div>
-                    ))}
+                  <h3 className="text-white font-bold mb-4 text-sm">
+                    توزيع أنواع الإدمان
+                  </h3>
+                  <div className="flex items-center justify-center h-[200px]">
+                    <div className="text-center">
+                      <BarChart3 className="w-10 h-10 text-white/10 mx-auto mb-2" />
+                      <p className="text-white/30 text-xs">
+                        لا توجد بيانات بعد
+                      </p>
+                    </div>
                   </div>
                 </div>
               </div>
 
               {/* Urgent Alerts */}
-              <div className="glass-card p-5 border border-[#EF4444]/20">
+              <div className="glass-card p-5 border border-white/5">
                 <h3 className="text-white font-bold mb-3 flex items-center gap-2 text-sm">
                   <AlertTriangle className="w-4 h-4 text-[#EF4444]" />
                   تنبيهات عاجلة
                 </h3>
-                <div className="space-y-2">
-                  {mockUsers.filter(u => u.riskLevel === "عالٍ جداً" || u.riskLevel === "مرتفع").map(u => (
-                    <div key={u.id} className="flex items-center justify-between p-3 rounded-xl bg-[#EF4444]/8 border border-[#EF4444]/15">
-                      <div className="flex items-center gap-3">
-                        <div className="w-8 h-8 rounded-xl bg-[#EF4444]/20 flex items-center justify-center">
-                          <span className="text-[#EF4444] font-black text-sm">{u.name.charAt(0)}</span>
-                        </div>
-                        <div>
-                          <div className="text-white font-bold text-sm">{u.name}</div>
-                          <div className="text-white/40 text-xs">{u.addictionType} · {u.soberDays} يوم فقط</div>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span className="px-2 py-0.5 rounded-lg text-xs font-bold" style={{ background: `${riskColors[u.riskLevel]}15`, color: riskColors[u.riskLevel] }}>
-                          {u.riskLevel}
-                        </span>
-                        <a href={`tel:${u.phone}`} className="p-1.5 rounded-lg bg-[#00D4AA]/15 text-[#00D4AA] hover:bg-[#00D4AA]/25 transition-colors">
-                          <Phone className="w-3.5 h-3.5" />
-                        </a>
-                      </div>
-                    </div>
-                  ))}
+                <div className="text-center py-4">
+                  <p className="text-white/30 text-xs">لا توجد تنبيهات عاجلة</p>
                 </div>
               </div>
             </motion.div>
@@ -311,152 +340,232 @@ export default function AdminDashboard() {
                     className="w-full bg-white/4 border border-white/10 rounded-xl pr-10 pl-4 py-2.5 text-white placeholder-white/25 focus:outline-none focus:border-white/25 text-sm"
                   />
                 </div>
-                <div className="text-white/40 text-sm">{filteredUsers.length} مستخدم</div>
+                <div className="text-white/40 text-sm">
+                  {filteredUsers.length} مستخدم
+                </div>
               </div>
 
-              <div className="space-y-2">
-                {filteredUsers.map(user => (
-                  <div key={user.id} className="glass-card p-4 border border-white/7 flex items-center gap-4">
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#00D4AA]/20 to-[#0EA5E9]/20 flex items-center justify-center font-black text-[#00D4AA]">
-                      {user.name.charAt(0)}
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-2 mb-0.5">
-                        <span className="text-white font-bold text-sm">{user.name}</span>
-                        <span className="px-2 py-0.5 rounded-lg text-xs font-bold" style={{ background: `${statusColors[user.status] || "#666"}15`, color: statusColors[user.status] || "#666" }}>
-                          {user.status}
+              {filteredUsers.length > 0 ? (
+                <div className="space-y-2">
+                  {filteredUsers.map(user => (
+                    <div
+                      key={user.id}
+                      className="glass-card p-4 border border-white/7 flex items-center gap-4"
+                    >
+                      <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#00D4AA]/20 to-[#0EA5E9]/20 flex items-center justify-center font-black text-[#00D4AA]">
+                        {user.name.charAt(0)}
+                      </div>
+                      <div className="flex-1">
+                        <div className="flex items-center gap-2 mb-0.5">
+                          <span className="text-white font-bold text-sm">
+                            {user.name}
+                          </span>
+                          <span
+                            className="px-2 py-0.5 rounded-lg text-xs font-bold"
+                            style={{
+                              background: `${statusColors[user.status] || "#666"}15`,
+                              color: statusColors[user.status] || "#666",
+                            }}
+                          >
+                            {user.status}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-3 text-white/35 text-xs">
+                          <span className="font-numbers">{user.phone}</span>
+                          <span>·</span>
+                          <span>{user.addictionType}</span>
+                          <span>·</span>
+                          <span className="font-numbers">
+                            {user.soberDays} يوم تعافٍ
+                          </span>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span
+                          className="px-2.5 py-1 rounded-lg text-xs font-bold"
+                          style={{
+                            background: `${riskColors[user.riskLevel] || "#666"}15`,
+                            color: riskColors[user.riskLevel] || "#666",
+                          }}
+                        >
+                          {user.riskLevel}
                         </span>
-                      </div>
-                      <div className="flex items-center gap-3 text-white/35 text-xs">
-                        <span className="font-numbers">{user.phone}</span>
-                        <span>·</span>
-                        <span>{user.addictionType}</span>
-                        <span>·</span>
-                        <span className="font-numbers">{user.soberDays} يوم تعافٍ</span>
+                        <a
+                          href={`tel:${user.phone}`}
+                          className="p-1.5 rounded-lg glass-card border border-white/8 text-white/40 hover:text-[#00D4AA] transition-colors"
+                        >
+                          <Phone className="w-3.5 h-3.5" />
+                        </a>
                       </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <span className="px-2.5 py-1 rounded-lg text-xs font-bold" style={{ background: `${riskColors[user.riskLevel] || "#666"}15`, color: riskColors[user.riskLevel] || "#666" }}>
-                        {user.riskLevel}
-                      </span>
-                      <a href={`tel:${user.phone}`} className="p-1.5 rounded-lg glass-card border border-white/8 text-white/40 hover:text-[#00D4AA] transition-colors">
-                        <Phone className="w-3.5 h-3.5" />
-                      </a>
-                    </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <Users className="w-10 h-10 text-white/10 mx-auto mb-3" />
+                  <p className="text-white/30 text-sm">لا يوجد مستخدمون بعد</p>
+                </div>
+              )}
             </motion.div>
           )}
 
           {/* Partner Requests Section */}
           {activeSection === "partners" && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-              <div className="space-y-3">
-                {partnerRequests.map(req => (
-                  <div key={req.id} className="glass-card p-5 border border-white/7">
-                    <div className="flex items-start justify-between mb-3">
-                      <div className="flex items-center gap-3">
-                        <div className="w-11 h-11 rounded-xl bg-[#00D4AA]/15 flex items-center justify-center">
-                          <Building2 className="w-5 h-5 text-[#00D4AA]" />
+              {partnerRequests.length > 0 ? (
+                <div className="space-y-3">
+                  {partnerRequests.map(req => (
+                    <div
+                      key={req.id}
+                      className="glass-card p-5 border border-white/7"
+                    >
+                      <div className="flex items-start justify-between mb-3">
+                        <div className="flex items-center gap-3">
+                          <div className="w-11 h-11 rounded-xl bg-[#00D4AA]/15 flex items-center justify-center">
+                            <Building2 className="w-5 h-5 text-[#00D4AA]" />
+                          </div>
+                          <div>
+                            <div className="text-white font-bold">
+                              {req.org}
+                            </div>
+                            <div className="text-white/40 text-xs">
+                              {req.type} · {req.city}
+                            </div>
+                          </div>
                         </div>
-                        <div>
-                          <div className="text-white font-bold">{req.org}</div>
-                          <div className="text-white/40 text-xs">{req.type} · {req.city}</div>
+                        <span
+                          className={`px-3 py-1 rounded-xl text-xs font-bold ${
+                            partnerStatuses[req.id] === "approved"
+                              ? "bg-[#10B981]/15 text-[#10B981]"
+                              : partnerStatuses[req.id] === "rejected"
+                                ? "bg-[#EF4444]/15 text-[#EF4444]"
+                                : "bg-[#F59E0B]/15 text-[#F59E0B]"
+                          }`}
+                        >
+                          {partnerStatuses[req.id] === "approved"
+                            ? "مقبول"
+                            : partnerStatuses[req.id] === "rejected"
+                              ? "مرفوض"
+                              : "معلق"}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-4 text-xs text-white/40 mb-3">
+                        <span className="flex items-center gap-1">
+                          <Users className="w-3 h-3" />
+                          {req.contact}
+                        </span>
+                        <span className="flex items-center gap-1 font-numbers">
+                          <Phone className="w-3 h-3" />
+                          {req.phone}
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <Clock className="w-3 h-3" />
+                          {req.date}
+                        </span>
+                      </div>
+                      {partnerStatuses[req.id] === "pending" && (
+                        <div className="flex gap-2">
+                          <button
+                            onClick={() => approvePartner(req.id)}
+                            className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/25 font-bold text-sm hover:bg-[#10B981]/25 transition-all"
+                          >
+                            <CheckCircle2 className="w-4 h-4" />
+                            قبول
+                          </button>
+                          <button
+                            onClick={() => rejectPartner(req.id)}
+                            className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl bg-[#EF4444]/15 text-[#EF4444] border border-[#EF4444]/25 font-bold text-sm hover:bg-[#EF4444]/25 transition-all"
+                          >
+                            <XCircle className="w-4 h-4" />
+                            رفض
+                          </button>
+                          <a
+                            href={`tel:${req.phone}`}
+                            className="px-4 py-2 rounded-xl glass-card border border-white/8 text-white/40 hover:text-white transition-colors"
+                          >
+                            <Phone className="w-4 h-4" />
+                          </a>
                         </div>
-                      </div>
-                      <span className={`px-3 py-1 rounded-xl text-xs font-bold ${
-                        partnerStatuses[req.id] === "approved" ? "bg-[#10B981]/15 text-[#10B981]" :
-                        partnerStatuses[req.id] === "rejected" ? "bg-[#EF4444]/15 text-[#EF4444]" :
-                        "bg-[#F59E0B]/15 text-[#F59E0B]"
-                      }`}>
-                        {partnerStatuses[req.id] === "approved" ? "مقبول" : partnerStatuses[req.id] === "rejected" ? "مرفوض" : "معلق"}
-                      </span>
+                      )}
                     </div>
-                    <div className="flex items-center gap-4 text-xs text-white/40 mb-3">
-                      <span className="flex items-center gap-1"><Users className="w-3 h-3" />{req.contact}</span>
-                      <span className="flex items-center gap-1 font-numbers"><Phone className="w-3 h-3" />{req.phone}</span>
-                      <span className="flex items-center gap-1"><Clock className="w-3 h-3" />{req.date}</span>
-                    </div>
-                    {partnerStatuses[req.id] === "pending" && (
-                      <div className="flex gap-2">
-                        <button onClick={() => approvePartner(req.id)} className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/25 font-bold text-sm hover:bg-[#10B981]/25 transition-all">
-                          <CheckCircle2 className="w-4 h-4" />
-                          قبول
-                        </button>
-                        <button onClick={() => rejectPartner(req.id)} className="flex-1 flex items-center justify-center gap-1.5 py-2 rounded-xl bg-[#EF4444]/15 text-[#EF4444] border border-[#EF4444]/25 font-bold text-sm hover:bg-[#EF4444]/25 transition-all">
-                          <XCircle className="w-4 h-4" />
-                          رفض
-                        </button>
-                        <a href={`tel:${req.phone}`} className="px-4 py-2 rounded-xl glass-card border border-white/8 text-white/40 hover:text-white transition-colors">
-                          <Phone className="w-4 h-4" />
-                        </a>
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <Building2 className="w-10 h-10 text-white/10 mx-auto mb-3" />
+                  <p className="text-white/30 text-sm">
+                    لا توجد طلبات شراكة بعد
+                  </p>
+                </div>
+              )}
             </motion.div>
           )}
 
           {/* Messages Section */}
           {activeSection === "messages" && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-              <div className="space-y-3">
-                {recentMessages.map(msg => (
-                  <div key={msg.id} className={`glass-card p-4 border transition-all ${msg.urgent ? "border-[#EF4444]/30 bg-[#EF4444]/5" : !msg.read ? "border-white/12" : "border-white/5"}`}>
-                    <div className="flex items-start gap-3">
-                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center font-black ${msg.urgent ? "bg-[#EF4444]/20 text-[#EF4444]" : "bg-[#00D4AA]/15 text-[#00D4AA]"}`}>
-                        {msg.from.charAt(0)}
-                      </div>
-                      <div className="flex-1">
-                        <div className="flex items-center gap-2 mb-0.5">
-                          <span className="text-white font-bold text-sm">{msg.from}</span>
-                          {msg.urgent && <span className="px-2 py-0.5 rounded-lg text-xs font-bold bg-[#EF4444]/15 text-[#EF4444]">عاجل</span>}
-                          {!msg.read && <div className="w-2 h-2 rounded-full bg-[#00D4AA]" />}
+              {recentMessages.length > 0 ? (
+                <div className="space-y-3">
+                  {recentMessages.map(msg => (
+                    <div
+                      key={msg.id}
+                      className={`glass-card p-4 border transition-all ${msg.urgent ? "border-[#EF4444]/30 bg-[#EF4444]/5" : !msg.read ? "border-white/12" : "border-white/5"}`}
+                    >
+                      <div className="flex items-start gap-3">
+                        <div
+                          className={`w-10 h-10 rounded-xl flex items-center justify-center font-black ${msg.urgent ? "bg-[#EF4444]/20 text-[#EF4444]" : "bg-[#00D4AA]/15 text-[#00D4AA]"}`}
+                        >
+                          {msg.from.charAt(0)}
                         </div>
-                        <p className="text-white/60 text-sm mb-1">{msg.msg}</p>
-                        <span className="text-white/25 text-xs">{msg.time}</span>
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-0.5">
+                            <span className="text-white font-bold text-sm">
+                              {msg.from}
+                            </span>
+                            {msg.urgent && (
+                              <span className="px-2 py-0.5 rounded-lg text-xs font-bold bg-[#EF4444]/15 text-[#EF4444]">
+                                عاجل
+                              </span>
+                            )}
+                            {!msg.read && (
+                              <div className="w-2 h-2 rounded-full bg-[#00D4AA]" />
+                            )}
+                          </div>
+                          <p className="text-white/60 text-sm mb-1">
+                            {msg.msg}
+                          </p>
+                          <span className="text-white/25 text-xs">
+                            {msg.time}
+                          </span>
+                        </div>
+                        <button
+                          onClick={() => toast.success("تم الرد على الرسالة")}
+                          className="px-3 py-1.5 rounded-xl glass-card border border-white/8 text-white/40 hover:text-white text-xs font-bold transition-colors"
+                        >
+                          رد
+                        </button>
                       </div>
-                      <button onClick={() => toast.success("تم الرد على الرسالة")} className="px-3 py-1.5 rounded-xl glass-card border border-white/8 text-white/40 hover:text-white text-xs font-bold transition-colors">
-                        رد
-                      </button>
                     </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="text-center py-12">
+                  <MessageSquare className="w-10 h-10 text-white/10 mx-auto mb-3" />
+                  <p className="text-white/30 text-sm">لا توجد رسائل بعد</p>
+                </div>
+              )}
             </motion.div>
           )}
 
           {/* Reports Section */}
           {activeSection === "reports" && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-              <div className="glass-card p-5 border border-white/7 mb-5">
-                <h3 className="text-white font-bold mb-4 text-sm">تقرير النشاط الشهري</h3>
-                <ResponsiveContainer width="100%" height={250}>
-                  <BarChart data={statsData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" />
-                    <XAxis dataKey="month" tick={{ fill: "rgba(255,255,255,0.3)", fontSize: 11 }} axisLine={false} tickLine={false} />
-                    <YAxis tick={{ fill: "rgba(255,255,255,0.3)", fontSize: 11 }} axisLine={false} tickLine={false} />
-                    <Tooltip contentStyle={{ background: "#0A1628", border: "1px solid rgba(255,255,255,0.1)", borderRadius: "12px", color: "white" }} />
-                    <Bar dataKey="users" fill="#00D4AA" radius={[6, 6, 0, 0]} name="المستخدمون" />
-                    <Bar dataKey="active" fill="#0EA5E9" radius={[6, 6, 0, 0]} name="النشطون" />
-                    <Bar dataKey="recovered" fill="#F59E0B" radius={[6, 6, 0, 0]} name="المتعافون" />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-              <div className="grid grid-cols-3 gap-4">
-                {[
-                  { label: "معدل الاستمرارية", value: "٨٧٪", desc: "من المستخدمين يكملون البرنامج", color: "#10B981" },
-                  { label: "متوسط أيام التعافي", value: "٦٣ يوم", desc: "لكل مستخدم نشط", color: "#00D4AA" },
-                  { label: "رضا المستخدمين", value: "٤.٨/٥", desc: "بناءً على ٢٣٤ تقييم", color: "#F59E0B" },
-                ].map((stat, i) => (
-                  <div key={i} className="glass-card p-4 border border-white/7 text-center">
-                    <div className="text-2xl font-black font-numbers mb-1" style={{ color: stat.color }}>{stat.value}</div>
-                    <div className="text-white font-bold text-sm mb-1">{stat.label}</div>
-                    <div className="text-white/35 text-xs">{stat.desc}</div>
-                  </div>
-                ))}
+              <div className="text-center py-16">
+                <BarChart3 className="w-12 h-12 text-white/10 mx-auto mb-3" />
+                <p className="text-white/30 text-sm">لا توجد تقارير بعد</p>
+                <p className="text-white/20 text-xs mt-1">
+                  ستظهر التقارير عند توفر بيانات كافية
+                </p>
               </div>
             </motion.div>
           )}
@@ -464,36 +573,9 @@ export default function AdminDashboard() {
           {/* Alerts Section */}
           {activeSection === "alerts" && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-              <div className="space-y-3">
-                {[
-                  { title: "مستخدم في خطر عالٍ", desc: "محمد الزهراني - ٣ أيام فقط من التعافي، يحتاج متابعة عاجلة", type: "danger", time: "منذ ١٠ دقائق" },
-                  { title: "طلب شراكة جديد", desc: "هيئة مكافحة المخدرات - الرياض - ينتظر المراجعة", type: "info", time: "منذ ٢ ساعة" },
-                  { title: "إنجاز مميز", desc: "فاطمة السالم أكملت ١٥٦ يوماً من التعافي!", type: "success", time: "منذ ٣ ساعات" },
-                  { title: "رسالة طوارئ", desc: "أحمد محمد يطلب مساعدة عاجلة عبر نظام الدردشة", type: "danger", time: "منذ ٥ ساعات" },
-                  { title: "محاضرة جديدة مضافة", desc: "تمت إضافة محاضرة 'الوقاية المبكرة للأطفال' بنجاح", type: "success", time: "أمس" },
-                ].map((alert, i) => (
-                  <div key={i} className={`glass-card p-4 border flex items-start gap-3 ${
-                    alert.type === "danger" ? "border-[#EF4444]/25 bg-[#EF4444]/5" :
-                    alert.type === "success" ? "border-[#10B981]/20" : "border-white/8"
-                  }`}>
-                    <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 ${
-                      alert.type === "danger" ? "bg-[#EF4444]/20" :
-                      alert.type === "success" ? "bg-[#10B981]/20" : "bg-[#3B82F6]/20"
-                    }`}>
-                      {alert.type === "danger" ? <AlertTriangle className="w-4.5 h-4.5 text-[#EF4444]" /> :
-                       alert.type === "success" ? <CheckCircle2 className="w-4.5 h-4.5 text-[#10B981]" /> :
-                       <Bell className="w-4.5 h-4.5 text-[#3B82F6]" />}
-                    </div>
-                    <div className="flex-1">
-                      <div className="text-white font-bold text-sm mb-0.5">{alert.title}</div>
-                      <div className="text-white/50 text-xs mb-1">{alert.desc}</div>
-                      <div className="text-white/25 text-xs">{alert.time}</div>
-                    </div>
-                    <button onClick={() => toast.success("تم تعليم التنبيه كمقروء")} className="text-white/25 hover:text-white/60 transition-colors">
-                      <CheckCircle2 className="w-4 h-4" />
-                    </button>
-                  </div>
-                ))}
+              <div className="text-center py-16">
+                <Bell className="w-12 h-12 text-white/10 mx-auto mb-3" />
+                <p className="text-white/30 text-sm">لا توجد تنبيهات بعد</p>
               </div>
             </motion.div>
           )}

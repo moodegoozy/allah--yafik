@@ -7,9 +7,23 @@ import { useState } from "react";
 import { useLocation } from "wouter";
 import Sidebar from "@/components/Sidebar";
 import {
-  Brain, ChevronLeft, ChevronRight, Shield, AlertTriangle,
-  CheckCircle2, Heart, Zap, Target, Phone, BookOpen,
-  Users, Star, BarChart3, ArrowRight, RefreshCw, Sparkles
+  Brain,
+  ChevronLeft,
+  ChevronRight,
+  Shield,
+  AlertTriangle,
+  CheckCircle2,
+  Heart,
+  Zap,
+  Target,
+  Phone,
+  BookOpen,
+  Users,
+  Star,
+  BarChart3,
+  ArrowRight,
+  RefreshCw,
+  Sparkles,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -30,8 +44,14 @@ const questions = [
   {
     id: 1,
     section: "الاستخدام والتحكم",
-    question: "هل تجد صعوبة في التوقف عن استخدام مادة أو سلوك معين حتى عندما تريد ذلك؟",
-    options: ["لا، أستطيع التوقف بسهولة", "أحياناً أجد بعض الصعوبة", "في أغلب الأحيان أجد صعوبة", "لا أستطيع التوقف أبداً"],
+    question:
+      "هل تجد صعوبة في التوقف عن استخدام مادة أو سلوك معين حتى عندما تريد ذلك؟",
+    options: [
+      "لا، أستطيع التوقف بسهولة",
+      "أحياناً أجد بعض الصعوبة",
+      "في أغلب الأحيان أجد صعوبة",
+      "لا أستطيع التوقف أبداً",
+    ],
     weights: [0, 1, 2, 3],
     icon: Target,
     color: "#EF4444",
@@ -39,8 +59,14 @@ const questions = [
   {
     id: 2,
     section: "الاستخدام والتحكم",
-    question: "هل تحتاج إلى كميات أكبر من المادة أو وقت أطول في السلوك لتحقيق نفس الشعور؟",
-    options: ["لا، الكمية نفسها كافية", "نعم، أحتاج أكثر قليلاً", "نعم، أحتاج أكثر بكثير", "الكميات الكبيرة لم تعد تكفي"],
+    question:
+      "هل تحتاج إلى كميات أكبر من المادة أو وقت أطول في السلوك لتحقيق نفس الشعور؟",
+    options: [
+      "لا، الكمية نفسها كافية",
+      "نعم، أحتاج أكثر قليلاً",
+      "نعم، أحتاج أكثر بكثير",
+      "الكميات الكبيرة لم تعد تكفي",
+    ],
     weights: [0, 1, 2, 3],
     icon: Zap,
     color: "#F59E0B",
@@ -49,7 +75,12 @@ const questions = [
     id: 3,
     section: "التأثير على الحياة",
     question: "هل أثّر هذا الاستخدام سلباً على علاقاتك الاجتماعية أو العائلية؟",
-    options: ["لا، علاقاتي بخير", "بعض التوترات البسيطة", "مشاكل واضحة في العلاقات", "علاقاتي تدهورت بشكل كبير"],
+    options: [
+      "لا، علاقاتي بخير",
+      "بعض التوترات البسيطة",
+      "مشاكل واضحة في العلاقات",
+      "علاقاتي تدهورت بشكل كبير",
+    ],
     weights: [0, 1, 2, 3],
     icon: Heart,
     color: "#EC4899",
@@ -66,8 +97,14 @@ const questions = [
   {
     id: 5,
     section: "أعراض الانسحاب",
-    question: "عند محاولة التوقف، هل تشعر بأعراض جسدية أو نفسية (قلق، توتر، صداع، تعرق)؟",
-    options: ["لا، لا أشعر بشيء", "أعراض خفيفة تزول سريعاً", "أعراض مزعجة تستمر أياماً", "أعراض شديدة تمنعني من التوقف"],
+    question:
+      "عند محاولة التوقف، هل تشعر بأعراض جسدية أو نفسية (قلق، توتر، صداع، تعرق)؟",
+    options: [
+      "لا، لا أشعر بشيء",
+      "أعراض خفيفة تزول سريعاً",
+      "أعراض مزعجة تستمر أياماً",
+      "أعراض شديدة تمنعني من التوقف",
+    ],
     weights: [0, 1, 2, 3],
     icon: AlertTriangle,
     color: "#EF4444",
@@ -75,8 +112,14 @@ const questions = [
   {
     id: 6,
     section: "أعراض الانسحاب",
-    question: "هل تستخدم المادة أو السلوك لتخفيف مشاعر سلبية مثل القلق أو الاكتئاب أو الوحدة؟",
-    options: ["لا، لأسباب أخرى", "أحياناً للاسترخاء", "في أغلب الأحيان", "دائماً لتخفيف المشاعر السلبية"],
+    question:
+      "هل تستخدم المادة أو السلوك لتخفيف مشاعر سلبية مثل القلق أو الاكتئاب أو الوحدة؟",
+    options: [
+      "لا، لأسباب أخرى",
+      "أحياناً للاسترخاء",
+      "في أغلب الأحيان",
+      "دائماً لتخفيف المشاعر السلبية",
+    ],
     weights: [0, 1, 2, 3],
     icon: Shield,
     color: "#3B82F6",
@@ -94,7 +137,12 @@ const questions = [
     id: 8,
     section: "الوعي والإنكار",
     question: "هل حاولت التوقف أو التقليل من الاستخدام في الماضي دون نجاح؟",
-    options: ["لم أحاول لأنه لا مشكلة", "حاولت مرة وأوقفت", "حاولت عدة مرات دون نجاح", "حاولت كثيراً وفشلت دائماً"],
+    options: [
+      "لم أحاول لأنه لا مشكلة",
+      "حاولت مرة وأوقفت",
+      "حاولت عدة مرات دون نجاح",
+      "حاولت كثيراً وفشلت دائماً",
+    ],
     weights: [0, 1, 2, 3],
     icon: RefreshCw,
     color: "#F59E0B",
@@ -104,11 +152,50 @@ const questions = [
 const getRiskLevel = (score: number) => {
   const maxScore = questions.length * 3;
   const percentage = (score / maxScore) * 100;
-  if (percentage <= 20) return { level: "منخفض جداً", color: "#10B981", bg: "#10B98115", desc: "لا توجد مؤشرات مقلقة. استمر في الوقاية والتوعية.", icon: CheckCircle2, action: "الوقاية والتثقيف" };
-  if (percentage <= 40) return { level: "منخفض", color: "#00D4AA", bg: "#00D4AA15", desc: "بعض المؤشرات الخفيفة. الوعي والمتابعة كافيان.", icon: Shield, action: "المتابعة والوعي" };
-  if (percentage <= 60) return { level: "متوسط", color: "#F59E0B", bg: "#F59E0B15", desc: "مؤشرات واضحة تستوجب الانتباه والتدخل المبكر.", icon: AlertTriangle, action: "التدخل المبكر" };
-  if (percentage <= 80) return { level: "مرتفع", color: "#EF4444", bg: "#EF444415", desc: "مؤشرات خطيرة. يُنصح بالتواصل مع متخصص.", icon: AlertTriangle, action: "استشارة متخصص" };
-  return { level: "مرتفع جداً", color: "#DC2626", bg: "#DC262615", desc: "حالة تستوجب تدخلاً فورياً. تواصل مع متخصص الآن.", icon: AlertTriangle, action: "تدخل فوري" };
+  if (percentage <= 20)
+    return {
+      level: "منخفض جداً",
+      color: "#10B981",
+      bg: "#10B98115",
+      desc: "لا توجد مؤشرات مقلقة. استمر في الوقاية والتوعية.",
+      icon: CheckCircle2,
+      action: "الوقاية والتثقيف",
+    };
+  if (percentage <= 40)
+    return {
+      level: "منخفض",
+      color: "#00D4AA",
+      bg: "#00D4AA15",
+      desc: "بعض المؤشرات الخفيفة. الوعي والمتابعة كافيان.",
+      icon: Shield,
+      action: "المتابعة والوعي",
+    };
+  if (percentage <= 60)
+    return {
+      level: "متوسط",
+      color: "#F59E0B",
+      bg: "#F59E0B15",
+      desc: "مؤشرات واضحة تستوجب الانتباه والتدخل المبكر.",
+      icon: AlertTriangle,
+      action: "التدخل المبكر",
+    };
+  if (percentage <= 80)
+    return {
+      level: "مرتفع",
+      color: "#EF4444",
+      bg: "#EF444415",
+      desc: "مؤشرات خطيرة. يُنصح بالتواصل مع متخصص.",
+      icon: AlertTriangle,
+      action: "استشارة متخصص",
+    };
+  return {
+    level: "مرتفع جداً",
+    color: "#DC2626",
+    bg: "#DC262615",
+    desc: "حالة تستوجب تدخلاً فورياً. تواصل مع متخصص الآن.",
+    icon: AlertTriangle,
+    action: "تدخل فوري",
+  };
 };
 
 const getPersonalizedPlan = (score: number, answers: number[]) => {
@@ -116,17 +203,71 @@ const getPersonalizedPlan = (score: number, answers: number[]) => {
   const plans = [];
 
   if (risk.level === "منخفض جداً" || risk.level === "منخفض") {
-    plans.push({ icon: BookOpen, title: "التثقيف الوقائي", desc: "اقرأ محاضرات التوعية لتعزيز وعيك", color: "#00D4AA", action: "/lectures" });
-    plans.push({ icon: Heart, title: "تمارين الاسترخاء", desc: "مارس تمارين التنفس والتأمل يومياً", color: "#EC4899", action: "/exercises" });
-    plans.push({ icon: Users, title: "شبكة الدعم", desc: "انضم لمجموعة دعم للوقاية المبكرة", color: "#3B82F6", action: "/community" });
+    plans.push({
+      icon: BookOpen,
+      title: "التثقيف الوقائي",
+      desc: "اقرأ محاضرات التوعية لتعزيز وعيك",
+      color: "#00D4AA",
+      action: "/lectures",
+    });
+    plans.push({
+      icon: Heart,
+      title: "تمارين الاسترخاء",
+      desc: "مارس تمارين التنفس والتأمل يومياً",
+      color: "#EC4899",
+      action: "/exercises",
+    });
+    plans.push({
+      icon: Users,
+      title: "شبكة الدعم",
+      desc: "انضم لمجموعة دعم للوقاية المبكرة",
+      color: "#3B82F6",
+      action: "/community",
+    });
   } else if (risk.level === "متوسط") {
-    plans.push({ icon: Brain, title: "تقييم دوري", desc: "أعد الاختبار كل أسبوع لمتابعة تقدمك", color: "#8B5CF6", action: "/assessment" });
-    plans.push({ icon: BookOpen, title: "محاضرات مكثفة", desc: "ابدأ بمحاضرة علم الأعصاب والإدمان", color: "#00D4AA", action: "/lectures/addiction-brain-science" });
-    plans.push({ icon: Phone, title: "استشارة مجانية", desc: "تواصل مع مختص للحصول على توجيه", color: "#F59E0B", action: `tel:${CONTACT_PHONE}` });
+    plans.push({
+      icon: Brain,
+      title: "تقييم دوري",
+      desc: "أعد الاختبار كل أسبوع لمتابعة تقدمك",
+      color: "#8B5CF6",
+      action: "/assessment",
+    });
+    plans.push({
+      icon: BookOpen,
+      title: "محاضرات مكثفة",
+      desc: "ابدأ بمحاضرة علم الأعصاب والإدمان",
+      color: "#00D4AA",
+      action: "/lectures/addiction-brain-science",
+    });
+    plans.push({
+      icon: Phone,
+      title: "استشارة مجانية",
+      desc: "تواصل مع مختص للحصول على توجيه",
+      color: "#F59E0B",
+      action: `tel:${CONTACT_PHONE}`,
+    });
   } else {
-    plans.push({ icon: Phone, title: "تواصل فوري", desc: "اتصل بنا الآن للحصول على مساعدة متخصصة", color: "#EF4444", action: `tel:${CONTACT_PHONE}` });
-    plans.push({ icon: Shield, title: "خطة تعافي", desc: "ابدأ خطة تعافي مخصصة بإشراف متخصص", color: "#8B5CF6", action: "/recovery" });
-    plans.push({ icon: Heart, title: "دعم نفسي", desc: "تمارين طارئة للتعامل مع الرغبة الشديدة", color: "#EC4899", action: "/exercises" });
+    plans.push({
+      icon: Phone,
+      title: "تواصل فوري",
+      desc: "اتصل بنا الآن للحصول على مساعدة متخصصة",
+      color: "#EF4444",
+      action: `tel:${CONTACT_PHONE}`,
+    });
+    plans.push({
+      icon: Shield,
+      title: "خطة تعافي",
+      desc: "ابدأ خطة تعافي مخصصة بإشراف متخصص",
+      color: "#8B5CF6",
+      action: "/recovery",
+    });
+    plans.push({
+      icon: Heart,
+      title: "دعم نفسي",
+      desc: "تمارين طارئة للتعامل مع الرغبة الشديدة",
+      color: "#EC4899",
+      action: "/exercises",
+    });
   }
 
   return plans;
@@ -170,16 +311,19 @@ export default function Assessment() {
   };
 
   const currentQuestion = questions[currentQ];
-  const sectionQuestions = questions.filter(q => q.section === currentQuestion?.section);
-  const sectionIndex = sectionQuestions.findIndex(q => q.id === currentQuestion?.id);
+  const sectionQuestions = questions.filter(
+    q => q.section === currentQuestion?.section
+  );
+  const sectionIndex = sectionQuestions.findIndex(
+    q => q.id === currentQuestion?.id
+  );
 
   return (
     <div className="min-h-screen bg-[#060B18] text-white flex">
       <Sidebar />
-      <main className="flex-1 mr-64 overflow-y-auto">
-
+      <main className="flex-1 mr-0 lg:mr-64 overflow-y-auto pb-24 lg:pb-0">
         {/* Header */}
-        <div className="relative overflow-hidden px-8 pt-10 pb-8 border-b border-white/5">
+        <div className="relative overflow-hidden px-4 md:px-8 pt-6 md:pt-10 pb-6 md:pb-8 border-b border-white/5">
           <div className="orb orb-purple w-72 h-72 -top-20 -right-20 opacity-40" />
           <div className="relative z-10">
             <div className="section-tag bg-[#8B5CF6]/10 border border-[#8B5CF6]/25 text-[#8B5CF6] mb-3">
@@ -190,13 +334,14 @@ export default function Assessment() {
               اختبار
               <span className="gradient-text-purple"> تقييم الإدمان</span>
             </h1>
-            <p className="text-white/55 text-sm">اختبار علمي سري مبني على معايير DSM-5 الدولية</p>
+            <p className="text-white/55 text-sm">
+              اختبار علمي سري مبني على معايير DSM-5 الدولية
+            </p>
           </div>
         </div>
 
         <div className="max-w-2xl mx-auto px-8 py-10">
           <AnimatePresence mode="wait">
-
             {/* Intro Phase */}
             {phase === "intro" && (
               <motion.div
@@ -211,9 +356,16 @@ export default function Assessment() {
                     <div className="w-20 h-20 rounded-3xl bg-[#8B5CF6]/20 flex items-center justify-center mx-auto mb-5 glow-purple">
                       <Brain className="w-10 h-10 text-[#8B5CF6]" />
                     </div>
-                    <h2 className="text-2xl font-black text-white mb-3">اختبار التقييم الشخصي</h2>
+                    <h2 className="text-2xl font-black text-white mb-3">
+                      اختبار التقييم الشخصي
+                    </h2>
                     <p className="text-white/55 leading-relaxed mb-6">
-                      هذا الاختبار العلمي المبني على معايير <strong className="text-white">DSM-5</strong> الدولية يساعدك على فهم مستوى خطر الإدمان وتحديد الخطة المناسبة لك. يتكون من <strong className="text-white">٨ أسئلة</strong> ويستغرق حوالي <strong className="text-white">٣ دقائق</strong>.
+                      هذا الاختبار العلمي المبني على معايير{" "}
+                      <strong className="text-white">DSM-5</strong> الدولية
+                      يساعدك على فهم مستوى خطر الإدمان وتحديد الخطة المناسبة لك.
+                      يتكون من <strong className="text-white">٨ أسئلة</strong>{" "}
+                      ويستغرق حوالي{" "}
+                      <strong className="text-white">٣ دقائق</strong>.
                     </p>
 
                     <div className="grid grid-cols-3 gap-4 mb-8">
@@ -222,9 +374,21 @@ export default function Assessment() {
                         { icon: Brain, label: "علمي موثوق", color: "#8B5CF6" },
                         { icon: Target, label: "خطة مخصصة", color: "#F59E0B" },
                       ].map((item, i) => (
-                        <div key={i} className="p-3 rounded-xl" style={{ background: `${item.color}10`, border: `1px solid ${item.color}20` }}>
-                          <item.icon className="w-5 h-5 mx-auto mb-1.5" style={{ color: item.color }} />
-                          <div className="text-white/70 text-xs">{item.label}</div>
+                        <div
+                          key={i}
+                          className="p-3 rounded-xl"
+                          style={{
+                            background: `${item.color}10`,
+                            border: `1px solid ${item.color}20`,
+                          }}
+                        >
+                          <item.icon
+                            className="w-5 h-5 mx-auto mb-1.5"
+                            style={{ color: item.color }}
+                          />
+                          <div className="text-white/70 text-xs">
+                            {item.label}
+                          </div>
                         </div>
                       ))}
                     </div>
@@ -232,11 +396,16 @@ export default function Assessment() {
                     <button
                       onClick={() => setPhase("questions")}
                       className="w-full py-4 rounded-2xl font-black text-lg text-[#060B18] transition-all hover:scale-105"
-                      style={{ background: "linear-gradient(135deg, #8B5CF6, #6D28D9)" }}
+                      style={{
+                        background: "linear-gradient(135deg, #8B5CF6, #6D28D9)",
+                      }}
                     >
                       ابدأ الاختبار الآن
                     </button>
-                    <p className="text-white/25 text-xs mt-3">لا يُستخدم هذا الاختبار كتشخيص طبي - للاستشارة الطبية اتصل بـ {CONTACT_PHONE}</p>
+                    <p className="text-white/25 text-xs mt-3">
+                      لا يُستخدم هذا الاختبار كتشخيص طبي - للاستشارة الطبية اتصل
+                      بـ {CONTACT_PHONE}
+                    </p>
                   </div>
                 </div>
               </motion.div>
@@ -254,15 +423,19 @@ export default function Assessment() {
                 {/* Progress */}
                 <div className="mb-6">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-white/40 text-sm">السؤال {currentQ + 1} من {questions.length}</span>
-                    <span className="text-white/40 text-sm">{currentQuestion.section}</span>
+                    <span className="text-white/40 text-sm">
+                      السؤال {currentQ + 1} من {questions.length}
+                    </span>
+                    <span className="text-white/40 text-sm">
+                      {currentQuestion.section}
+                    </span>
                   </div>
                   <div className="h-2 bg-white/8 rounded-full overflow-hidden">
                     <div
                       className="h-full rounded-full transition-all duration-500"
                       style={{
                         width: `${((currentQ + 1) / questions.length) * 100}%`,
-                        background: `linear-gradient(to right, ${currentQuestion.color}, #00D4AA)`
+                        background: `linear-gradient(to right, ${currentQuestion.color}, #00D4AA)`,
                       }}
                     />
                   </div>
@@ -273,41 +446,75 @@ export default function Assessment() {
                   className="glass-card p-7 border mb-5 relative overflow-hidden"
                   style={{ borderColor: `${currentQuestion.color}25` }}
                 >
-                  <div className="absolute top-0 right-0 w-32 h-32 rounded-full opacity-5" style={{ background: `radial-gradient(circle, ${currentQuestion.color}, transparent)` }} />
+                  <div
+                    className="absolute top-0 right-0 w-32 h-32 rounded-full opacity-5"
+                    style={{
+                      background: `radial-gradient(circle, ${currentQuestion.color}, transparent)`,
+                    }}
+                  />
                   <div className="relative z-10">
                     <div className="flex items-center gap-3 mb-5">
-                      <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: `${currentQuestion.color}20`, border: `1px solid ${currentQuestion.color}30` }}>
-                        <currentQuestion.icon className="w-5 h-5" style={{ color: currentQuestion.color }} />
+                      <div
+                        className="w-10 h-10 rounded-xl flex items-center justify-center"
+                        style={{
+                          background: `${currentQuestion.color}20`,
+                          border: `1px solid ${currentQuestion.color}30`,
+                        }}
+                      >
+                        <currentQuestion.icon
+                          className="w-5 h-5"
+                          style={{ color: currentQuestion.color }}
+                        />
                       </div>
-                      <span className="text-white/40 text-sm">{currentQuestion.section}</span>
+                      <span className="text-white/40 text-sm">
+                        {currentQuestion.section}
+                      </span>
                     </div>
-                    <h3 className="text-white font-black text-lg leading-relaxed mb-6">{currentQuestion.question}</h3>
+                    <h3 className="text-white font-black text-lg leading-relaxed mb-6">
+                      {currentQuestion.question}
+                    </h3>
 
                     <div className="space-y-3">
                       {currentQuestion.options.map((option, i) => (
                         <button
                           key={i}
-                          onClick={() => handleAnswer(currentQuestion.weights[i])}
+                          onClick={() =>
+                            handleAnswer(currentQuestion.weights[i])
+                          }
                           className={`w-full text-right p-4 rounded-xl transition-all border ${
                             selectedAnswer === currentQuestion.weights[i]
                               ? "text-white"
                               : "glass-card text-white/60 border-white/8 hover:border-white/20 hover:text-white/80"
                           }`}
-                          style={selectedAnswer === currentQuestion.weights[i] ? {
-                            background: `${currentQuestion.color}15`,
-                            borderColor: `${currentQuestion.color}40`,
-                          } : {}}
+                          style={
+                            selectedAnswer === currentQuestion.weights[i]
+                              ? {
+                                  background: `${currentQuestion.color}15`,
+                                  borderColor: `${currentQuestion.color}40`,
+                                }
+                              : {}
+                          }
                         >
                           <div className="flex items-center gap-3">
                             <div
                               className="w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0"
                               style={{
-                                borderColor: selectedAnswer === currentQuestion.weights[i] ? currentQuestion.color : "rgba(255,255,255,0.2)",
-                                background: selectedAnswer === currentQuestion.weights[i] ? `${currentQuestion.color}30` : "transparent"
+                                borderColor:
+                                  selectedAnswer === currentQuestion.weights[i]
+                                    ? currentQuestion.color
+                                    : "rgba(255,255,255,0.2)",
+                                background:
+                                  selectedAnswer === currentQuestion.weights[i]
+                                    ? `${currentQuestion.color}30`
+                                    : "transparent",
                               }}
                             >
-                              {selectedAnswer === currentQuestion.weights[i] && (
-                                <div className="w-2.5 h-2.5 rounded-full" style={{ background: currentQuestion.color }} />
+                              {selectedAnswer ===
+                                currentQuestion.weights[i] && (
+                                <div
+                                  className="w-2.5 h-2.5 rounded-full"
+                                  style={{ background: currentQuestion.color }}
+                                />
                               )}
                             </div>
                             <span className="text-sm">{option}</span>
@@ -339,11 +546,19 @@ export default function Assessment() {
                     disabled={selectedAnswer === null}
                     className="flex items-center gap-2 px-6 py-2.5 rounded-xl font-bold text-sm transition-all disabled:opacity-40"
                     style={{
-                      background: selectedAnswer !== null ? `linear-gradient(135deg, ${currentQuestion.color}, #00D4AA)` : "rgba(255,255,255,0.05)",
-                      color: selectedAnswer !== null ? "#060B18" : "rgba(255,255,255,0.3)",
+                      background:
+                        selectedAnswer !== null
+                          ? `linear-gradient(135deg, ${currentQuestion.color}, #00D4AA)`
+                          : "rgba(255,255,255,0.05)",
+                      color:
+                        selectedAnswer !== null
+                          ? "#060B18"
+                          : "rgba(255,255,255,0.3)",
                     }}
                   >
-                    {currentQ === questions.length - 1 ? "عرض النتيجة" : "التالي"}
+                    {currentQ === questions.length - 1
+                      ? "عرض النتيجة"
+                      : "التالي"}
                     <ChevronLeft className="w-4 h-4" />
                   </button>
                 </div>
@@ -363,13 +578,34 @@ export default function Assessment() {
                   className="glass-card p-7 border mb-6 text-center relative overflow-hidden"
                   style={{ borderColor: `${risk.color}30` }}
                 >
-                  <div className="absolute inset-0 opacity-5" style={{ background: `radial-gradient(ellipse at center, ${risk.color}, transparent)` }} />
+                  <div
+                    className="absolute inset-0 opacity-5"
+                    style={{
+                      background: `radial-gradient(ellipse at center, ${risk.color}, transparent)`,
+                    }}
+                  />
                   <div className="relative z-10">
-                    <div className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4" style={{ background: risk.bg, border: `1px solid ${risk.color}30` }}>
-                      <risk.icon className="w-8 h-8" style={{ color: risk.color }} />
+                    <div
+                      className="w-16 h-16 rounded-2xl flex items-center justify-center mx-auto mb-4"
+                      style={{
+                        background: risk.bg,
+                        border: `1px solid ${risk.color}30`,
+                      }}
+                    >
+                      <risk.icon
+                        className="w-8 h-8"
+                        style={{ color: risk.color }}
+                      />
                     </div>
-                    <div className="text-white/40 text-sm mb-1">مستوى الخطر</div>
-                    <h2 className="text-3xl font-black mb-2" style={{ color: risk.color }}>{risk.level}</h2>
+                    <div className="text-white/40 text-sm mb-1">
+                      مستوى الخطر
+                    </div>
+                    <h2
+                      className="text-3xl font-black mb-2"
+                      style={{ color: risk.color }}
+                    >
+                      {risk.level}
+                    </h2>
                     <p className="text-white/60 text-sm mb-5">{risk.desc}</p>
 
                     {/* Score Meter */}
@@ -385,7 +621,9 @@ export default function Assessment() {
                           animate={{ width: `${percentage}%` }}
                           transition={{ duration: 1, ease: "easeOut" }}
                           className="h-full rounded-full"
-                          style={{ background: `linear-gradient(to right, #10B981, #F59E0B, ${risk.color})` }}
+                          style={{
+                            background: `linear-gradient(to right, #10B981, #F59E0B, ${risk.color})`,
+                          }}
                         />
                       </div>
                     </div>
@@ -395,9 +633,20 @@ export default function Assessment() {
                         <div key={i} className="text-center">
                           <div
                             className="w-full h-2 rounded-full mb-1"
-                            style={{ background: answers[i] === 0 ? "#10B98140" : answers[i] === 1 ? "#F59E0B40" : answers[i] === 2 ? "#EF444440" : "#DC262640" }}
+                            style={{
+                              background:
+                                answers[i] === 0
+                                  ? "#10B98140"
+                                  : answers[i] === 1
+                                    ? "#F59E0B40"
+                                    : answers[i] === 2
+                                      ? "#EF444440"
+                                      : "#DC262640",
+                            }}
                           />
-                          <div className="text-white/20 text-xs font-numbers">{i + 1}</div>
+                          <div className="text-white/20 text-xs font-numbers">
+                            {i + 1}
+                          </div>
                         </div>
                       ))}
                     </div>
@@ -417,14 +666,29 @@ export default function Assessment() {
                         initial={{ opacity: 0, x: 20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ delay: i * 0.15 }}
-                        onClick={() => item.action.startsWith("tel:") ? window.open(item.action) : navigate(item.action)}
+                        onClick={() =>
+                          item.action.startsWith("tel:")
+                            ? window.open(item.action)
+                            : navigate(item.action)
+                        }
                         className="w-full flex items-center gap-4 p-4 rounded-xl glass-card border border-white/7 hover:border-white/15 transition-all group text-right"
                       >
-                        <div className="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0" style={{ background: `${item.color}15`, border: `1px solid ${item.color}25` }}>
-                          <item.icon className="w-6 h-6" style={{ color: item.color }} />
+                        <div
+                          className="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0"
+                          style={{
+                            background: `${item.color}15`,
+                            border: `1px solid ${item.color}25`,
+                          }}
+                        >
+                          <item.icon
+                            className="w-6 h-6"
+                            style={{ color: item.color }}
+                          />
                         </div>
                         <div className="flex-1">
-                          <h4 className="text-white font-bold text-sm">{item.title}</h4>
+                          <h4 className="text-white font-bold text-sm">
+                            {item.title}
+                          </h4>
                           <p className="text-white/40 text-xs">{item.desc}</p>
                         </div>
                         <ArrowRight className="w-4 h-4 text-white/20 group-hover:text-white/50 transition-colors rotate-180" />
@@ -441,14 +705,20 @@ export default function Assessment() {
                         <Phone className="w-5 h-5 text-[#EF4444]" />
                       </div>
                       <div>
-                        <h4 className="text-white font-bold text-sm">تواصل معنا الآن</h4>
-                        <p className="text-white/40 text-xs">متخصصون متاحون للمساعدة</p>
+                        <h4 className="text-white font-bold text-sm">
+                          تواصل معنا الآن
+                        </h4>
+                        <p className="text-white/40 text-xs">
+                          متخصصون متاحون للمساعدة
+                        </p>
                       </div>
                     </div>
                     <a
                       href={`tel:${CONTACT_PHONE}`}
                       className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-black text-[#060B18] transition-all hover:scale-105"
-                      style={{ background: "linear-gradient(135deg, #EF4444, #DC2626)" }}
+                      style={{
+                        background: "linear-gradient(135deg, #EF4444, #DC2626)",
+                      }}
                     >
                       <Phone className="w-4 h-4" />
                       {CONTACT_PHONE}
@@ -468,7 +738,10 @@ export default function Assessment() {
                   <button
                     onClick={() => navigate("/dashboard")}
                     className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-bold text-sm transition-all"
-                    style={{ background: "linear-gradient(135deg, #00D4AA, #0EA5E9)", color: "#060B18" }}
+                    style={{
+                      background: "linear-gradient(135deg, #00D4AA, #0EA5E9)",
+                      color: "#060B18",
+                    }}
                   >
                     <BarChart3 className="w-4 h-4" />
                     لوحة التحكم

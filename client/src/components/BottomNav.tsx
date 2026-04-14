@@ -4,15 +4,14 @@
  * الهدف: الوقاية من الإدمان
  */
 import { Link, useLocation } from "wouter";
-import { Home, Shield, BookOpen, MessageCircle, User } from "lucide-react";
+import { Home, Shield, BookOpen, User } from "lucide-react";
 import { motion } from "framer-motion";
 
 const navItems = [
   { icon: Home, label: "الرئيسية", path: "/" },
   { icon: Shield, label: "وقايتي", path: "/recovery" },
   { icon: BookOpen, label: "التوعية", path: "/lectures" },
-  { icon: MessageCircle, label: "استشارة", path: "/chat" },
-  { icon: User, label: "حسابي", path: "/login" },
+  { icon: User, label: "حسابي", path: "/account" },
 ];
 
 export default function BottomNav() {
@@ -21,8 +20,11 @@ export default function BottomNav() {
   return (
     <nav className="bottom-nav">
       <div className="flex items-center justify-around px-2 py-2">
-        {navItems.map((item) => {
-          const isActive = location === item.path || (item.path !== "/" && location.startsWith(item.path));
+        {navItems.map(item => {
+          const isActive =
+            location === item.path ||
+            (item.path !== "/" && location.startsWith(item.path));
+
           return (
             <Link key={item.path} href={item.path}>
               <motion.div
