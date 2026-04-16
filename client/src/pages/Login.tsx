@@ -25,7 +25,11 @@ import { hashPassword, isValidSaudiPhone, isValidEmail } from "@/lib/utils";
 
 const CONTACT_PHONE = "0546192019";
 
-type Mode = "login" | "register" | "forgot";
+// SHA-256 hash of the admin PIN — never store the raw PIN in code
+const ADMIN_PIN_HASH =
+  "f2a13f6230405e7a898ea123b738c84040a98e2434f818b0d56375627bb023c0";
+
+type Mode = "login" | "register" | "forgot" | "admin";
 
 export default function Login() {
   const [, navigate] = useLocation();
@@ -49,6 +53,7 @@ export default function Login() {
   const [forgotStep, setForgotStep] = useState<"phone" | "reset">("phone");
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
+  const [adminPin, setAdminPin] = useState("");
 
   const addictionTypes = [
     "مخدرات",
@@ -171,6 +176,36 @@ export default function Login() {
       navigate("/mental-health-test");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleAdminLogin = async () => {
+    if (!adminPin) {
+      toast.error("يرجى إدخال رمز الدخول");
+      return;
+    }
+    setLoading(true);
+    try {
+      const hashed = await hashPassword(adminPin);
+      if (hashed === ADMIN_PIN_HASH) {
+        // Check if already logged in — promote existing user
+        const raw = localStorage.getItem("allah_yafik_current_user");
+        const existing = raw ? JSON.parse(raw) : null;
+        const adminUser = existing
+          ? { ...existing, role: "admin" }
+          : { name: "المشرف", phone: "", role: "admin", testCompleted: true };
+        localStorage.setItem(
+          "allah_yafik_current_user",
+          JSON.stringify(adminUser)
+        );
+        toast.success("مرحباً بك في لوحة الإدارة");
+        navigate("/admin");
+      } else {
+        toast.error("رمز الدخول غير صحيح");
+      }
+    } finally {
+      setLoading(false);
+      setAdminPin("");
     }
   };
 
@@ -355,6 +390,82 @@ export default function Login() {
               >
                 تصفح كزائر
               </button>
+
+              {/* Admin Access */}
+              <button
+                onClick={() => setMode("admin")}
+                className="w-full mt-2 py-2.5 text-white/20 hover:text-white/40 text-xs transition-colors flex items-center justify-center gap-1.5"
+              >
+                <Shield className="w-3.5 h-3.5" />
+                دخول كمشرف
+              </button>
+            </motion.div>
+          )}
+
+          {/* Admin Login */}
+          {mode === "admin" && (
+            <motion.div
+              key="admin"
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -20 }}
+            >
+              <div className="glass-card p-7 border border-white/10">
+                <div className="flex items-center gap-3 mb-5">
+                  <button
+                    onClick={() => { setMode("login"); setAdminPin(""); }}
+                    className="text-white/40 hover:text-white transition-colors"
+                  >
+                    <ArrowLeft className="w-5 h-5" />
+                  </button>
+                  <div>
+                    <h2 className="text-white font-black text-xl">
+                      لوحة الإدارة
+                    </h2>
+                    <p className="text-white/40 text-xs">
+                      أدخل رمز المشرف للمتابعة
+                    </p>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <div>
+                    <label className="text-white/50 text-xs font-bold mb-1.5 block">
+                      رمز الدخول
+                    </label>
+                    <div className="relative">
+                      <Lock className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
+                      <input
+                        type="password"
+                        value={adminPin}
+                        onChange={e => setAdminPin(e.target.value)}
+                        onKeyDown={e => e.key === "Enter" && handleAdminLogin()}
+                        placeholder="أدخل رمز المشرف"
+                        className="w-full bg-white/4 border border-white/10 rounded-xl pr-10 pl-4 py-3 text-white placeholder-white/20 focus:outline-none focus:border-[#F59E0B]/40 text-sm"
+                        dir="ltr"
+                        autoFocus
+                      />
+                    </div>
+                  </div>
+                  <button
+                    onClick={handleAdminLogin}
+                    disabled={loading}
+                    className="w-full py-3.5 rounded-xl font-black text-[#060B18] transition-all hover:scale-105 disabled:opacity-60 disabled:scale-100 flex items-center justify-center gap-2"
+                    style={{
+                      background: "linear-gradient(135deg, #F59E0B, #EF4444)",
+                    }}
+                  >
+                    {loading ? (
+                      <div className="w-5 h-5 border-2 border-[#060B18]/30 border-t-[#060B18] rounded-full animate-spin" />
+                    ) : (
+                      <>
+                        <Shield className="w-5 h-5" />
+                        دخول
+                      </>
+                    )}
+                  </button>
+                </div>
+              </div>
             </motion.div>
           )}
 

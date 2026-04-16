@@ -17,6 +17,11 @@ const navItems = [
 export default function BottomNav() {
   const [location] = useLocation();
 
+  // Hide bottom nav on admin, login, and mental-health-test pages
+  if (location.startsWith("/admin") || location === "/login" || location === "/mental-health-test") {
+    return null;
+  }
+
   return (
     <nav className="bottom-nav">
       <div className="flex items-center justify-around px-2 py-2">

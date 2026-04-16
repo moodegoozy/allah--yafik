@@ -72,10 +72,12 @@ const navGroups = [
     items: [
       { icon: User, label: "حسابي", path: "/account" },
       { icon: LogIn, label: "تسجيل الدخول", path: "/login" },
-      { icon: Shield, label: "لوحة الإدارة", path: "/admin" },
     ],
   },
 ];
+
+/** Admin-only nav items — shown only when user.role === "admin" */
+const adminNavItem = { icon: Shield, label: "لوحة الإدارة", path: "/admin" };
 
 export default function Sidebar() {
   const [location] = useLocation();
@@ -83,6 +85,11 @@ export default function Sidebar() {
   const [collapsed, setCollapsed] = useState(
     () => typeof window !== "undefined" && window.innerWidth < 1024
   );
+
+  // Read current user to conditionally show admin link
+  const currentUserRaw = localStorage.getItem("allah_yafik_current_user");
+  const currentUser = currentUserRaw ? JSON.parse(currentUserRaw) : null;
+  const isAdmin = currentUser?.role === "admin";
 
   const handleLogout = () => {
     localStorage.removeItem("allah_yafik_current_user");
@@ -178,6 +185,35 @@ export default function Sidebar() {
             </div>
           ))}
         </nav>
+
+        {/* Admin link — only for admins */}
+        {isAdmin && (
+          <div className="px-3 mb-2">
+            <Link href={adminNavItem.path}>
+              <div
+                className={cn(
+                  "flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group",
+                  location === adminNavItem.path
+                    ? "bg-[#F59E0B]/10 border border-[#F59E0B]/20 text-white"
+                    : "text-[#F59E0B]/60 hover:text-[#F59E0B] hover:bg-[#F59E0B]/5 border border-[#F59E0B]/15"
+                )}
+              >
+                <adminNavItem.icon
+                  className={cn(
+                    "flex-shrink-0 transition-all",
+                    location === adminNavItem.path
+                      ? "text-[#F59E0B]"
+                      : "group-hover:text-[#F59E0B]"
+                  )}
+                  size={18}
+                />
+                {!collapsed && (
+                  <span className="text-sm font-bold">{adminNavItem.label}</span>
+                )}
+              </div>
+            </Link>
+          </div>
+        )}
 
         {/* Contact Phone */}
         {!collapsed && (

@@ -36,6 +36,9 @@ const emergencySteps = [
 ];
 
 export default function SOSButton() {
+  // Hide SOS button on admin pages
+  const isAdmin = typeof window !== "undefined" && window.location.pathname.startsWith("/admin");
+  if (isAdmin) return null;
   const [isOpen, setIsOpen] = useState(false);
 
   return (
