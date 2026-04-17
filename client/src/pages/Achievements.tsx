@@ -5,7 +5,6 @@
  */
 import { useState, useEffect, useCallback } from "react";
 import { useLocation } from "wouter";
-import Sidebar from "@/components/Sidebar";
 import {
   Award,
   Star,
@@ -37,7 +36,18 @@ import { toast } from "sonner";
 const CONTACT_PHONE = "0546192019";
 
 // Recovery phases mirrored for achievement mapping
-const RECOVERY_STORAGE_KEY = "allah_yafik_recovery_goals";
+const RECOVERY_KEY_PREFIX = "allah_yafik_recovery_goals";
+
+function getUserRecoveryKey(): string {
+  try {
+    const raw = localStorage.getItem("allah_yafik_current_user");
+    if (raw) {
+      const user = JSON.parse(raw);
+      if (user.email) return `${RECOVERY_KEY_PREFIX}_${user.email}`;
+    }
+  } catch {}
+  return RECOVERY_KEY_PREFIX;
+}
 
 const phaseAchievements = [
   {
@@ -84,7 +94,7 @@ const phaseAchievements = [
 
 function loadRecoveryProgress(): Record<number, boolean[]> {
   try {
-    const raw = localStorage.getItem(RECOVERY_STORAGE_KEY);
+    const raw = localStorage.getItem(getUserRecoveryKey());
     return raw ? JSON.parse(raw) : {};
   } catch {
     return {};
@@ -128,7 +138,7 @@ export default function Achievements() {
   // Also re-read on storage events (same-tab won't fire, but cross-tab will)
   useEffect(() => {
     const onStorage = (e: StorageEvent) => {
-      if (e.key === RECOVERY_STORAGE_KEY)
+      if (e.key?.startsWith(RECOVERY_KEY_PREFIX))
         setRecoveryData(loadRecoveryProgress());
     };
     window.addEventListener("storage", onStorage);
@@ -165,114 +175,67 @@ export default function Achievements() {
   };
 
   return (
-    <div className="min-h-screen bg-[#060B18] text-white flex">
-      <Sidebar />
-      <main className="flex-1 mr-0 lg:mr-64 overflow-y-auto pb-24 lg:pb-0">
-        {/* Header */}
-        <div className="relative overflow-hidden px-4 md:px-8 pt-6 md:pt-10 pb-6 md:pb-8 border-b border-white/5">
-          <div className="orb orb-gold w-80 h-80 -top-20 -left-20 opacity-40" />
-          <div className="orb orb-teal w-60 h-60 -bottom-10 -right-10 opacity-30" />
-          <div className="relative z-10">
-            <div className="flex items-start justify-between">
-              <div>
-                <div className="section-tag bg-[#F59E0B]/10 border border-[#F59E0B]/25 text-[#F59E0B] mb-3">
-                  <Trophy className="w-3.5 h-3.5" />
-                  مركز الإنجازات
-                </div>
-                <h1 className="text-4xl font-black text-white mb-2">
-                  إنجازاتي
-                  <span className="gradient-text-gold"> وشهاداتي</span>
-                </h1>
-                <p className="text-white/55 text-sm">
-                  تتبع تقدمك في رحلة التعلم والوقاية
-                </p>
-              </div>
+    <div className="app-container bg-gradient-navy overflow-hidden">
+      <div className="orb w-64 h-64 opacity-8 top-10 -left-20" style={{ background: "#F59E0B" }} />
 
-              {/* Level Card */}
-              <div className="glass-card p-5 border border-[#F59E0B]/25 min-w-48">
-                <div className="flex items-center gap-3 mb-3">
-                  <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#F59E0B] to-[#FBBF24] flex items-center justify-center glow-gold">
-                    <Crown className="w-6 h-6 text-[#060B18]" />
-                  </div>
-                  <div>
-                    <div className="text-white/40 text-xs">المستوى الحالي</div>
-                    <div className="text-white font-black text-xl">
-                      المستوى {level}
-                    </div>
-                  </div>
-                </div>
-                <div className="mb-2">
-                  <div className="flex justify-between text-xs mb-1">
-                    <span className="text-white/40">{totalXP} XP</span>
-                    <span className="text-white/40">{nextLevelXP} XP</span>
-                  </div>
-                  <div className="h-2 bg-white/8 rounded-full overflow-hidden">
-                    <div
-                      className="h-full rounded-full transition-all"
-                      style={{
-                        width: `${progressToNext}%`,
-                        background:
-                          "linear-gradient(to right, #F59E0B, #FBBF24)",
-                      }}
-                    />
-                  </div>
-                </div>
-                <div className="text-white/30 text-xs text-center">
-                  {nextLevelXP - totalXP} XP للمستوى التالي
-                </div>
-              </div>
+      {/* Header */}
+      <div className="mobile-header px-5 py-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <div className="text-[#F59E0B] text-xs font-bold uppercase tracking-wider mb-1">
+              مركز الإنجازات
             </div>
-
-            {/* Stats Row */}
-            {doneGoals > 0 && (
-              <div className="grid grid-cols-4 gap-3 mt-6">
-                {[
-                  {
-                    icon: Target,
-                    label: "أهداف مكتملة",
-                    value: `${doneGoals}/${totalGoals}`,
-                    color: "#00D4AA",
-                  },
-                  {
-                    icon: Trophy,
-                    label: "إنجازات",
-                    value: `${allAchievements.filter(a => a.unlocked).length}`,
-                    color: "#F59E0B",
-                  },
-                  {
-                    icon: Zap,
-                    label: "نقاط XP",
-                    value: `${totalXP}`,
-                    color: "#8B5CF6",
-                  },
-                  {
-                    icon: Flame,
-                    label: "المستوى",
-                    value: `${level}`,
-                    color: "#EF4444",
-                  },
-                ].map((stat, i) => (
-                  <div
-                    key={i}
-                    className="glass-card p-3 border border-white/5 text-center"
-                  >
-                    <stat.icon
-                      className="w-4 h-4 mx-auto mb-1.5"
-                      style={{ color: stat.color }}
-                    />
-                    <div className="text-white font-black font-numbers">
-                      {stat.value}
-                    </div>
-                    <div className="text-white/30 text-xs">{stat.label}</div>
-                  </div>
-                ))}
-              </div>
-            )}
+            <h1 className="text-white font-black text-xl">إنجازاتي وشهاداتي</h1>
+          </div>
+          <div className="flex items-center gap-2">
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#F59E0B] to-[#FBBF24] flex items-center justify-center">
+              <Crown className="w-4 h-4 text-[#060B18]" />
+            </div>
+            <div>
+              <div className="text-white font-black text-sm">Lv.{level}</div>
+              <div className="text-white/30 text-[10px]">{totalXP} XP</div>
+            </div>
           </div>
         </div>
 
+        {/* XP Progress */}
+        <div className="mt-2">
+          <div className="h-1.5 bg-white/8 rounded-full overflow-hidden">
+            <div
+              className="h-full rounded-full transition-all"
+              style={{
+                width: `${progressToNext}%`,
+                background: "linear-gradient(to right, #F59E0B, #FBBF24)",
+              }}
+            />
+          </div>
+          <div className="text-white/25 text-[10px] mt-1 text-center">
+            {nextLevelXP - totalXP} XP للمستوى التالي
+          </div>
+        </div>
+
+        {/* Stats Row */}
+        {doneGoals > 0 && (
+          <div className="grid grid-cols-4 gap-2 mt-3">
+            {[
+              { icon: Target, label: "أهداف", value: `${doneGoals}/${totalGoals}`, color: "#00D4AA" },
+              { icon: Trophy, label: "إنجازات", value: `${allAchievements.filter(a => a.unlocked).length}`, color: "#F59E0B" },
+              { icon: Zap, label: "XP", value: `${totalXP}`, color: "#8B5CF6" },
+              { icon: Flame, label: "مستوى", value: `${level}`, color: "#EF4444" },
+            ].map((stat, i) => (
+              <div key={i} className="glass-card p-2 border border-white/5 text-center rounded-xl">
+                <stat.icon className="w-3.5 h-3.5 mx-auto mb-1" style={{ color: stat.color }} />
+                <div className="text-white font-black text-xs font-numbers">{stat.value}</div>
+                <div className="text-white/25 text-[10px]">{stat.label}</div>
+              </div>
+            ))}
+          </div>
+        )}
+      </div>
+
+      <div className="page-content overflow-y-auto">
         {/* Tabs */}
-        <div className="px-8 pt-6">
+        <div className="px-4 pt-3">
           <div className="flex gap-2 mb-6">
             {[
               {
@@ -297,7 +260,7 @@ export default function Achievements() {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as typeof activeTab)}
-                className={`flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-bold transition-all ${
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
                   activeTab === tab.id
                     ? "bg-[#F59E0B]/15 text-[#F59E0B] border border-[#F59E0B]/30"
                     : "glass-card text-white/50 border border-white/7 hover:text-white/80"
@@ -323,7 +286,7 @@ export default function Achievements() {
                 a => !a.unlocked && (a.progress ?? 0) === 0
               ) ? (
                 <div className="text-center py-16">
-                  <Trophy className="w-16 h-16 text-white/10 mx-auto mb-4" />
+                  <Trophy className="w-12 h-12 text-white/10 mx-auto mb-4" />
                   <h3 className="text-white/40 font-bold">
                     لا توجد إنجازات بعد
                   </h3>
@@ -356,7 +319,7 @@ export default function Achievements() {
                     </div>
                   </div>
 
-                  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4 pb-8">
+                  <div className="grid grid-cols-1 gap-3 pb-8">
                     {allAchievements.map((ach, i) => (
                       <motion.div
                         key={ach.id}
@@ -459,7 +422,7 @@ export default function Achievements() {
             <div className="pb-8">
               {completedLectures.length === 0 ? (
                 <div className="text-center py-16">
-                  <Award className="w-16 h-16 text-white/10 mx-auto mb-4" />
+                  <Award className="w-12 h-12 text-white/10 mx-auto mb-4" />
                   <h3 className="text-white/40 font-bold">
                     لا توجد شهادات بعد
                   </h3>
@@ -614,7 +577,7 @@ export default function Achievements() {
             <div className="pb-8">
               {doneGoals === 0 ? (
                 <div className="text-center py-16">
-                  <TrendingUp className="w-16 h-16 text-white/10 mx-auto mb-4" />
+                  <TrendingUp className="w-12 h-12 text-white/10 mx-auto mb-4" />
                   <h3 className="text-white/40 font-bold">
                     لا توجد إحصائيات بعد
                   </h3>
@@ -687,7 +650,7 @@ export default function Achievements() {
             </div>
           )}
         </div>
-      </main>
+      </div>
     </div>
   );
 }

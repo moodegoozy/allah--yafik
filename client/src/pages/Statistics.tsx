@@ -4,7 +4,6 @@
  * Style: Recharts visualizations, dark theme, teal/gold/purple
  */
 import { useState } from "react";
-import Sidebar from "@/components/Sidebar";
 import {
   AreaChart,
   Area,
@@ -183,62 +182,38 @@ export default function Statistics() {
   );
 
   return (
-    <div className="min-h-screen bg-[#060B18] text-white flex">
-      <Sidebar />
-      <main className="flex-1 mr-0 lg:mr-64 overflow-y-auto pb-24 lg:pb-0">
-        {/* Header */}
-        <div className="relative overflow-hidden px-4 md:px-8 pt-6 md:pt-10 pb-4 md:pb-6 border-b border-white/5">
-          <div className="orb orb-purple w-80 h-80 -top-20 -right-20 opacity-50" />
-          <div className="orb orb-teal w-60 h-60 -bottom-10 -left-10 opacity-40" />
-          <div className="relative z-10 flex items-center justify-between">
-            <div>
-              <div className="section-tag bg-[#8B5CF6]/10 border border-[#8B5CF6]/25 text-[#8B5CF6] mb-3">
-                <BarChart2 className="w-3.5 h-3.5" />
-                لوحة الإحصائيات
-              </div>
-              <h1 className="text-4xl font-black text-white mb-2">
-                البيانات و
-                <span className="gradient-text-purple"> الإحصائيات</span>
-              </h1>
-              <p className="text-white/55 text-sm">
-                تتبع تقدمك الشخصي والإحصائيات الوطنية الشاملة
-              </p>
-            </div>
-            <a
-              href={`tel:${CONTACT_PHONE}`}
-              className="flex items-center gap-3 glass-card px-4 py-3 border border-[#00D4AA]/25 hover:border-[#00D4AA]/50 transition-all group"
-            >
-              <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#00D4AA] to-[#0EA5E9] flex items-center justify-center group-hover:scale-110 transition-transform">
-                <Phone className="w-4 h-4 text-[#060B18]" />
-              </div>
-              <div className="text-right">
-                <div className="text-[#00D4AA] font-black font-numbers">
-                  {CONTACT_PHONE}
-                </div>
-                <div className="text-white/35 text-xs">للاستفسار</div>
-              </div>
-            </a>
-          </div>
-          {/* Tabs */}
-          <div className="flex gap-3 mt-5">
-            <button
-              onClick={() => setActiveTab("personal")}
-              className={`px-5 py-2.5 rounded-xl text-sm font-bold transition-all flex items-center gap-2 ${activeTab === "personal" ? "btn-teal" : "glass-card text-white/50 hover:text-white border border-white/7"}`}
-            >
-              <Activity className="w-4 h-4" />
-              تقدمي الشخصي
-            </button>
-            <button
-              onClick={() => setActiveTab("national")}
-              className={`px-5 py-2.5 rounded-xl text-sm font-bold transition-all flex items-center gap-2 ${activeTab === "national" ? "btn-teal" : "glass-card text-white/50 hover:text-white border border-white/7"}`}
-            >
-              <Globe className="w-4 h-4" />
-              الإحصائيات الوطنية
-            </button>
-          </div>
-        </div>
+    <div className="app-container bg-gradient-navy overflow-hidden">
+      <div className="orb w-72 h-72 opacity-8 -top-20 -right-20" style={{ background: "#8B5CF6" }} />
 
-        <div className="p-4 md:p-8">
+      {/* Header */}
+      <div className="mobile-header px-5 py-4">
+        <div>
+          <div className="text-[#8B5CF6] text-xs font-bold uppercase tracking-wider mb-1">
+            لوحة الإحصائيات
+          </div>
+          <h1 className="text-white font-black text-xl">البيانات والإحصائيات</h1>
+          <p className="text-white/40 text-xs mt-0.5">تتبع تقدمك والإحصائيات الوطنية</p>
+        </div>
+        <div className="flex gap-2 mt-3">
+          <button
+            onClick={() => setActiveTab("personal")}
+            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${activeTab === "personal" ? "bg-[#00D4AA] text-[#060B18]" : "glass-card text-white/50 border border-white/7"}`}
+          >
+            <Activity className="w-3.5 h-3.5" />
+            تقدمي الشخصي
+          </button>
+          <button
+            onClick={() => setActiveTab("national")}
+            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${activeTab === "national" ? "bg-[#00D4AA] text-[#060B18]" : "glass-card text-white/50 border border-white/7"}`}
+          >
+            <Globe className="w-3.5 h-3.5" />
+            الوطنية
+          </button>
+        </div>
+      </div>
+
+      <div className="page-content overflow-y-auto">
+        <div className="px-4 pt-3">
           {activeTab === "personal" ? (
             <>
               {/* Personal Stats */}
@@ -273,7 +248,7 @@ export default function Statistics() {
                     sub: "تمرين",
                   },
                 ].map((stat, i) => (
-                  <div key={i} className="stat-card p-5">
+                  <div key={i} className="stat-card p-4">
                     <div
                       className={`w-10 h-10 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center mb-4`}
                     >
@@ -290,8 +265,8 @@ export default function Statistics() {
                 ))}
               </div>
 
-              <div className="grid lg:grid-cols-3 gap-6 mb-6">
-                <div className="lg:col-span-2 glass-card p-6 border border-white/5">
+              <div className="grid gap-4 mb-4">
+                <div className="lg:col-span-2 glass-card p-4 border border-white/5">
                   <div className="flex items-center justify-between mb-5">
                     <h3 className="text-white font-bold">التقدم الشهري</h3>
                     <TrendingUp className="w-5 h-5 text-[#00D4AA]" />
@@ -360,7 +335,7 @@ export default function Statistics() {
                     </AreaChart>
                   </ResponsiveContainer>
                 </div>
-                <div className="glass-card p-6 border border-white/5">
+                <div className="glass-card p-4 border border-white/5">
                   <h3 className="text-white font-bold mb-5">أسباب الإغراء</h3>
                   <ResponsiveContainer width="100%" height={160}>
                     <PieChart>
@@ -402,8 +377,8 @@ export default function Statistics() {
                 </div>
               </div>
 
-              <div className="grid lg:grid-cols-2 gap-6 mb-6">
-                <div className="glass-card p-6 border border-white/5">
+              <div className="grid gap-4 mb-4">
+                <div className="glass-card p-4 border border-white/5">
                   <h3 className="text-white font-bold mb-5">
                     المزاج والطاقة - هذا الأسبوع
                   </h3>
@@ -445,7 +420,7 @@ export default function Statistics() {
                     </LineChart>
                   </ResponsiveContainer>
                 </div>
-                <div className="glass-card p-6 border border-white/5">
+                <div className="glass-card p-4 border border-white/5">
                   <h3 className="text-white font-bold mb-5">
                     التمارين الأسبوعية
                   </h3>
@@ -490,7 +465,7 @@ export default function Statistics() {
                 </div>
               </div>
 
-              <div className="glass-card p-6 border border-white/5">
+              <div className="glass-card p-4 border border-white/5">
                 <div className="flex items-center gap-3 mb-5">
                   <Award className="w-5 h-5 text-[#F59E0B]" />
                   <h3 className="text-white font-bold">الإنجازات المحققة</h3>
@@ -498,7 +473,7 @@ export default function Statistics() {
                     {achievements.length} إنجاز
                   </span>
                 </div>
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+                <div className="grid grid-cols-3 gap-3">
                   {achievements.map((ach, i) => (
                     <div
                       key={i}
@@ -560,7 +535,7 @@ export default function Statistics() {
                     icon: Activity,
                   },
                 ].map((kpi, i) => (
-                  <div key={i} className="stat-card p-5">
+                  <div key={i} className="stat-card p-4">
                     <div className="flex items-center justify-between mb-3">
                       <div
                         className="w-9 h-9 rounded-xl flex items-center justify-center"
@@ -590,8 +565,8 @@ export default function Statistics() {
                 ))}
               </div>
 
-              <div className="grid lg:grid-cols-3 gap-6 mb-6">
-                <div className="lg:col-span-2 glass-card p-6 border border-white/5">
+              <div className="grid gap-4 mb-4">
+                <div className="lg:col-span-2 glass-card p-4 border border-white/5">
                   <h3 className="text-white font-bold mb-1">
                     الاتجاه السنوي ٢٠١٩ - ٢٠٢٥
                   </h3>
@@ -682,7 +657,7 @@ export default function Statistics() {
                     </AreaChart>
                   </ResponsiveContainer>
                 </div>
-                <div className="glass-card p-6 border border-white/5">
+                <div className="glass-card p-4 border border-white/5">
                   <h3 className="text-white font-bold mb-1">
                     توزيع الفئات العمرية
                   </h3>
@@ -731,8 +706,8 @@ export default function Statistics() {
                 </div>
               </div>
 
-              <div className="grid lg:grid-cols-2 gap-6 mb-6">
-                <div className="glass-card p-6 border border-white/5">
+              <div className="grid gap-4 mb-4">
+                <div className="glass-card p-4 border border-white/5">
                   <h3 className="text-white font-bold mb-4">
                     أنواع المواد المخدرة
                   </h3>
@@ -760,7 +735,7 @@ export default function Statistics() {
                     ))}
                   </div>
                 </div>
-                <div className="glass-card p-6 border border-white/5">
+                <div className="glass-card p-4 border border-white/5">
                   <h3 className="text-white font-bold mb-1">
                     مؤشرات جودة الحياة
                   </h3>
@@ -801,12 +776,12 @@ export default function Statistics() {
               </div>
 
               {/* Partner Contribution */}
-              <div className="glass-card p-6 border border-white/5">
+              <div className="glass-card p-4 border border-white/5">
                 <h3 className="text-white font-bold mb-6 flex items-center gap-2">
                   <Globe className="w-4 h-4 text-[#00D4AA]" />
                   مساهمة قطاعات الشراكة في التعافي
                 </h3>
-                <div className="grid grid-cols-5 gap-4">
+                <div className="grid grid-cols-2 gap-3">
                   {partnerContrib.map((sector, i) => (
                     <div
                       key={i}
@@ -850,7 +825,7 @@ export default function Statistics() {
             </>
           )}
         </div>
-      </main>
+      </div>
     </div>
   );
 }

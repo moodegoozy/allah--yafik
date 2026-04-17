@@ -37,11 +37,11 @@ export default function Login() {
   const [showPass, setShowPass] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  const [loginForm, setLoginForm] = useState({ phone: "", password: "" });
+  const [loginForm, setLoginForm] = useState({ email: "", password: "" });
   const [registerForm, setRegisterForm] = useState({
     name: "",
-    phone: "",
     email: "",
+    phone: "",
     password: "",
     confirmPassword: "",
     age: "",
@@ -49,8 +49,8 @@ export default function Login() {
     soberDays: "",
     agreeTerms: false,
   });
-  const [forgotPhone, setForgotPhone] = useState("");
-  const [forgotStep, setForgotStep] = useState<"phone" | "reset">("phone");
+  const [forgotEmail, setForgotEmail] = useState("");
+  const [forgotStep, setForgotStep] = useState<"email" | "reset">("email");
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [adminPin, setAdminPin] = useState("");
@@ -66,12 +66,12 @@ export default function Login() {
   ];
 
   const handleLogin = async () => {
-    if (!loginForm.phone || !loginForm.password) {
+    if (!loginForm.email || !loginForm.password) {
       toast.error("يرجى تعبئة جميع الحقول");
       return;
     }
-    if (!isValidSaudiPhone(loginForm.phone)) {
-      toast.error("رقم الجوال غير صحيح. يجب أن يبدأ بـ 05 ويتكون من 10 أرقام");
+    if (!isValidEmail(loginForm.email)) {
+      toast.error("البريد الإلكتروني غير صحيح");
       return;
     }
     setLoading(true);
@@ -82,7 +82,7 @@ export default function Login() {
       );
       const user = users.find(
         (u: any) =>
-          u.phone === loginForm.phone && u.passwordHash === hashedPassword
+          u.email === loginForm.email && u.passwordHash === hashedPassword
       );
       if (user) {
         const { passwordHash: _, ...safeUser } = user;
@@ -93,7 +93,7 @@ export default function Login() {
         toast.success(`أهلاً بعودتك، ${user.name}!`);
         navigate("/dashboard");
       } else {
-        toast.error("رقم الجوال أو كلمة المرور غير صحيحة");
+        toast.error("البريد الإلكترونيلكتروني أو كلمة المرور غير صحيحة");
       }
     } finally {
       setLoading(false);
@@ -101,8 +101,12 @@ export default function Login() {
   };
 
   const handleRegister = async () => {
-    if (!registerForm.name || !registerForm.phone || !registerForm.password) {
+    if (!registerForm.name || !registerForm.email || !registerForm.password) {
       toast.error("يرجى تعبئة الحقول المطلوبة");
+      return;
+    }
+    if (!isValidEmail(registerForm.email)) {
+      toast.error("البريد الإلكتروني غير صحيح");
       return;
     }
     if (
@@ -114,12 +118,8 @@ export default function Login() {
       toast.error("يرجى إدخال العمر بشكل صحيح");
       return;
     }
-    if (!isValidSaudiPhone(registerForm.phone)) {
-      toast.error("رقم الجوال غير صحيح. يجب أن يبدأ بـ 05 ويتكون من 10 أرقام");
-      return;
-    }
-    if (registerForm.email && !isValidEmail(registerForm.email)) {
-      toast.error("البريد الإلكتروني غير صحيح");
+    if (registerForm.phone && !isValidSaudiPhone(registerForm.phone)) {
+      toast.error("رقم الجوال غير صحيح. يجب أن يبدأ بـ 05 ويتكون من 10 أرقامن يبدأ بـ 05 ويتكون من 10 أرقام");
       return;
     }
     if (registerForm.password.length < 8) {
@@ -139,11 +139,11 @@ export default function Login() {
       const users = JSON.parse(
         localStorage.getItem("allah_yafik_users") || "[]"
       );
-      const phoneExists = users.some(
-        (u: any) => u.phone === registerForm.phone
+      const emailExists = users.some(
+        (u: any) => u.email === registerForm.email
       );
-      if (phoneExists) {
-        toast.error("رقم الجوال مسجل مسبقاً. يرجى تسجيل الدخول");
+      if (emailExists) {
+        toast.error("البريد الإلكترونيلكتروني مسجل مسبقاً. يرجى تسجيل الدخول");
         setLoading(false);
         return;
       }
@@ -210,18 +210,18 @@ export default function Login() {
   };
 
   const handleForgot = () => {
-    if (!forgotPhone) {
-      toast.error("يرجى إدخال رقم الجوال");
+    if (!forgotEmail) {
+      toast.error("يرجى إدخال البريد الإلكتروني");
       return;
     }
-    if (!isValidSaudiPhone(forgotPhone)) {
-      toast.error("رقم الجوال غير صحيح. يجب أن يبدأ بـ 05 ويتكون من 10 أرقام");
+    if (!isValidEmail(forgotEmail)) {
+      toast.error("البريد الإلكتروني غير صحيح");
       return;
     }
     const users = JSON.parse(localStorage.getItem("allah_yafik_users") || "[]");
-    const userExists = users.some((u: any) => u.phone === forgotPhone);
+    const userExists = users.some((u: any) => u.email === forgotEmail);
     if (!userExists) {
-      toast.error("رقم الجوال غير مسجل");
+      toast.error("البريد الإلكتروني غير مسجل");
       return;
     }
     setForgotStep("reset");
@@ -243,12 +243,12 @@ export default function Login() {
     const hashedPassword = await hashPassword(newPassword);
     const users = JSON.parse(localStorage.getItem("allah_yafik_users") || "[]");
     const updatedUsers = users.map((u: any) =>
-      u.phone === forgotPhone ? { ...u, passwordHash: hashedPassword } : u
+      u.email === forgotEmail ? { ...u, passwordHash: hashedPassword } : u
     );
     localStorage.setItem("allah_yafik_users", JSON.stringify(updatedUsers));
     toast.success("تم تغيير كلمة المرور بنجاح. يرجى تسجيل الدخول");
-    setForgotStep("phone");
-    setForgotPhone("");
+    setForgotStep("email");
+    setForgotEmail("");
     setNewPassword("");
     setConfirmNewPassword("");
     setMode("login");
@@ -291,17 +291,18 @@ export default function Login() {
                 <div className="space-y-4">
                   <div>
                     <label className="text-white/50 text-xs font-bold mb-1.5 block">
-                      رقم الجوال
+                      البريد الإلكتروني
                     </label>
                     <div className="relative">
-                      <Phone className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
+                      <Mail className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
                       <input
-                        value={loginForm.phone}
+                        value={loginForm.email}
                         onChange={e =>
-                          setLoginForm(p => ({ ...p, phone: e.target.value }))
+                          setLoginForm(p => ({ ...p, email: e.target.value }))
                         }
-                        placeholder="05XXXXXXXX"
-                        className="w-full bg-white/4 border border-white/10 rounded-xl pr-10 pl-4 py-3 text-white placeholder-white/20 focus:outline-none focus:border-[#00D4AA]/40 text-sm font-numbers"
+                        placeholder="example@email.com"
+                        autoComplete="email"
+                        className="w-full bg-white/4 border border-white/10 rounded-xl pr-10 pl-4 py-3 text-white placeholder-white/20 focus:outline-none focus:border-[#00D4AA]/40 text-sm"
                         dir="ltr"
                       />
                     </div>
@@ -322,6 +323,7 @@ export default function Login() {
                           }))
                         }
                         placeholder="••••••••"
+                        autoComplete="current-password"
                         className="w-full bg-white/4 border border-white/10 rounded-xl pr-10 pl-10 py-3 text-white placeholder-white/20 focus:outline-none focus:border-[#00D4AA]/40 text-sm"
                         dir="ltr"
                       />
@@ -514,7 +516,28 @@ export default function Login() {
                   </div>
                   <div>
                     <label className="text-white/50 text-xs font-bold mb-1.5 block">
-                      رقم الجوال *
+                      البريد الإلكتروني *
+                    </label>
+                    <div className="relative">
+                      <Mail className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
+                      <input
+                        value={registerForm.email}
+                        onChange={e =>
+                          setRegisterForm(p => ({
+                            ...p,
+                            email: e.target.value,
+                          }))
+                        }
+                        placeholder="example@email.com"
+                        autoComplete="email"
+                        className="w-full bg-white/4 border border-white/10 rounded-xl pr-10 pl-4 py-3 text-white placeholder-white/20 focus:outline-none focus:border-[#00D4AA]/40 text-sm"
+                        dir="ltr"
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="text-white/50 text-xs font-bold mb-1.5 block">
+                      رقم الجوال (اختياري)
                     </label>
                     <div className="relative">
                       <Phone className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
@@ -528,26 +551,6 @@ export default function Login() {
                         }
                         placeholder="05XXXXXXXX"
                         className="w-full bg-white/4 border border-white/10 rounded-xl pr-10 pl-4 py-3 text-white placeholder-white/20 focus:outline-none focus:border-[#00D4AA]/40 text-sm font-numbers"
-                        dir="ltr"
-                      />
-                    </div>
-                  </div>
-                  <div>
-                    <label className="text-white/50 text-xs font-bold mb-1.5 block">
-                      البريد الإلكتروني
-                    </label>
-                    <div className="relative">
-                      <Mail className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
-                      <input
-                        value={registerForm.email}
-                        onChange={e =>
-                          setRegisterForm(p => ({
-                            ...p,
-                            email: e.target.value,
-                          }))
-                        }
-                        placeholder="example@email.com"
-                        className="w-full bg-white/4 border border-white/10 rounded-xl pr-10 pl-4 py-3 text-white placeholder-white/20 focus:outline-none focus:border-[#00D4AA]/40 text-sm"
                         dir="ltr"
                       />
                     </div>
@@ -646,6 +649,7 @@ export default function Login() {
                           }))
                         }
                         placeholder="٨ أحرف على الأقل"
+                        autoComplete="new-password"
                         className="w-full bg-white/4 border border-white/10 rounded-xl pr-10 pl-10 py-3 text-white placeholder-white/20 focus:outline-none focus:border-[#00D4AA]/40 text-sm"
                         dir="ltr"
                       />
@@ -675,6 +679,7 @@ export default function Login() {
                         }))
                       }
                       placeholder="أعد كتابة كلمة المرور"
+                      autoComplete="new-password"
                       className="w-full bg-white/4 border border-white/10 rounded-xl p-3 text-white placeholder-white/20 focus:outline-none focus:border-[#00D4AA]/40 text-sm"
                       dir="ltr"
                     />
@@ -732,7 +737,7 @@ export default function Login() {
                   <button
                     onClick={() => {
                       setMode("login");
-                      setForgotStep("phone");
+                      setForgotStep("email");
                     }}
                     className="text-white/40 hover:text-white transition-colors"
                   >
@@ -743,26 +748,26 @@ export default function Login() {
                       استعادة كلمة المرور
                     </h2>
                     <p className="text-white/40 text-xs">
-                      {forgotStep === "phone"
-                        ? "أدخل رقم جوالك المسجل"
+                      {forgotStep === "email"
+                        ? "أدخل بريدك الإلكتروني المسجل"
                         : "أدخل كلمة المرور الجديدة"}
                     </p>
                   </div>
                 </div>
                 <div className="space-y-4">
-                  {forgotStep === "phone" ? (
+                  {forgotStep === "email" ? (
                     <>
                       <div>
                         <label className="text-white/50 text-xs font-bold mb-1.5 block">
-                          رقم الجوال المسجل
+                          البريد الإلكتروني المسجل
                         </label>
                         <div className="relative">
-                          <Phone className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
+                          <Mail className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
                           <input
-                            value={forgotPhone}
-                            onChange={e => setForgotPhone(e.target.value)}
-                            placeholder="05XXXXXXXX"
-                            className="w-full bg-white/4 border border-white/10 rounded-xl pr-10 pl-4 py-3 text-white placeholder-white/20 focus:outline-none focus:border-[#00D4AA]/40 text-sm font-numbers"
+                            value={forgotEmail}
+                            onChange={e => setForgotEmail(e.target.value)}
+                            placeholder="example@email.com"
+                            className="w-full bg-white/4 border border-white/10 rounded-xl pr-10 pl-4 py-3 text-white placeholder-white/20 focus:outline-none focus:border-[#00D4AA]/40 text-sm"
                             dir="ltr"
                           />
                         </div>

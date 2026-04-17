@@ -1,4 +1,4 @@
-/*
+﻿/*
  * Design: Dark Luxury Wellness v2 - Lectures & Awareness Center
  * مركز المحاضرات والتوعية التفاعلية لجميع الفئات العمرية
  * Style: Age-group cards, lecture library, live sessions
@@ -37,8 +37,8 @@ import {
   CheckCircle2,
   Eye,
 } from "lucide-react";
-import Sidebar from "@/components/Sidebar";
 import { lecturesData } from "@/data/lecturesData";
+import Sidebar from "@/components/Sidebar";
 
 const CONTACT_PHONE = "0546192019";
 
@@ -231,10 +231,50 @@ const typeIcons: Record<string, React.ElementType> = {
 export default function Lectures() {
   const [selectedAge, setSelectedAge] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
-  const [playingId, setPlayingId] = useState<number | null>(null);
+  const [playingId, setPlayingId] = useState<string | number | null>(null);
   const [, navigate] = useLocation();
 
-  const filtered = lectures.filter(l => {
+  // Merge admin-created lectures from localStorage
+  const allLectures = (() => {
+    try {
+      const raw = localStorage.getItem("allah_yafik_custom_lectures");
+      if (!raw) return lectures;
+      const custom = JSON.parse(raw) as {
+        id: string;
+        title: string;
+        speaker: string;
+        speakerTitle: string;
+        category: string;
+        ageGroup: string;
+        duration: string;
+        type: string;
+        color: string;
+        featured: boolean;
+        subtitle?: string;
+      }[];
+      const mapped = custom.map(c => ({
+        id: `custom-${c.id}`,
+        title: c.title,
+        speaker: c.speaker,
+        speakerTitle: c.speakerTitle,
+        category: c.category,
+        ageGroup: c.ageGroup,
+        duration: c.duration,
+        views: "جديد",
+        rating: 0,
+        type: c.type,
+        color: c.color,
+        tags: [c.category],
+        featured: c.featured,
+        description: c.subtitle || "",
+      }));
+      return [...lectures, ...mapped];
+    } catch {
+      return lectures;
+    }
+  })();
+
+  const filtered = allLectures.filter(l => {
     const matchAge = selectedAge === "all" || l.ageGroup === selectedAge;
     const matchSearch =
       l.title.includes(searchQuery) ||
@@ -675,7 +715,7 @@ export default function Lectures() {
               ✕
             </button>
             {(() => {
-              const lecture = lectures.find(l => l.id === playingId);
+              const lecture = allLectures.find(l => l.id === playingId);
               if (!lecture) return null;
               return (
                 <>

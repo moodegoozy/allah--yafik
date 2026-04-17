@@ -4,7 +4,6 @@
  * Style: Partner cards with color-coded sectors, stats, contact info
  */
 import { useState } from "react";
-import Sidebar from "@/components/Sidebar";
 import {
   Hospital,
   GraduationCap,
@@ -13,15 +12,12 @@ import {
   AlertTriangle,
   Phone,
   Mail,
-  Globe,
-  MapPin,
   Users,
   FileText,
   Award,
   ChevronLeft,
-  ExternalLink,
   CheckCircle2,
-  ArrowLeft,
+  ArrowRight,
   Building2,
   Star,
   TrendingUp,
@@ -244,303 +240,251 @@ export default function Partners() {
       : partnerSectors.filter(s => s.id === activeTab);
 
   return (
-    <div className="min-h-screen bg-[#060B18] text-white flex">
-      <Sidebar />
-      <main className="flex-1 mr-0 lg:mr-64 overflow-y-auto pb-24 lg:pb-0">
-        {/* Hero Header */}
-        <div className="relative overflow-hidden px-4 md:px-8 pt-6 md:pt-10 pb-6 md:pb-8 border-b border-white/5">
-          <div className="orb orb-purple w-96 h-96 top-0 left-0 opacity-60" />
-          <div className="orb orb-teal w-64 h-64 bottom-0 right-0 opacity-40" />
-          <div className="relative z-10">
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <div className="section-tag bg-[#8B5CF6]/10 border border-[#8B5CF6]/25 text-[#8B5CF6] mb-3">
-                  <Building2 className="w-3.5 h-3.5" />
-                  منظومة الشراكات الوطنية
-                </div>
-                <h1 className="text-4xl font-black text-white mb-2">
-                  شبكة الدعم
-                  <span className="gradient-text-purple">
-                    {" "}
-                    المؤسسي المتكامل
-                  </span>
-                </h1>
-                <p className="text-white/55 text-base max-w-2xl">
-                  خمسة قطاعات متخصصة تعمل معاً لتوفير منظومة شاملة من الدعم
-                  الصحي، الأكاديمي، الأمني، الديني، والوقائي
-                </p>
+    <div className="app-container bg-gradient-navy overflow-hidden">
+      {/* Ambient Orbs */}
+      <div className="orb w-72 h-72 opacity-10 -top-16 -right-16" style={{ background: "#8B5CF6" }} />
+      <div className="orb w-56 h-56 opacity-6 top-40 -left-16" style={{ background: "#00D4AA" }} />
+
+      {/* Mobile Header */}
+      <div className="mobile-header px-4 py-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <Link href="/dashboard">
+              <div className="p-2 rounded-xl glass-card border border-white/8">
+                <ArrowRight className="w-4 h-4 text-white/50" />
               </div>
-              <a
-                href={`tel:${CONTACT_PHONE}`}
-                className="flex items-center gap-3 glass-card px-5 py-3 border border-[#00D4AA]/25 hover:border-[#00D4AA]/50 transition-all group"
-              >
-                <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#00D4AA] to-[#0EA5E9] flex items-center justify-center glow-teal group-hover:scale-110 transition-transform">
-                  <Phone className="w-5 h-5 text-[#060B18]" />
-                </div>
-                <div className="text-right">
-                  <div className="text-[#00D4AA] font-black font-numbers text-lg">
-                    {CONTACT_PHONE}
-                  </div>
-                  <div className="text-white/40 text-xs">تواصل مع المنسق</div>
-                </div>
-              </a>
-            </div>
-
-            {/* National Stats */}
-            <div className="grid grid-cols-4 gap-4">
-              {nationalStats.map((stat, i) => (
-                <div key={i} className="counter-card p-4">
-                  <div className="flex items-center gap-2 mb-2">
-                    <div
-                      className="w-7 h-7 rounded-lg flex items-center justify-center"
-                      style={{ background: `${stat.color}20` }}
-                    >
-                      <stat.icon
-                        className="w-3.5 h-3.5"
-                        style={{ color: stat.color }}
-                      />
-                    </div>
-                    <span className="text-white/40 text-xs">{stat.label}</span>
-                  </div>
-                  <div className="text-2xl font-black text-white font-numbers">
-                    {stat.value}
-                  </div>
-                  <div className="text-xs mt-1" style={{ color: stat.color }}>
-                    {stat.change}
-                  </div>
-                </div>
-              ))}
+            </Link>
+            <div>
+              <h1 className="text-white font-black text-base">شبكة الدعم المؤسسي</h1>
+              <p className="text-white/40 text-[10px]">٥ قطاعات متخصصة</p>
             </div>
           </div>
+          <a
+            href={`tel:${CONTACT_PHONE}`}
+            className="p-2.5 rounded-xl glass-card border border-[#00D4AA]/25"
+          >
+            <Phone className="w-4 h-4 text-[#00D4AA]" />
+          </a>
+        </div>
+      </div>
+
+      {/* Page Content */}
+      <div className="page-content px-4 space-y-4 pt-3 pb-6">
+        {/* National Stats - 2x2 grid */}
+        <div className="grid grid-cols-2 gap-2.5">
+          {nationalStats.map((stat, i) => (
+            <div key={i} className="glass-card p-3 rounded-xl border border-white/5">
+              <div className="flex items-center gap-2 mb-1.5">
+                <div
+                  className="w-6 h-6 rounded-lg flex items-center justify-center"
+                  style={{ background: `${stat.color}20` }}
+                >
+                  <stat.icon className="w-3 h-3" style={{ color: stat.color }} />
+                </div>
+                <span className="text-white/40 text-[10px] leading-tight">{stat.label}</span>
+              </div>
+              <div className="text-lg font-black text-white font-numbers">{stat.value}</div>
+              <div className="text-[10px] mt-0.5" style={{ color: stat.color }}>{stat.change}</div>
+            </div>
+          ))}
         </div>
 
-        {/* Sector Filter Tabs */}
-        <div className="px-8 py-5 border-b border-white/5">
-          <div className="flex items-center gap-2 flex-wrap">
+        {/* Sector Filter - horizontal scroll */}
+        <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide -mx-4 px-4">
+          <button
+            onClick={() => setActiveTab("all")}
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap flex-shrink-0 ${activeTab === "all" ? "bg-[#00D4AA] text-[#060B18]" : "glass-card text-white/50"}`}
+          >
+            الكل
+          </button>
+          {partnerSectors.map(s => (
             <button
-              onClick={() => setActiveTab("all")}
-              className={`px-4 py-2 rounded-xl text-sm font-bold transition-all ${activeTab === "all" ? "btn-teal" : "glass-card text-white/50 hover:text-white"}`}
+              key={s.id}
+              onClick={() => setActiveTab(s.id)}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1 whitespace-nowrap flex-shrink-0 ${activeTab === s.id ? "text-white" : "glass-card text-white/50"}`}
+              style={
+                activeTab === s.id
+                  ? {
+                      background: `${s.color}25`,
+                      border: `1px solid ${s.color}40`,
+                      color: s.color,
+                    }
+                  : {}
+              }
             >
-              جميع القطاعات
+              <s.icon className="w-3 h-3" />
+              {s.title.split(" ").slice(1).join(" ") || s.title}
             </button>
-            {partnerSectors.map(s => (
-              <button
-                key={s.id}
-                onClick={() => setActiveTab(s.id)}
-                className={`px-4 py-2 rounded-xl text-sm font-bold transition-all flex items-center gap-1.5 ${activeTab === s.id ? "text-white" : "glass-card text-white/50 hover:text-white"}`}
-                style={
-                  activeTab === s.id
-                    ? {
-                        background: `linear-gradient(135deg, ${s.color}30, ${s.color}15)`,
-                        border: `1px solid ${s.color}50`,
-                        color: s.color,
-                      }
-                    : {}
-                }
-              >
-                <s.icon className="w-3.5 h-3.5" />
-                {s.title.split(" ")[1] || s.title}
-              </button>
-            ))}
-          </div>
+          ))}
         </div>
 
-        {/* Sectors Grid */}
-        <div className="p-8 space-y-6">
+        {/* Sector Cards */}
+        <div className="space-y-3">
           {filteredSectors.map(sector => (
             <div
               key={sector.id}
-              className="partner-card overflow-hidden"
-              style={
-                { "--partner-color": sector.bgGlow } as React.CSSProperties
-              }
+              className="glass-card rounded-xl border border-white/5 overflow-hidden"
             >
               {/* Sector Header */}
               <div
-                className="p-6 cursor-pointer"
+                className="p-3.5 cursor-pointer active:bg-white/2"
                 onClick={() =>
-                  setExpandedSector(
-                    expandedSector === sector.id ? null : sector.id
-                  )
+                  setExpandedSector(expandedSector === sector.id ? null : sector.id)
                 }
               >
-                <div className="flex items-start justify-between">
-                  <div className="flex items-start gap-4">
+                <div className="flex items-center gap-3">
+                  <div
+                    className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+                    style={{
+                      background: `linear-gradient(135deg, ${sector.color}30, ${sector.color}15)`,
+                      border: `1px solid ${sector.color}40`,
+                    }}
+                  >
+                    <sector.icon className="w-5 h-5" style={{ color: sector.color }} />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-0.5">
+                      <h3 className="text-sm font-black text-white truncate">{sector.title}</h3>
+                    </div>
+                    <p className="text-white/40 text-[10px] leading-snug line-clamp-1">
+                      {sector.subtitle}
+                    </p>
+                  </div>
+                  <div
+                    className={`w-7 h-7 rounded-lg glass-card flex items-center justify-center transition-transform flex-shrink-0 ${expandedSector === sector.id ? "rotate-90" : ""}`}
+                  >
+                    <ChevronLeft className="w-3.5 h-3.5 text-white/40" />
+                  </div>
+                </div>
+
+                {/* Mini stats row */}
+                <div className="flex gap-2 mt-2.5">
+                  {sector.stats.map((st, i) => (
                     <div
-                      className="w-14 h-14 rounded-2xl flex items-center justify-center flex-shrink-0"
+                      key={i}
+                      className="flex-1 text-center py-1.5 px-1 rounded-lg"
                       style={{
-                        background: `linear-gradient(135deg, ${sector.color}30, ${sector.color}15)`,
-                        border: `1px solid ${sector.color}40`,
+                        background: `${sector.color}08`,
+                        border: `1px solid ${sector.color}15`,
                       }}
                     >
-                      <sector.icon
-                        className="w-7 h-7"
-                        style={{ color: sector.color }}
-                      />
-                    </div>
-                    <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-1">
-                        <h3 className="text-xl font-black text-white">
-                          {sector.title}
-                        </h3>
-                        <span className="badge-teal">{sector.subtitle}</span>
+                      <div className="text-sm font-black font-numbers" style={{ color: sector.color }}>
+                        {st.value}
                       </div>
-                      <p className="text-white/55 text-sm leading-relaxed max-w-2xl">
-                        {sector.description}
-                      </p>
+                      <div className="text-white/30 text-[9px] leading-tight">{st.label}</div>
                     </div>
-                  </div>
-                  <div className="flex items-center gap-4 flex-shrink-0">
-                    {/* Mini Stats */}
-                    <div className="flex gap-3">
-                      {sector.stats.map((st, i) => (
-                        <div
-                          key={i}
-                          className="text-center px-3 py-2 rounded-xl"
-                          style={{
-                            background: `${sector.color}10`,
-                            border: `1px solid ${sector.color}20`,
-                          }}
-                        >
-                          <div
-                            className="text-lg font-black font-numbers"
-                            style={{ color: sector.color }}
-                          >
-                            {st.value}
-                          </div>
-                          <div className="text-white/35 text-xs">
-                            {st.label}
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                    <div
-                      className={`w-8 h-8 rounded-xl glass-card flex items-center justify-center transition-transform ${expandedSector === sector.id ? "rotate-90" : ""}`}
-                    >
-                      <ChevronLeft className="w-4 h-4 text-white/50" />
-                    </div>
-                  </div>
+                  ))}
                 </div>
               </div>
 
               {/* Expanded Content */}
               {expandedSector === sector.id && (
-                <div className="px-6 pb-6 border-t border-white/5">
-                  <div className="grid lg:grid-cols-2 gap-6 mt-6">
-                    {/* Services */}
-                    <div>
-                      <h4 className="text-white font-bold mb-4 flex items-center gap-2">
-                        <Zap
-                          className="w-4 h-4"
-                          style={{ color: sector.color }}
-                        />
-                        الخدمات المقدمة
-                      </h4>
-                      <div className="space-y-2.5">
-                        {sector.services.map((service, i) => (
-                          <div
-                            key={i}
-                            className="flex items-center gap-3 p-3 rounded-xl"
+                <div className="px-3.5 pb-3.5 border-t border-white/5">
+                  {/* Description */}
+                  <p className="text-white/50 text-xs leading-relaxed mt-3 mb-3">
+                    {sector.description}
+                  </p>
+
+                  {/* Services */}
+                  <div className="mb-3">
+                    <h4 className="text-white text-xs font-bold mb-2 flex items-center gap-1.5">
+                      <Zap className="w-3 h-3" style={{ color: sector.color }} />
+                      الخدمات المقدمة
+                    </h4>
+                    <div className="space-y-1.5">
+                      {sector.services.map((service, i) => (
+                        <div
+                          key={i}
+                          className="flex items-center gap-2 p-2 rounded-lg"
+                          style={{
+                            background: `${sector.color}06`,
+                            border: `1px solid ${sector.color}12`,
+                          }}
+                        >
+                          <CheckCircle2
+                            className="w-3 h-3 flex-shrink-0"
+                            style={{ color: sector.color }}
+                          />
+                          <span className="text-white/65 text-[11px]">{service}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Partners */}
+                  <div className="mb-3">
+                    <h4 className="text-white text-xs font-bold mb-2 flex items-center gap-1.5">
+                      <Building2 className="w-3 h-3" style={{ color: sector.color }} />
+                      الجهات الشريكة
+                    </h4>
+                    <div className="space-y-1.5">
+                      {sector.partners.map((partner, i) => (
+                        <div
+                          key={i}
+                          className="flex items-center justify-between p-2.5 rounded-lg glass-card border border-white/5"
+                        >
+                          <div className="flex items-center gap-2 min-w-0">
+                            <div
+                              className="w-7 h-7 rounded-lg flex items-center justify-center flex-shrink-0"
+                              style={{ background: `${sector.color}15` }}
+                            >
+                              <Star className="w-3 h-3" style={{ color: sector.color }} />
+                            </div>
+                            <div className="min-w-0">
+                              <div className="text-white text-[11px] font-bold truncate">
+                                {partner.name}
+                              </div>
+                              <div className="text-white/30 text-[9px]">{partner.type}</div>
+                            </div>
+                          </div>
+                          <span
+                            className="text-[9px] px-2 py-0.5 rounded-full font-medium flex-shrink-0"
                             style={{
-                              background: `${sector.color}08`,
-                              border: `1px solid ${sector.color}15`,
+                              background: `${sector.color}15`,
+                              color: sector.color,
+                              border: `1px solid ${sector.color}25`,
                             }}
                           >
-                            <CheckCircle2
-                              className="w-4 h-4 flex-shrink-0"
-                              style={{ color: sector.color }}
-                            />
-                            <span className="text-white/75 text-sm">
-                              {service}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
+                            {partner.status}
+                          </span>
+                        </div>
+                      ))}
                     </div>
+                  </div>
 
-                    {/* Partners */}
-                    <div>
-                      <h4 className="text-white font-bold mb-4 flex items-center gap-2">
-                        <Building2
-                          className="w-4 h-4"
-                          style={{ color: sector.color }}
-                        />
-                        الجهات الشريكة
-                      </h4>
-                      <div className="space-y-3">
-                        {sector.partners.map((partner, i) => (
-                          <div
-                            key={i}
-                            className="flex items-center justify-between p-3 rounded-xl glass-card border border-white/5"
-                          >
-                            <div className="flex items-center gap-3">
-                              <div
-                                className="w-8 h-8 rounded-lg flex items-center justify-center"
-                                style={{ background: `${sector.color}15` }}
-                              >
-                                <Star
-                                  className="w-3.5 h-3.5"
-                                  style={{ color: sector.color }}
-                                />
-                              </div>
-                              <div>
-                                <div className="text-white text-sm font-bold">
-                                  {partner.name}
-                                </div>
-                                <div className="text-white/35 text-xs">
-                                  {partner.type}
-                                </div>
-                              </div>
-                            </div>
-                            <span
-                              className="text-xs px-2.5 py-1 rounded-full font-medium"
-                              style={{
-                                background: `${sector.color}15`,
-                                color: sector.color,
-                                border: `1px solid ${sector.color}25`,
-                              }}
-                            >
-                              {partner.status}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-
-                      {/* Contact CTA */}
-                      <div
-                        className="mt-4 p-4 rounded-xl"
+                  {/* Contact CTA */}
+                  <div
+                    className="p-3 rounded-xl"
+                    style={{
+                      background: `${sector.color}08`,
+                      border: `1px solid ${sector.color}20`,
+                    }}
+                  >
+                    <p className="text-white/50 text-[10px] mb-2">
+                      للتواصل والانضمام كشريك في هذا القطاع
+                    </p>
+                    <div className="flex gap-2">
+                      <a
+                        href={`tel:${CONTACT_PHONE}`}
+                        className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-[11px] font-bold transition-all flex-1 justify-center"
                         style={{
-                          background: `${sector.color}08`,
-                          border: `1px solid ${sector.color}20`,
+                          background: `${sector.color}20`,
+                          color: sector.color,
+                          border: `1px solid ${sector.color}30`,
                         }}
                       >
-                        <p className="text-white/60 text-xs mb-3">
-                          للتواصل والانضمام كشريك في هذا القطاع
-                        </p>
-                        <div className="flex gap-2">
-                          <a
-                            href={`tel:${CONTACT_PHONE}`}
-                            className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all flex-1 justify-center"
-                            style={{
-                              background: `${sector.color}20`,
-                              color: sector.color,
-                              border: `1px solid ${sector.color}30`,
-                            }}
-                          >
-                            <Phone className="w-3.5 h-3.5" />
-                            {CONTACT_PHONE}
-                          </a>
-                          <button
-                            className="flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold glass-card text-white/60 hover:text-white transition-all"
-                            onClick={() => {
-                              window.location.href = `mailto:info@allahyeafik.sa`;
-                            }}
-                          >
-                            <Mail className="w-3.5 h-3.5" />
-                            راسلنا
-                          </button>
-                        </div>
-                      </div>
+                        <Phone className="w-3 h-3" />
+                        اتصل
+                      </a>
+                      <button
+                        className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-[11px] font-bold glass-card text-white/50 transition-all flex-1 justify-center"
+                        onClick={() => {
+                          window.location.href = `mailto:info@allahyeafik.sa`;
+                        }}
+                      >
+                        <Mail className="w-3 h-3" />
+                        راسلنا
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -550,43 +494,37 @@ export default function Partners() {
         </div>
 
         {/* Partnership CTA Banner */}
-        <div className="px-8 pb-10">
-          <div className="glass-card p-8 border border-[#00D4AA]/20 relative overflow-hidden">
-            <div className="orb orb-teal w-80 h-80 -top-20 -right-20 opacity-50" />
-            <div className="orb orb-purple w-60 h-60 -bottom-10 -left-10 opacity-40" />
-            <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
-              <div>
-                <div className="section-tag bg-[#00D4AA]/10 border border-[#00D4AA]/25 text-[#00D4AA] mb-3">
-                  <Sparkles className="w-3.5 h-3.5" />
-                  انضم إلى المنظومة
-                </div>
-                <h3 className="text-2xl font-black text-white mb-2">
-                  هل مؤسستك مهتمة بالشراكة؟
-                </h3>
-                <p className="text-white/55 text-sm max-w-xl">
-                  نرحب بجميع المؤسسات الحكومية والخاصة والأهلية للانضمام إلى
-                  منظومة الوقاية الوطنية من الإدمان
-                </p>
-              </div>
-              <div className="flex flex-col gap-3 flex-shrink-0">
-                <a
-                  href={`tel:${CONTACT_PHONE}`}
-                  className="btn-teal px-6 py-3 rounded-xl font-bold flex items-center gap-2 text-sm"
-                >
-                  <Phone className="w-4 h-4" />
-                  اتصل الآن: {CONTACT_PHONE}
-                </a>
-                <Link href="/lectures">
-                  <button className="btn-outline-teal px-6 py-3 rounded-xl font-bold flex items-center gap-2 text-sm w-full justify-center">
-                    <FileText className="w-4 h-4" />
-                    استعرض البرامج التوعوية
-                  </button>
-                </Link>
-              </div>
+        <div className="glass-card p-4 rounded-xl border border-[#00D4AA]/20 relative overflow-hidden">
+          <div className="orb w-40 h-40 opacity-20 -top-10 -right-10" style={{ background: "#00D4AA" }} />
+          <div className="relative z-10">
+            <div className="flex items-center gap-2 mb-2">
+              <Sparkles className="w-3.5 h-3.5 text-[#00D4AA]" />
+              <span className="text-[#00D4AA] text-[10px] font-bold">انضم إلى المنظومة</span>
+            </div>
+            <h3 className="text-sm font-black text-white mb-1">
+              هل مؤسستك مهتمة بالشراكة؟
+            </h3>
+            <p className="text-white/45 text-[11px] mb-3 leading-relaxed">
+              نرحب بجميع المؤسسات الحكومية والخاصة والأهلية للانضمام إلى منظومة الوقاية
+            </p>
+            <div className="flex gap-2">
+              <a
+                href={`tel:${CONTACT_PHONE}`}
+                className="bg-[#00D4AA] text-[#060B18] px-4 py-2.5 rounded-xl font-bold flex items-center gap-1.5 text-xs flex-1 justify-center"
+              >
+                <Phone className="w-3.5 h-3.5" />
+                اتصل الآن
+              </a>
+              <Link href="/join-partner">
+                <button className="glass-card border border-[#00D4AA]/25 text-[#00D4AA] px-4 py-2.5 rounded-xl font-bold flex items-center gap-1.5 text-xs">
+                  <FileText className="w-3.5 h-3.5" />
+                  تقديم طلب
+                </button>
+              </Link>
             </div>
           </div>
         </div>
-      </main>
+      </div>
     </div>
   );
 }

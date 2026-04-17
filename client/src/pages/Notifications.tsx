@@ -1,10 +1,9 @@
-/**
+﻿/**
  * Notifications - نظام الإشعارات والتذكيرات اليومية
  * Design: Dark Luxury Wellness - "الله يعافيك"
  * Features: جدولة تذكيرات، إشعارات مخصصة، سجل الإشعارات
  */
 import { useState } from "react";
-import Sidebar from "@/components/Sidebar";
 import {
   Bell,
   BellRing,
@@ -135,40 +134,31 @@ export default function Notifications() {
   };
 
   return (
-    <div className="min-h-screen bg-[#060B18] text-white flex">
-      <Sidebar />
-      <main className="flex-1 mr-0 lg:mr-64 overflow-y-auto pb-24 lg:pb-0">
-        {/* Header */}
-        <div className="relative overflow-hidden px-4 md:px-8 pt-6 md:pt-10 pb-6 md:pb-8 border-b border-white/5">
-          <div className="orb orb-gold w-72 h-72 -top-20 -left-20 opacity-30" />
-          <div className="relative z-10 flex items-start justify-between">
-            <div>
-              <div className="section-tag bg-[#F59E0B]/10 border border-[#F59E0B]/25 text-[#F59E0B] mb-3">
-                <Bell className="w-3.5 h-3.5" />
-                الإشعارات والتذكيرات
-              </div>
-              <h1 className="text-4xl font-black text-white mb-2">
-                نظام
-                <span className="gradient-text-gold"> التذكيرات</span>
-              </h1>
-              <p className="text-white/55 text-sm">
-                تذكيرات مخصصة تساعدك على البقاء في مسار التعافي
-              </p>
-            </div>
-            {unreadCount > 0 && (
-              <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-[#EF4444]/15 border border-[#EF4444]/25">
-                <BellRing className="w-4 h-4 text-[#EF4444] animate-pulse" />
-                <span className="text-[#EF4444] font-black text-sm">
-                  {unreadCount} إشعار جديد
-                </span>
-              </div>
-            )}
-          </div>
-        </div>
+    <div className="app-container bg-gradient-navy overflow-hidden">
+      <div className="orb w-64 h-64 opacity-8 top-20 -left-20" style={{ background: "#F59E0B" }} />
 
-        <div className="px-8 py-8">
+      {/* Header */}
+      <div className="mobile-header px-5 py-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <div className="text-[#F59E0B] text-xs font-bold uppercase tracking-wider mb-1">
+              الإشعارات والتذكيرات
+            </div>
+            <h1 className="text-white font-black text-xl">نظام التذكيرات</h1>
+          </div>
+          {unreadCount > 0 && (
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#EF4444]/15 border border-[#EF4444]/25">
+              <BellRing className="w-3.5 h-3.5 text-[#EF4444] animate-pulse" />
+              <span className="text-[#EF4444] font-black text-xs">{unreadCount}</span>
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="page-content overflow-y-auto">
+        <div className="px-4 pt-3">
           {/* Tabs */}
-          <div className="flex gap-1 p-1 glass-card border border-white/8 rounded-2xl mb-7 w-fit">
+          <div className="flex gap-1 p-1 glass-card border border-white/8 rounded-2xl mb-5 overflow-x-auto">
             {[
               { id: "reminders", label: "التذكيرات", icon: Clock },
               {
@@ -182,7 +172,7 @@ export default function Notifications() {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id as any)}
-                className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all relative ${
+                className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold transition-all relative ${
                   activeTab === tab.id
                     ? "bg-[#00D4AA]/15 text-[#00D4AA] border border-[#00D4AA]/25"
                     : "text-white/40 hover:text-white/70"
@@ -328,7 +318,7 @@ export default function Notifications() {
                               لا توجد أنواع تذكيرات متاحة حالياً
                             </p>
                           ) : (
-                            <div className="grid grid-cols-4 gap-2">
+                            <div className="grid grid-cols-3 gap-2">
                               {reminderTypes.map(t => (
                                 <button
                                   key={t.id}
@@ -632,7 +622,7 @@ export default function Notifications() {
             )}
           </AnimatePresence>
         </div>
-      </main>
+      </div>
     </div>
   );
 }

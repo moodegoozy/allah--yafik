@@ -29,7 +29,18 @@ import { motion } from "framer-motion";
 import { Link } from "wouter";
 import { ExternalLink } from "lucide-react";
 
-const STORAGE_KEY = "allah_yafik_recovery_goals";
+const STORAGE_KEY_PREFIX = "allah_yafik_recovery_goals";
+
+function getUserStorageKey(): string {
+  try {
+    const raw = localStorage.getItem("allah_yafik_current_user");
+    if (raw) {
+      const user = JSON.parse(raw);
+      if (user.email) return `${STORAGE_KEY_PREFIX}_${user.email}`;
+    }
+  } catch {}
+  return STORAGE_KEY_PREFIX;
+}
 
 const preventionPhases = [
   {
@@ -102,7 +113,7 @@ type CompletedGoals = Record<number, boolean[]>;
 
 function loadCompleted(): CompletedGoals {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
+    const raw = localStorage.getItem(getUserStorageKey());
     return raw ? JSON.parse(raw) : {};
   } catch {
     return {};
@@ -110,7 +121,7 @@ function loadCompleted(): CompletedGoals {
 }
 
 function saveCompleted(data: CompletedGoals) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  localStorage.setItem(getUserStorageKey(), JSON.stringify(data));
 }
 
 function getPhaseStatus(

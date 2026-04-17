@@ -4,7 +4,6 @@
  * Features: نموذج تفاعلي متعدد الخطوات، تصنيف المؤسسات، تأكيد الإرسال
  */
 import { useState } from "react";
-import Sidebar from "@/components/Sidebar";
 import {
   Building2,
   Hospital,
@@ -215,29 +214,22 @@ export default function JoinPartner() {
   };
 
   return (
-    <div className="min-h-screen bg-[#060B18] text-white flex">
-      <Sidebar />
-      <main className="flex-1 mr-0 lg:mr-64 overflow-y-auto pb-24 lg:pb-0">
-        {/* Header */}
-        <div className="relative overflow-hidden px-4 md:px-8 pt-6 md:pt-10 pb-6 md:pb-8 border-b border-white/5">
-          <div className="orb orb-purple w-72 h-72 -top-20 -right-20 opacity-30" />
-          <div className="relative z-10">
-            <div className="section-tag bg-[#00D4AA]/10 border border-[#00D4AA]/25 text-[#00D4AA] mb-3">
-              <Building2 className="w-3.5 h-3.5" />
-              انضم كشريك
-            </div>
-            <h1 className="text-4xl font-black text-white mb-2">
-              طلب
-              <span className="gradient-text"> الشراكة المؤسسية</span>
-            </h1>
-            <p className="text-white/55 text-sm">
-              انضم لمنظومة "الله يعافيك" وكن جزءاً من الحل الوطني لمكافحة
-              الإدمان
-            </p>
-          </div>
-        </div>
+    <div className="app-container bg-gradient-navy overflow-hidden">
+      <div className="orb w-64 h-64 opacity-8 top-10 -right-20" style={{ background: "#00D4AA" }} />
 
-        <div className="max-w-2xl mx-auto px-8 py-10">
+      {/* Header */}
+      <div className="mobile-header px-5 py-4">
+        <div>
+          <div className="text-[#00D4AA] text-xs font-bold uppercase tracking-wider mb-1">
+            انضم كشريك
+          </div>
+          <h1 className="text-white font-black text-xl">طلب الشراكة المؤسسية</h1>
+          <p className="text-white/40 text-xs mt-0.5">كن جزءاً من الحل الوطني لمكافحة الإدمان</p>
+        </div>
+      </div>
+
+      <div className="page-content overflow-y-auto">
+        <div className="px-4 pt-3">
           <AnimatePresence mode="wait">
             {/* Success State */}
             {submitted ? (
@@ -247,10 +239,10 @@ export default function JoinPartner() {
                 animate={{ opacity: 1, scale: 1 }}
                 className="text-center py-10"
               >
-                <div className="w-24 h-24 rounded-3xl bg-[#10B981]/20 flex items-center justify-center mx-auto mb-6 glow-teal">
-                  <CheckCircle2 className="w-12 h-12 text-[#10B981]" />
+                <div className="w-16 h-16 rounded-2xl bg-[#10B981]/20 flex items-center justify-center mx-auto mb-6 glow-teal">
+                  <CheckCircle2 className="w-8 h-8 text-[#10B981]" />
                 </div>
-                <h2 className="text-3xl font-black text-white mb-3">
+                <h2 className="text-xl font-black text-white mb-3">
                   تم إرسال الطلب!
                 </h2>
                 <p className="text-white/55 mb-2">
@@ -345,7 +337,7 @@ export default function JoinPartner() {
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: -20 }}
                   >
-                    <h3 className="text-white font-black text-lg mb-5">
+                    <h3 className="text-white font-black text-base mb-4">
                       ما نوع مؤسستك؟
                     </h3>
                     <div className="grid grid-cols-2 gap-3 mb-6">
@@ -412,7 +404,7 @@ export default function JoinPartner() {
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: -20 }}
                   >
-                    <h3 className="text-white font-black text-lg mb-5">
+                    <h3 className="text-white font-black text-base mb-4">
                       بيانات المؤسسة
                     </h3>
                     <div className="space-y-4">
@@ -575,7 +567,7 @@ export default function JoinPartner() {
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: -20 }}
                   >
-                    <h3 className="text-white font-black text-lg mb-5">
+                    <h3 className="text-white font-black text-base mb-4">
                       تفاصيل الشراكة
                     </h3>
                     <div className="space-y-5">
@@ -669,7 +661,7 @@ export default function JoinPartner() {
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: -20 }}
                   >
-                    <h3 className="text-white font-black text-lg mb-5">
+                    <h3 className="text-white font-black text-base mb-4">
                       مراجعة الطلب
                     </h3>
                     <div className="space-y-4 mb-6">
@@ -812,7 +804,7 @@ export default function JoinPartner() {
             )}
           </AnimatePresence>
         </div>
-      </main>
+      </div>
     </div>
   );
 }

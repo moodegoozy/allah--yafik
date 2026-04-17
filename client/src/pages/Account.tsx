@@ -40,11 +40,22 @@ const ageGroupConfig: Record<
   adult: { label: "بالغ", color: "#8B5CF6", emoji: "🎯" },
 };
 
-const RECOVERY_STORAGE_KEY = "allah_yafik_recovery_goals";
+const RECOVERY_KEY_PREFIX = "allah_yafik_recovery_goals";
+
+function getUserRecoveryKey(): string {
+  try {
+    const raw = localStorage.getItem("allah_yafik_current_user");
+    if (raw) {
+      const user = JSON.parse(raw);
+      if (user.email) return `${RECOVERY_KEY_PREFIX}_${user.email}`;
+    }
+  } catch {}
+  return RECOVERY_KEY_PREFIX;
+}
 
 function getRecoveryAchievementCount(): number {
   try {
-    const raw = localStorage.getItem(RECOVERY_STORAGE_KEY);
+    const raw = localStorage.getItem(getUserRecoveryKey());
     if (!raw) return 0;
     const data: Record<number, boolean[]> = JSON.parse(raw);
     // 4 phases, each with 5 goals — a phase counts as an achievement when all 5 goals are done

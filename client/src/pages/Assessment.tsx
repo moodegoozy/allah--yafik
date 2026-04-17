@@ -5,7 +5,6 @@
  */
 import { useState } from "react";
 import { useLocation } from "wouter";
-import Sidebar from "@/components/Sidebar";
 import {
   Brain,
   ChevronLeft,
@@ -319,28 +318,22 @@ export default function Assessment() {
   );
 
   return (
-    <div className="min-h-screen bg-[#060B18] text-white flex">
-      <Sidebar />
-      <main className="flex-1 mr-0 lg:mr-64 overflow-y-auto pb-24 lg:pb-0">
-        {/* Header */}
-        <div className="relative overflow-hidden px-4 md:px-8 pt-6 md:pt-10 pb-6 md:pb-8 border-b border-white/5">
-          <div className="orb orb-purple w-72 h-72 -top-20 -right-20 opacity-40" />
-          <div className="relative z-10">
-            <div className="section-tag bg-[#8B5CF6]/10 border border-[#8B5CF6]/25 text-[#8B5CF6] mb-3">
-              <Brain className="w-3.5 h-3.5" />
-              التقييم الشخصي
-            </div>
-            <h1 className="text-4xl font-black text-white mb-2">
-              اختبار
-              <span className="gradient-text-purple"> تقييم الإدمان</span>
-            </h1>
-            <p className="text-white/55 text-sm">
-              اختبار علمي سري مبني على معايير DSM-5 الدولية
-            </p>
-          </div>
-        </div>
+    <div className="app-container bg-gradient-navy overflow-hidden">
+      <div className="orb w-64 h-64 opacity-8 -top-20 -right-20" style={{ background: "#8B5CF6" }} />
 
-        <div className="max-w-2xl mx-auto px-8 py-10">
+      {/* Header */}
+      <div className="mobile-header px-5 py-4">
+        <div>
+          <div className="text-[#8B5CF6] text-xs font-bold uppercase tracking-wider mb-1">
+            التقييم الشخصي
+          </div>
+          <h1 className="text-white font-black text-xl">اختبار تقييم الإدمان</h1>
+          <p className="text-white/40 text-xs mt-0.5">اختبار علمي سري — معايير DSM-5</p>
+        </div>
+      </div>
+
+      <div className="page-content overflow-y-auto">
+        <div className="px-4 pt-3">
           <AnimatePresence mode="wait">
             {/* Intro Phase */}
             {phase === "intro" && (
@@ -350,13 +343,13 @@ export default function Assessment() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
               >
-                <div className="glass-card p-8 border border-[#8B5CF6]/25 mb-6 text-center relative overflow-hidden">
+                <div className="glass-card p-5 border border-[#8B5CF6]/25 mb-4 text-center relative overflow-hidden">
                   <div className="orb orb-purple w-60 h-60 -top-10 -right-10 opacity-20" />
                   <div className="relative z-10">
-                    <div className="w-20 h-20 rounded-3xl bg-[#8B5CF6]/20 flex items-center justify-center mx-auto mb-5 glow-purple">
-                      <Brain className="w-10 h-10 text-[#8B5CF6]" />
+                    <div className="w-14 h-14 rounded-2xl bg-[#8B5CF6]/20 flex items-center justify-center mx-auto mb-5 glow-purple">
+                      <Brain className="w-7 h-7 text-[#8B5CF6]" />
                     </div>
-                    <h2 className="text-2xl font-black text-white mb-3">
+                    <h2 className="text-lg font-black text-white mb-2">
                       اختبار التقييم الشخصي
                     </h2>
                     <p className="text-white/55 leading-relaxed mb-6">
@@ -443,7 +436,7 @@ export default function Assessment() {
 
                 {/* Question Card */}
                 <div
-                  className="glass-card p-7 border mb-5 relative overflow-hidden"
+                  className="glass-card p-4 border mb-5 relative overflow-hidden"
                   style={{ borderColor: `${currentQuestion.color}25` }}
                 >
                   <div
@@ -575,7 +568,7 @@ export default function Assessment() {
               >
                 {/* Risk Level Card */}
                 <div
-                  className="glass-card p-7 border mb-6 text-center relative overflow-hidden"
+                  className="glass-card p-4 border mb-6 text-center relative overflow-hidden"
                   style={{ borderColor: `${risk.color}30` }}
                 >
                   <div
@@ -751,7 +744,7 @@ export default function Assessment() {
             )}
           </AnimatePresence>
         </div>
-      </main>
+      </div>
     </div>
   );
 }

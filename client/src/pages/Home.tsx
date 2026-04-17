@@ -52,6 +52,7 @@ const partnerTypes = [
 export default function Home() {
   const [quote] = useState(() => preventionQuotes[Math.floor(Math.random() * preventionQuotes.length)]);
   const [greeting, setGreeting] = useState("");
+  const [userName, setUserName] = useState("");
   const [riskScore] = useState(() => {
     try {
       const saved = JSON.parse(localStorage.getItem("assessment_result") || "{}");
@@ -64,6 +65,14 @@ export default function Home() {
     if (hour < 12) setGreeting("صباح النور");
     else if (hour < 17) setGreeting("مساء الخير");
     else setGreeting("مساء النور");
+
+    try {
+      const raw = localStorage.getItem("allah_yafik_current_user");
+      if (raw) {
+        const user = JSON.parse(raw);
+        if (user.name) setUserName(user.name);
+      }
+    } catch {}
   }, []);
 
   return (
@@ -76,7 +85,7 @@ export default function Home() {
       <div className="mobile-header px-5 py-4">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-white/40 text-xs">{greeting}</p>
+            <p className="text-white/40 text-xs">{greeting}{userName ? ` يا ${userName}` : ""}</p>
             <h1 className="text-white font-black text-lg">الله يعافيك</h1>
           </div>
           <div className="flex items-center gap-2">
