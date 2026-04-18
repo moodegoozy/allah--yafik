@@ -55,8 +55,12 @@ export default function Home() {
   const [userName, setUserName] = useState("");
   const [riskScore] = useState(() => {
     try {
-      const saved = JSON.parse(localStorage.getItem("assessment_result") || "{}");
-      return saved.score || null;
+      const raw = localStorage.getItem("allah_yafik_current_user");
+      if (raw) {
+        const user = JSON.parse(raw);
+        if (user.testResult?.total != null) return user.testResult.total;
+      }
+      return null;
     } catch { return null; }
   });
 
@@ -134,9 +138,9 @@ export default function Home() {
               <div className="flex items-center gap-2 p-3 rounded-2xl bg-white/4 border border-white/8 mb-3">
                 <Award className="w-4 h-4 text-[#00D4AA]" />
                 <div className="flex-1">
-                  <div className="text-white/60 text-xs">مستوى الخطر لديك</div>
+                  <div className="text-white/60 text-xs">مستوى الوعي الوقائي</div>
                   <div className="text-white font-bold text-sm">
-                    {riskScore <= 3 ? "منخفض — ممتاز!" : riskScore <= 6 ? "متوسط — انتبه" : "مرتفع — تحرّك الآن"}
+                    {riskScore >= 70 ? "ممتاز — استمر!" : riskScore >= 50 ? "متوسط — طوّر مهاراتك" : "يحتاج تحسين — تابع الخطة"}
                   </div>
                 </div>
                 <Link href="/assessment">

@@ -267,6 +267,126 @@ function saveExercises(items: ExerciseItem[]) {
   localStorage.setItem(EXERCISES_KEY, JSON.stringify(items));
 }
 
+// ─── Recovery Plan (Prevention Phases) ───────────────────────────────────────
+
+const ADMIN_PHASES_KEY = "allah_yafik_admin_prevention_phases";
+
+interface AdminPreventionPhase {
+  id: number;
+  title: string;
+  subtitle: string;
+  iconName: string;
+  color: string;
+  description: string;
+  goals: { text: string; link: string }[];
+  reward: string;
+}
+
+const PHASE_ICON_OPTIONS = [
+  { name: "Brain", label: "🧠 دماغ" },
+  { name: "Shield", label: "🛡️ درع" },
+  { name: "Heart", label: "❤️ قلب" },
+  { name: "TrendingUp", label: "📈 نمو" },
+  { name: "Target", label: "🎯 هدف" },
+  { name: "Star", label: "⭐ نجمة" },
+  { name: "BookOpen", label: "📖 كتاب" },
+  { name: "Users", label: "👥 مجتمع" },
+  { name: "Zap", label: "⚡ طاقة" },
+  { name: "Lightbulb", label: "💡 فكرة" },
+];
+
+const PHASE_COLOR_OPTIONS = [
+  { value: "from-[#00D4AA] to-[#0EA5E9]", label: "تركوازي → أزرق" },
+  { value: "from-[#F59E0B] to-[#EF4444]", label: "ذهبي → أحمر" },
+  { value: "from-[#8B5CF6] to-[#EC4899]", label: "بنفسجي → وردي" },
+  { value: "from-[#10B981] to-[#3B82F6]", label: "أخضر → أزرق" },
+  { value: "from-[#F59E0B] to-[#10B981]", label: "ذهبي → أخضر" },
+  { value: "from-[#EF4444] to-[#8B5CF6]", label: "أحمر → بنفسجي" },
+];
+
+const GOAL_LINK_OPTIONS = [
+  { value: "/assessment", label: "التقييم" },
+  { value: "/lectures", label: "المحاضرات" },
+  { value: "/resources", label: "الموارد" },
+  { value: "/exercises", label: "التمارين" },
+  { value: "/community", label: "المجتمع" },
+  { value: "/tracker", label: "التتبع" },
+  { value: "/partners", label: "الشركاء" },
+  { value: "/rehab-plan", label: "خطة التأهيل" },
+  { value: "/achievements", label: "الإنجازات" },
+  { value: "/chat", label: "المحادثة" },
+];
+
+const defaultAdminPhases: AdminPreventionPhase[] = [
+  {
+    id: 1, title: "مرحلة الوعي والمعرفة", subtitle: "الأسبوع ١-٢", iconName: "Brain",
+    color: "from-[#00D4AA] to-[#0EA5E9]",
+    description: "اكتساب المعرفة الكاملة بمخاطر الإدمان وعوامل الخطر الشخصية",
+    goals: [
+      { text: "إكمال تقييم مستوى الخطر الشخصي", link: "/assessment" },
+      { text: "قراءة محاضرة: علم الأعصاب والإدمان", link: "/lectures" },
+      { text: "تحديد عوامل الخطر في بيئتك", link: "/assessment" },
+      { text: "تعلم أعراض الإدمان المبكرة", link: "/resources" },
+      { text: "إكمال اختبار الوعي الوقائي", link: "/assessment" },
+    ],
+    reward: "شارة الواعي",
+  },
+  {
+    id: 2, title: "مرحلة بناء المهارات", subtitle: "الأسبوع ٣-٤", iconName: "Shield",
+    color: "from-[#F59E0B] to-[#EF4444]",
+    description: "تطوير مهارات الرفض والمقاومة وبناء الحصانة الشخصية",
+    goals: [
+      { text: "تعلم تقنية الرفض الاجتماعي الحازم", link: "/exercises" },
+      { text: "ممارسة سيناريوهات الضغط الاجتماعي", link: "/exercises" },
+      { text: "تطوير خطة الهروب من المواقف الخطرة", link: "/rehab-plan" },
+      { text: "حضور جلسة توعية جماعية", link: "/community" },
+      { text: "إكمال تمارين الوقاية الأسبوعية", link: "/exercises" },
+    ],
+    reward: "شارة المحصّن",
+  },
+  {
+    id: 3, title: "مرحلة التحصين الروحي", subtitle: "الأسبوع ٥-٦", iconName: "Heart",
+    color: "from-[#8B5CF6] to-[#EC4899]",
+    description: "تعزيز الجانب الروحي والديني كدرع واقٍ قوي من الإدمان",
+    goals: [
+      { text: "الالتزام بأذكار الصباح والمساء يومياً", link: "/tracker" },
+      { text: "حضور محاضرة التوعية الدينية", link: "/lectures" },
+      { text: "قراءة آيات الوقاية والتحصين", link: "/resources" },
+      { text: "التواصل مع إمام أو مرشد ديني", link: "/partners" },
+      { text: "إكمال برنامج التحصين الروحي", link: "/exercises" },
+    ],
+    reward: "شارة المحصّن روحياً",
+  },
+  {
+    id: 4, title: "مرحلة الوقاية المستدامة", subtitle: "الأسبوع ٧+", iconName: "TrendingUp",
+    color: "from-[#10B981] to-[#3B82F6]",
+    description: "الحفاظ على مستوى الوقاية ونشر الوعي في المجتمع",
+    goals: [
+      { text: "مشاركة تجربتك الوقائية مع الآخرين", link: "/community" },
+      { text: "الانضمام لفريق التوعية المجتمعية", link: "/community" },
+      { text: "إكمال ٣ محاضرات توعوية", link: "/lectures" },
+      { text: "تدريب شخص آخر على مهارات الوقاية", link: "/community" },
+      { text: "الحصول على شهادة السفير الوقائي", link: "/achievements" },
+    ],
+    reward: "شهادة سفير الوقاية",
+  },
+];
+
+function loadAdminPhases(): AdminPreventionPhase[] {
+  try {
+    const raw = localStorage.getItem(ADMIN_PHASES_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    }
+  } catch {}
+  return defaultAdminPhases;
+}
+
+function saveAdminPhases(phases: AdminPreventionPhase[]) {
+  localStorage.setItem(ADMIN_PHASES_KEY, JSON.stringify(phases));
+}
+
 function exportCSV(filename: string, headers: string[], rows: string[][]) {
   const bom = "\uFEFF";
   const csvContent =
@@ -300,6 +420,7 @@ const adminSections = [
   { id: "overview", icon: LayoutDashboard, label: "نظرة عامة" },
   { id: "users", icon: Users, label: "المستخدمون" },
   { id: "content", icon: FileText, label: "إدارة المحتوى" },
+  { id: "recovery-plan", icon: Target, label: "الخطة الوقائية" },
   { id: "partners", icon: Building2, label: "طلبات الشراكة" },
   { id: "messages", icon: MessageSquare, label: "الرسائل" },
   { id: "reports", icon: BarChart3, label: "التقارير" },
@@ -373,6 +494,17 @@ export default function AdminDashboard() {
     title: "", description: "", duration: "", category: "تنفس", difficulty: "سهل",
   };
   const [exerciseForm, setExerciseForm] = useState(emptyExercise);
+
+  // Recovery plan (prevention phases) state
+  const [adminPhases, setAdminPhases] = useState<AdminPreventionPhase[]>(loadAdminPhases);
+  const [editingPhaseId, setEditingPhaseId] = useState<number | null>(null);
+  const [showAddPhase, setShowAddPhase] = useState(false);
+  const emptyPhase: Omit<AdminPreventionPhase, "id"> = {
+    title: "", subtitle: "", iconName: "Brain",
+    color: "from-[#00D4AA] to-[#0EA5E9]", description: "",
+    goals: [{ text: "", link: "/assessment" }], reward: "",
+  };
+  const [phaseForm, setPhaseForm] = useState<Omit<AdminPreventionPhase, "id">>(emptyPhase);
 
   // Load real data from localStorage
   const users = useMemo(() => loadUsers(), [refreshKey]);
@@ -1882,6 +2014,298 @@ export default function AdminDashboard() {
                   ) : null}
                 </div>
               )}
+            </motion.div>
+          )}
+
+          {/* ═══════════════ RECOVERY PLAN (PREVENTION PHASES) ═══════════════ */}
+          {activeSection === "recovery-plan" && (
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+              <div className="flex items-center justify-between mb-5">
+                <div>
+                  <h3 className="text-white font-black text-lg">الخطة الوقائية</h3>
+                  <p className="text-white/40 text-sm mt-1">{adminPhases.length} مراحل · التعديلات تظهر مباشرة في صفحة /recovery</p>
+                </div>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => {
+                      setAdminPhases(defaultAdminPhases);
+                      saveAdminPhases(defaultAdminPhases);
+                      toast.success("تم إعادة الخطة للوضع الافتراضي");
+                    }}
+                    className="flex items-center gap-1.5 px-3 py-2 rounded-xl glass-card border border-white/8 text-white/40 text-sm font-bold hover:text-white transition-all"
+                  >
+                    <RefreshCw className="w-3.5 h-3.5" />
+                    استعادة الأصلية
+                  </button>
+                  <button
+                    onClick={() => {
+                      setPhaseForm({ ...emptyPhase });
+                      setEditingPhaseId(null);
+                      setShowAddPhase(true);
+                    }}
+                    className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#00D4AA]/15 text-[#00D4AA] border border-[#00D4AA]/25 text-sm font-bold hover:bg-[#00D4AA]/25 transition-all"
+                  >
+                    <Plus className="w-4 h-4" />
+                    إضافة مرحلة
+                  </button>
+                </div>
+              </div>
+
+              {/* Add / Edit Phase Form */}
+              <AnimatePresence>
+                {showAddPhase && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: "auto" }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="glass-card p-5 border border-[#00D4AA]/20 mb-5 overflow-hidden"
+                  >
+                    <div className="flex items-center justify-between mb-4">
+                      <h4 className="text-white font-bold text-sm">
+                        {editingPhaseId !== null ? "تعديل المرحلة" : "إضافة مرحلة جديدة"}
+                      </h4>
+                      <button onClick={() => { setShowAddPhase(false); setEditingPhaseId(null); }} className="text-white/30 hover:text-white">
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
+                      <input
+                        placeholder="عنوان المرحلة *"
+                        value={phaseForm.title}
+                        onChange={e => setPhaseForm(f => ({ ...f, title: e.target.value }))}
+                        className="px-3 py-2.5 rounded-xl glass-card border border-white/10 bg-transparent text-white text-sm placeholder-white/25"
+                      />
+                      <input
+                        placeholder="العنوان الفرعي (مثل: الأسبوع ١-٢)"
+                        value={phaseForm.subtitle}
+                        onChange={e => setPhaseForm(f => ({ ...f, subtitle: e.target.value }))}
+                        className="px-3 py-2.5 rounded-xl glass-card border border-white/10 bg-transparent text-white text-sm placeholder-white/25"
+                      />
+                      <select
+                        value={phaseForm.iconName}
+                        onChange={e => setPhaseForm(f => ({ ...f, iconName: e.target.value }))}
+                        className="px-3 py-2.5 rounded-xl glass-card border border-white/10 bg-[#111827] text-white text-sm"
+                      >
+                        {PHASE_ICON_OPTIONS.map(o => (
+                          <option key={o.name} value={o.name}>{o.label}</option>
+                        ))}
+                      </select>
+                      <select
+                        value={phaseForm.color}
+                        onChange={e => setPhaseForm(f => ({ ...f, color: e.target.value }))}
+                        className="px-3 py-2.5 rounded-xl glass-card border border-white/10 bg-[#111827] text-white text-sm"
+                      >
+                        {PHASE_COLOR_OPTIONS.map(o => (
+                          <option key={o.value} value={o.value}>{o.label}</option>
+                        ))}
+                      </select>
+                      <input
+                        placeholder="المكافأة (مثل: شارة الواعي)"
+                        value={phaseForm.reward}
+                        onChange={e => setPhaseForm(f => ({ ...f, reward: e.target.value }))}
+                        className="px-3 py-2.5 rounded-xl glass-card border border-white/10 bg-transparent text-white text-sm placeholder-white/25"
+                      />
+                    </div>
+                    <textarea
+                      placeholder="وصف المرحلة *"
+                      value={phaseForm.description}
+                      onChange={e => setPhaseForm(f => ({ ...f, description: e.target.value }))}
+                      rows={2}
+                      className="w-full px-3 py-2.5 rounded-xl glass-card border border-white/10 bg-transparent text-white text-sm placeholder-white/25 mb-4 resize-none"
+                    />
+
+                    {/* Goals editor */}
+                    <div className="mb-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <span className="text-white/60 text-sm font-bold">الأهداف</span>
+                        <button
+                          onClick={() => setPhaseForm(f => ({ ...f, goals: [...f.goals, { text: "", link: "/assessment" }] }))}
+                          className="text-[#00D4AA] text-xs font-bold hover:underline flex items-center gap-1"
+                        >
+                          <Plus className="w-3 h-3" />
+                          إضافة هدف
+                        </button>
+                      </div>
+                      <div className="space-y-2">
+                        {phaseForm.goals.map((goal, gi) => (
+                          <div key={gi} className="flex gap-2 items-center">
+                            <input
+                              placeholder="نص الهدف *"
+                              value={goal.text}
+                              onChange={e => {
+                                const goals = [...phaseForm.goals];
+                                goals[gi] = { ...goals[gi], text: e.target.value };
+                                setPhaseForm(f => ({ ...f, goals }));
+                              }}
+                              className="flex-1 px-3 py-2 rounded-xl glass-card border border-white/10 bg-transparent text-white text-sm placeholder-white/25"
+                            />
+                            <select
+                              value={goal.link}
+                              onChange={e => {
+                                const goals = [...phaseForm.goals];
+                                goals[gi] = { ...goals[gi], link: e.target.value };
+                                setPhaseForm(f => ({ ...f, goals }));
+                              }}
+                              className="px-2 py-2 rounded-xl glass-card border border-white/10 bg-[#111827] text-white text-xs w-28"
+                            >
+                              {GOAL_LINK_OPTIONS.map(o => (
+                                <option key={o.value} value={o.value}>{o.label}</option>
+                              ))}
+                            </select>
+                            {phaseForm.goals.length > 1 && (
+                              <button
+                                onClick={() => setPhaseForm(f => ({ ...f, goals: f.goals.filter((_, i) => i !== gi) }))}
+                                className="text-red-400/60 hover:text-red-400 flex-shrink-0"
+                              >
+                                <Trash2 className="w-3.5 h-3.5" />
+                              </button>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    <div className="flex gap-2 justify-end">
+                      <button
+                        onClick={() => { setShowAddPhase(false); setEditingPhaseId(null); }}
+                        className="px-4 py-2.5 rounded-xl glass-card border border-white/8 text-white/40 text-sm font-bold hover:text-white transition-all"
+                      >
+                        إلغاء
+                      </button>
+                      <button
+                        onClick={() => {
+                          if (!phaseForm.title || !phaseForm.description) {
+                            toast.error("العنوان والوصف مطلوبان");
+                            return;
+                          }
+                          const validGoals = phaseForm.goals.filter(g => g.text.trim());
+                          if (validGoals.length === 0) {
+                            toast.error("أضف هدفاً واحداً على الأقل");
+                            return;
+                          }
+                          if (editingPhaseId !== null) {
+                            const updated = adminPhases.map(p =>
+                              p.id === editingPhaseId ? { ...phaseForm, id: editingPhaseId, goals: validGoals } : p
+                            );
+                            setAdminPhases(updated);
+                            saveAdminPhases(updated);
+                            toast.success("تم تعديل المرحلة");
+                          } else {
+                            const newId = adminPhases.length > 0 ? Math.max(...adminPhases.map(p => p.id)) + 1 : 1;
+                            const updated = [...adminPhases, { ...phaseForm, id: newId, goals: validGoals }];
+                            setAdminPhases(updated);
+                            saveAdminPhases(updated);
+                            toast.success("تمت إضافة مرحلة جديدة");
+                          }
+                          setShowAddPhase(false);
+                          setEditingPhaseId(null);
+                        }}
+                        className="px-6 py-2.5 rounded-xl bg-[#00D4AA]/20 text-[#00D4AA] border border-[#00D4AA]/25 text-sm font-bold hover:bg-[#00D4AA]/30 transition-all flex items-center gap-1.5"
+                      >
+                        <Save className="w-4 h-4" />
+                        {editingPhaseId !== null ? "حفظ التعديلات" : "إضافة المرحلة"}
+                      </button>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Phases list */}
+              <div className="space-y-3">
+                {adminPhases.map((phase, idx) => (
+                  <motion.div
+                    key={phase.id}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: idx * 0.05 }}
+                    className="glass-card p-5 border border-white/7"
+                  >
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="flex items-center gap-3">
+                        <div className={`w-11 h-11 rounded-xl bg-gradient-to-br ${phase.color} flex items-center justify-center`}>
+                          <span className="text-lg">{PHASE_ICON_OPTIONS.find(o => o.name === phase.iconName)?.label.split(" ")[0] || "🧠"}</span>
+                        </div>
+                        <div>
+                          <div className="text-white font-bold">{phase.title}</div>
+                          <div className="text-white/40 text-xs">{phase.subtitle} · {phase.goals.length} أهداف · المكافأة: {phase.reward}</div>
+                        </div>
+                      </div>
+                      <div className="flex gap-1.5">
+                        {idx > 0 && (
+                          <button
+                            onClick={() => {
+                              const arr = [...adminPhases];
+                              [arr[idx - 1], arr[idx]] = [arr[idx], arr[idx - 1]];
+                              setAdminPhases(arr);
+                              saveAdminPhases(arr);
+                            }}
+                            className="w-8 h-8 rounded-lg glass-card border border-white/8 flex items-center justify-center text-white/30 hover:text-white transition-all"
+                            title="تحريك لأعلى"
+                          >
+                            <ChevronDown className="w-3.5 h-3.5 rotate-180" />
+                          </button>
+                        )}
+                        {idx < adminPhases.length - 1 && (
+                          <button
+                            onClick={() => {
+                              const arr = [...adminPhases];
+                              [arr[idx], arr[idx + 1]] = [arr[idx + 1], arr[idx]];
+                              setAdminPhases(arr);
+                              saveAdminPhases(arr);
+                            }}
+                            className="w-8 h-8 rounded-lg glass-card border border-white/8 flex items-center justify-center text-white/30 hover:text-white transition-all"
+                            title="تحريك لأسفل"
+                          >
+                            <ChevronDown className="w-3.5 h-3.5" />
+                          </button>
+                        )}
+                        <button
+                          onClick={() => {
+                            setPhaseForm({
+                              title: phase.title,
+                              subtitle: phase.subtitle,
+                              iconName: phase.iconName,
+                              color: phase.color,
+                              description: phase.description,
+                              goals: [...phase.goals],
+                              reward: phase.reward,
+                            });
+                            setEditingPhaseId(phase.id);
+                            setShowAddPhase(true);
+                          }}
+                          className="w-8 h-8 rounded-lg glass-card border border-white/8 flex items-center justify-center text-white/30 hover:text-[#00D4AA] transition-all"
+                        >
+                          <Edit3 className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          onClick={() => {
+                            if (adminPhases.length <= 1) {
+                              toast.error("يجب أن تبقى مرحلة واحدة على الأقل");
+                              return;
+                            }
+                            const updated = adminPhases.filter(p => p.id !== phase.id);
+                            setAdminPhases(updated);
+                            saveAdminPhases(updated);
+                            toast.success("تم حذف المرحلة");
+                          }}
+                          className="w-8 h-8 rounded-lg glass-card border border-white/8 flex items-center justify-center text-white/30 hover:text-red-400 transition-all"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    </div>
+                    <p className="text-white/50 text-xs leading-relaxed mb-3">{phase.description}</p>
+                    <div className="flex flex-wrap gap-1.5">
+                      {phase.goals.map((g, gi) => (
+                        <span key={gi} className="px-2.5 py-1 rounded-lg bg-white/5 text-white/50 text-xs border border-white/5">
+                          {g.text}
+                        </span>
+                      ))}
+                    </div>
+                  </motion.div>
+                ))}
+              </div>
             </motion.div>
           )}
 

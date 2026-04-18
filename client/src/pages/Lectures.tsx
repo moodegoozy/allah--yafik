@@ -5,6 +5,8 @@
  */
 import { useState } from "react";
 import { useLocation } from "wouter";
+import { toast } from "sonner";
+import { motion } from "framer-motion";
 import {
   Play,
   BookOpen,
@@ -19,9 +21,7 @@ import {
   Mic,
   Baby,
   School,
-  GraduationCap,
   Briefcase,
-  Heart,
   Video,
   FileText,
   Headphones,
@@ -62,15 +62,6 @@ const ageGroups = [
     count: "٣٨ محاضرة",
   },
   {
-    id: "youth",
-    icon: GraduationCap,
-    label: "الشباب",
-    range: "١٩ - ٣٠ سنة",
-    color: "#00D4AA",
-    desc: "الوقاية في مرحلة الجامعة والعمل",
-    count: "٤٥ محاضرة",
-  },
-  {
     id: "adults",
     icon: Briefcase,
     label: "البالغون",
@@ -78,15 +69,6 @@ const ageGroups = [
     color: "#F59E0B",
     desc: "إدارة الضغوط والوقاية من الانتكاسة",
     count: "٣٢ محاضرة",
-  },
-  {
-    id: "parents",
-    icon: Heart,
-    label: "الآباء والأمهات",
-    range: "جميع الأعمار",
-    color: "#EC4899",
-    desc: "كيف تحمي أسرتك وتتعرف على المخاطر",
-    count: "٢٨ محاضرة",
   },
 ];
 
@@ -97,7 +79,7 @@ const lectures = [
     speaker: "د. محمد الحارثي",
     speakerTitle: "استشاري طب الإدمان",
     category: "صحي",
-    ageGroup: "youth",
+    ageGroup: "adults",
     duration: "٤٥ دقيقة",
     views: "١٢,٤٠٠",
     rating: 4.9,
@@ -146,7 +128,7 @@ const lectures = [
     speaker: "د. نورة السبيعي",
     speakerTitle: "طبيبة أطفال ونفسية",
     category: "أسري",
-    ageGroup: "parents",
+    ageGroup: "children",
     duration: "٥٠ دقيقة",
     views: "١٨,٢٠٠",
     rating: 4.9,
@@ -228,11 +210,68 @@ const typeIcons: Record<string, React.ElementType> = {
   presentation: FileText,
 };
 
+const RATINGS_KEY = "allah_yafik_lecture_ratings";
+
+function loadRatings(): Record<string, { score: number; feedback: string[] }> {
+  try {
+    const raw = localStorage.getItem(RATINGS_KEY);
+    return raw ? JSON.parse(raw) : {};
+  } catch { return {}; }
+}
+
+function saveRating(lectureId: string | number, score: number, feedback: string[]) {
+  const all = loadRatings();
+  all[String(lectureId)] = { score, feedback };
+  localStorage.setItem(RATINGS_KEY, JSON.stringify(all));
+}
+
+const ratingFeedbackOptions = [
+  "محتوى علمي ممتاز",
+  "سهل الفهم",
+  "مفيد جداً",
+  "يستحق المشاركة",
+  "غيّر تفكيري",
+  "أريد المزيد",
+];
+
 export default function Lectures() {
   const [selectedAge, setSelectedAge] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [playingId, setPlayingId] = useState<string | number | null>(null);
   const [, navigate] = useLocation();
+
+  // Rating state
+  const [ratings, setRatings] = useState(loadRatings);
+  const [ratingScore, setRatingScore] = useState(0);
+  const [ratingHover, setRatingHover] = useState(0);
+  const [ratingFeedback, setRatingFeedback] = useState<string[]>([]);
+  const [ratingSubmitted, setRatingSubmitted] = useState(false);
+
+  const openLecture = (id: string | number) => {
+    const existing = loadRatings()[String(id)];
+    if (existing) {
+      setRatingScore(existing.score);
+      setRatingFeedback(existing.feedback);
+      setRatingSubmitted(true);
+    } else {
+      setRatingScore(0);
+      setRatingFeedback([]);
+      setRatingSubmitted(false);
+    }
+    setRatingHover(0);
+    setPlayingId(id);
+  };
+
+  const submitRating = () => {
+    if (ratingScore === 0 || !playingId) {
+      toast.error("يرجى اختيار تقييم أولاً");
+      return;
+    }
+    saveRating(playingId, ratingScore, ratingFeedback);
+    setRatings(loadRatings());
+    setRatingSubmitted(true);
+    toast.success("شكراً على تقييمك! رأيك يساعدنا على التحسين ⭐");
+  };
 
   // Merge admin-created lectures from localStorage
   const allLectures = (() => {
@@ -510,7 +549,7 @@ export default function Lectures() {
                       <div
                         key={lecture.id}
                         className="rounded-2xl border border-white/7 bg-white/3 overflow-hidden cursor-pointer active:scale-[0.98] transition-all"
-                        onClick={() => setPlayingId(lecture.id)}
+                        onClick={() => openLecture(lecture.id)}
                       >
                         {/* Thumbnail */}
                         <div
@@ -581,7 +620,7 @@ export default function Lectures() {
                   <div
                     key={lecture.id}
                     className="p-3 rounded-xl border border-white/5 bg-white/3 flex items-center gap-3 cursor-pointer active:scale-[0.98] transition-all"
-                    onClick={() => setPlayingId(lecture.id)}
+                    onClick={() => openLecture(lecture.id)}
                   >
                     <div
                       className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
@@ -606,7 +645,7 @@ export default function Lectures() {
                     <div className="flex items-center gap-1 flex-shrink-0">
                       <Star className="w-3 h-3 text-[#F59E0B] fill-[#F59E0B]" />
                       <span className="text-white/50 text-xs">
-                        {lecture.rating}
+                        {ratings[String(lecture.id)]?.score || lecture.rating || "—"}
                       </span>
                     </div>
                   </div>
@@ -754,6 +793,88 @@ export default function Lectures() {
                     <button className="w-11 h-11 rounded-xl bg-white/5 flex items-center justify-center text-white/50 border border-white/7">
                       <Share2 className="w-4 h-4" />
                     </button>
+                  </div>
+
+                  {/* Rating Section */}
+                  <div className="mt-5 pt-4 border-t border-white/8">
+                    {ratingSubmitted ? (
+                      <div className="text-center">
+                        <div className="flex items-center justify-center gap-1 mb-2">
+                          {[1, 2, 3, 4, 5].map(s => (
+                            <Star
+                              key={s}
+                              className={`w-5 h-5 ${s <= ratingScore ? "text-[#F59E0B] fill-[#F59E0B]" : "text-white/15"}`}
+                            />
+                          ))}
+                        </div>
+                        <p className="text-[#00D4AA] text-xs font-bold mb-1">تم التقييم — شكراً لك!</p>
+                        {ratingFeedback.length > 0 && (
+                          <div className="flex flex-wrap gap-1 justify-center mt-2">
+                            {ratingFeedback.map(f => (
+                              <span key={f} className="px-2 py-0.5 rounded-full bg-[#F59E0B]/10 text-[#F59E0B] text-[10px]">{f}</span>
+                            ))}
+                          </div>
+                        )}
+                        <button
+                          onClick={() => setRatingSubmitted(false)}
+                          className="mt-2 text-white/30 text-xs hover:text-white/60 transition-colors"
+                        >
+                          تعديل التقييم
+                        </button>
+                      </div>
+                    ) : (
+                      <div>
+                        <p className="text-white/60 text-sm font-bold text-center mb-3">قيّم هذه المحاضرة</p>
+                        <div className="flex items-center justify-center gap-2 mb-3">
+                          {[1, 2, 3, 4, 5].map(s => (
+                            <button
+                              key={s}
+                              onMouseEnter={() => setRatingHover(s)}
+                              onMouseLeave={() => setRatingHover(0)}
+                              onClick={() => setRatingScore(s)}
+                              className="transition-transform hover:scale-110"
+                            >
+                              <Star
+                                className={`w-7 h-7 transition-colors ${
+                                  s <= (ratingHover || ratingScore)
+                                    ? "text-[#F59E0B] fill-[#F59E0B]"
+                                    : "text-white/15"
+                                }`}
+                              />
+                            </button>
+                          ))}
+                        </div>
+                        {ratingScore > 0 && (
+                          <motion.div initial={{ opacity: 0, y: 5 }} animate={{ opacity: 1, y: 0 }}>
+                            <div className="flex flex-wrap gap-1.5 justify-center mb-3">
+                              {ratingFeedbackOptions.map(opt => (
+                                <button
+                                  key={opt}
+                                  onClick={() =>
+                                    setRatingFeedback(prev =>
+                                      prev.includes(opt) ? prev.filter(f => f !== opt) : [...prev, opt]
+                                    )
+                                  }
+                                  className={`px-2.5 py-1 rounded-full text-[11px] font-bold transition-all border ${
+                                    ratingFeedback.includes(opt)
+                                      ? "bg-[#F59E0B]/15 text-[#F59E0B] border-[#F59E0B]/25"
+                                      : "bg-white/5 text-white/40 border-white/8 hover:text-white"
+                                  }`}
+                                >
+                                  {opt}
+                                </button>
+                              ))}
+                            </div>
+                            <button
+                              onClick={submitRating}
+                              className="w-full py-2.5 rounded-xl font-bold text-sm bg-[#F59E0B]/15 text-[#F59E0B] border border-[#F59E0B]/25 hover:bg-[#F59E0B]/25 transition-all"
+                            >
+                              إرسال التقييم
+                            </button>
+                          </motion.div>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </>
               );

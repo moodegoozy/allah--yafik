@@ -3,7 +3,7 @@
  * Design: Dark Luxury Wellness - الله يعافيك
  * الهدف: الوقاية من الإدمان قبل الوقوع فيه
  */
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import {
   Shield,
@@ -30,6 +30,7 @@ import { Link } from "wouter";
 import { ExternalLink } from "lucide-react";
 
 const STORAGE_KEY_PREFIX = "allah_yafik_recovery_goals";
+const ADMIN_PHASES_KEY = "allah_yafik_admin_prevention_phases";
 
 function getUserStorageKey(): string {
   try {
@@ -42,12 +43,28 @@ function getUserStorageKey(): string {
   return STORAGE_KEY_PREFIX;
 }
 
-const preventionPhases = [
+// Icon map for serialisation — admin stores iconName string, we resolve here
+const iconMap: Record<string, typeof Brain> = {
+  Brain, Shield, Heart, TrendingUp, Target, Star, BookOpen, Users, Zap, Lightbulb,
+};
+
+interface StoredPhase {
+  id: number;
+  title: string;
+  subtitle: string;
+  iconName: string;
+  color: string;
+  description: string;
+  goals: { text: string; link: string }[];
+  reward: string;
+}
+
+const defaultPhases: StoredPhase[] = [
   {
     id: 1,
     title: "مرحلة الوعي والمعرفة",
     subtitle: "الأسبوع ١-٢",
-    icon: Brain,
+    iconName: "Brain",
     color: "from-[#00D4AA] to-[#0EA5E9]",
     description: "اكتساب المعرفة الكاملة بمخاطر الإدمان وعوامل الخطر الشخصية",
     goals: [
@@ -63,7 +80,7 @@ const preventionPhases = [
     id: 2,
     title: "مرحلة بناء المهارات",
     subtitle: "الأسبوع ٣-٤",
-    icon: Shield,
+    iconName: "Shield",
     color: "from-[#F59E0B] to-[#EF4444]",
     description: "تطوير مهارات الرفض والمقاومة وبناء الحصانة الشخصية",
     goals: [
@@ -79,7 +96,7 @@ const preventionPhases = [
     id: 3,
     title: "مرحلة التحصين الروحي",
     subtitle: "الأسبوع ٥-٦",
-    icon: Heart,
+    iconName: "Heart",
     color: "from-[#8B5CF6] to-[#EC4899]",
     description: "تعزيز الجانب الروحي والديني كدرع واقٍ قوي من الإدمان",
     goals: [
@@ -95,7 +112,7 @@ const preventionPhases = [
     id: 4,
     title: "مرحلة الوقاية المستدامة",
     subtitle: "الأسبوع ٧+",
-    icon: TrendingUp,
+    iconName: "TrendingUp",
     color: "from-[#10B981] to-[#3B82F6]",
     description: "الحفاظ على مستوى الوقاية ونشر الوعي في المجتمع",
     goals: [
@@ -108,6 +125,24 @@ const preventionPhases = [
     reward: "شهادة سفير الوقاية",
   },
 ];
+
+function loadAdminPhases(): StoredPhase[] {
+  try {
+    const raw = localStorage.getItem(ADMIN_PHASES_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed) && parsed.length > 0) return parsed;
+    }
+  } catch {}
+  return defaultPhases;
+}
+
+function resolvePhases(stored: StoredPhase[]) {
+  return stored.map(p => ({
+    ...p,
+    icon: iconMap[p.iconName] || Brain,
+  }));
+}
 
 type CompletedGoals = Record<number, boolean[]>;
 
@@ -126,23 +161,26 @@ function saveCompleted(data: CompletedGoals) {
 
 function getPhaseStatus(
   phaseId: number,
-  completed: CompletedGoals
+  completed: CompletedGoals,
+  phases: { id: number; goals: { text: string; link: string }[] }[]
 ): "completed" | "active" | "locked" {
-  const phase = preventionPhases.find(p => p.id === phaseId)!;
+  const phase = phases.find(p => p.id === phaseId);
+  if (!phase) return "locked";
   const done = completed[phaseId] || [];
   const allDone =
-    phase.goals.length > 0 && phase.goals.every((_, i) => done[i]);
+    phase.goals.length > 0 && phase.goals.every((_: unknown, i: number) => done[i]);
 
   if (allDone) return "completed";
 
-  // First phase is always unlocked
-  if (phaseId === 1) return "active";
+  // First phase (by index) is always unlocked
+  const phaseIdx = phases.indexOf(phase);
+  if (phaseIdx === 0) return "active";
 
   // Unlock if previous phase is completed
-  const prevDone = completed[phaseId - 1] || [];
-  const prevPhase = preventionPhases.find(p => p.id === phaseId - 1)!;
+  const prevPhase = phases[phaseIdx - 1];
+  const prevDone = completed[prevPhase.id] || [];
   const prevAllDone =
-    prevPhase.goals.length > 0 && prevPhase.goals.every((_, i) => prevDone[i]);
+    prevPhase.goals.length > 0 && prevPhase.goals.every((_: unknown, i: number) => prevDone[i]);
   return prevAllDone ? "active" : "locked";
 }
 
@@ -159,9 +197,23 @@ const weeklyTips = [
 export default function Recovery() {
   const [expandedPhase, setExpandedPhase] = useState<number | null>(1);
   const [completed, setCompleted] = useState<CompletedGoals>(loadCompleted);
+  const [storedPhases, setStoredPhases] = useState<StoredPhase[]>(loadAdminPhases);
+
+  // Re-read admin phases when window regains focus (admin may have edited them)
+  useEffect(() => {
+    const onFocus = () => setStoredPhases(loadAdminPhases());
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === ADMIN_PHASES_KEY) setStoredPhases(loadAdminPhases());
+    };
+    window.addEventListener("focus", onFocus);
+    window.addEventListener("storage", onStorage);
+    return () => { window.removeEventListener("focus", onFocus); window.removeEventListener("storage", onStorage); };
+  }, []);
+
+  const preventionPhases = resolvePhases(storedPhases);
 
   const handleGoalToggle = (phaseId: number, goalIdx: number) => {
-    const status = getPhaseStatus(phaseId, completed);
+    const status = getPhaseStatus(phaseId, completed, preventionPhases);
     if (status === "locked") return;
 
     setCompleted(prev => {
@@ -194,12 +246,12 @@ export default function Recovery() {
 
   // Find current active phase for header
   const activePhase = preventionPhases.find(
-    p => getPhaseStatus(p.id, completed) === "active"
+    p => getPhaseStatus(p.id, completed, preventionPhases) === "active"
   );
   const activePhaseIdx = activePhase
     ? preventionPhases.indexOf(activePhase) + 1
     : overallPct === 100
-      ? 4
+      ? preventionPhases.length
       : 1;
 
   // Arabic numeral helper
@@ -271,7 +323,7 @@ export default function Recovery() {
           </h2>
 
           {preventionPhases.map((phase, idx) => {
-            const status = getPhaseStatus(phase.id, completed);
+            const status = getPhaseStatus(phase.id, completed, preventionPhases);
             const phaseCompleted = completed[phase.id] || [];
             const phaseDoneCount = phaseCompleted.filter(Boolean).length;
             const phaseTotal = phase.goals.length;

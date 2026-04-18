@@ -79,6 +79,23 @@ Dark mode is the default. Theme colors are CSS variables in `index.css` using **
 - **New UI components:** Add via shadcn/ui CLI (`npx shadcn@latest add <component>`), don't create from scratch
 - **Data:** Static data lives in `client/src/data/` with exported TypeScript interfaces
 - **Routing:** All routes defined in `App.tsx` using Wouter `<Route>` components
+- **Exports:** Pages and components use `export default function Name() {}`
+- **Icons:** `lucide-react` — import individually, size with `w-4 h-4` / `w-5 h-5` / `w-6 h-6`
+- **Toasts:** `import { toast } from "sonner"` — always Arabic strings, positioned top-center
+- **Animations:** Framer Motion spring defaults — `{ type: "spring", bounce: 0.2, duration: 0.4 }`, tap feedback `whileTap={{ scale: 0.85 }}`
+- **localStorage keys:** Always prefix with `allah_yafik_` (e.g., `allah_yafik_current_user`, `allah_yafik_users`, `allah_yafik_recovery_goals`)
+- **Auth:** localStorage-based, three roles (`user`, `guest`, `admin`). `AuthGuard` wraps all routes with public/protected split
+- **Forms:** Most use local `useState` + manual validation; React Hook Form + Zod available but lightly used
+
+## Environment Variables
+
+| Variable | Context | Purpose |
+|----------|---------|----------|
+| `VITE_OAUTH_PORTAL_URL` | Client | OAuth portal base URL (stubbed) |
+| `VITE_APP_ID` | Client | OAuth app ID (stubbed) |
+| `VITE_FRONTEND_FORGE_API_KEY` | Client | Google Maps API key |
+| `NODE_ENV` | Server | `development` or `production` |
+| `PORT` | Server | Server port (default 3000) |
 
 ## Mandatory Workflow
 
@@ -100,5 +117,7 @@ After completing work:
 - **Theme switching** is currently disabled (`switchable={false}` in ThemeProvider)
 - **No backend API routes** — server only serves the SPA; all data is client-side static
 - `tailwindcss>nanoid` pinned to 3.3.7 for compatibility
-- **No backend API routes** — server only serves the SPA; all data is client-side static
-- `tailwindcss>nanoid` pinned to 3.3.7 for compatibility
+- **Firebase configured but unused** — `firebase.json` exists for hosting config; no Firebase SDK in code
+- **Prettier prose-wrap: preserve** — important for Arabic text; don't change
+
+See `CHANGELOG.md` for the full inventory of pages (22), components (11), hooks (3), data layer details, and known issues.

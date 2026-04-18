@@ -199,7 +199,7 @@ export default function RehabAssessment() {
       {/* Header */}
       <div className="mobile-header px-4 py-3">
         <div className="flex items-center gap-3">
-          <button onClick={() => navigate(-1 as never)} className="p-2 rounded-xl glass-card border border-white/8">
+          <button onClick={() => window.history.back()} className="p-2 rounded-xl glass-card border border-white/8">
             <ChevronRight className="w-4 h-4 text-white/60" />
           </button>
           <div>

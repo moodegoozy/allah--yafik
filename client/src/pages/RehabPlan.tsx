@@ -19,10 +19,10 @@ const CONTACT_PHONE = "0546192019";
 
 // LocalStorage helpers
 const getProgress = () => {
-  try { return JSON.parse(localStorage.getItem("rehab_progress") || "{}"); } catch { return {}; }
+  try { return JSON.parse(localStorage.getItem("allah_yafik_rehab_progress") || "{}"); } catch { return {}; }
 };
 const saveProgress = (data: Record<string, unknown>) => {
-  localStorage.setItem("rehab_progress", JSON.stringify(data));
+  localStorage.setItem("allah_yafik_rehab_progress", JSON.stringify(data));
 };
 
 export default function RehabPlan() {
