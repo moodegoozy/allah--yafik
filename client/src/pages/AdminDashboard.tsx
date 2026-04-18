@@ -30,6 +30,8 @@ import {
   AlertTriangle,
   Sparkles,
   ChevronDown,
+  ChevronRight,
+  Menu,
   RefreshCw,
   UserCheck,
   UserX,
@@ -454,6 +456,7 @@ const testLevelColors: Record<string, string> = {
 
 export default function AdminDashboard() {
   const [activeSection, setActiveSection] = useState("overview");
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [refreshKey, setRefreshKey] = useState(0);
   const [contentTab, setContentTab] = useState<"lectures" | "stories" | "exercises">("lectures");
@@ -914,9 +917,55 @@ export default function AdminDashboard() {
   );
 
   return (
-    <div className="min-h-screen bg-[#060B18] text-white flex">
-      {/* Admin Sidebar */}
-      <aside className="fixed right-0 top-0 h-full w-60 bg-[#0A0F1E] border-l border-white/5 z-30 flex flex-col">
+    <div className="min-h-screen bg-[#060B18] text-white md:flex">
+      {/* Mobile Header */}
+      <div className="md:hidden sticky top-0 z-40 bg-[#0A0F1E] border-b border-white/5">
+        <div className="flex items-center justify-between px-4 py-3">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#F59E0B] to-[#EF4444] flex items-center justify-center">
+              <Shield className="w-4 h-4 text-white" />
+            </div>
+            <div>
+              <h1 className="text-white font-black text-sm">لوحة الإدارة</h1>
+              <p className="text-[#F59E0B] text-[10px]">الله يعافيك</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <Link href="/dashboard">
+              <div className="p-2 rounded-lg text-white/40 hover:text-white">
+                <ChevronRight className="w-5 h-5" />
+              </div>
+            </Link>
+          </div>
+        </div>
+        {/* Mobile section tabs — horizontal scroll */}
+        <div className="overflow-x-auto scrollbar-hide">
+          <div className="flex gap-1 px-3 pb-2 min-w-max">
+            {adminSections.map(sec => (
+              <button
+                key={sec.id}
+                onClick={() => setActiveSection(sec.id)}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold whitespace-nowrap transition-all ${
+                  activeSection === sec.id
+                    ? "bg-[#F59E0B]/15 text-[#F59E0B] border border-[#F59E0B]/25"
+                    : "text-white/40 hover:text-white bg-white/3"
+                }`}
+              >
+                <sec.icon className="w-3.5 h-3.5 flex-shrink-0" />
+                {sec.label}
+                {sec.id === "partners" && pendingPartners > 0 && (
+                  <span className="px-1 py-0.5 rounded bg-[#EF4444] text-white text-[10px] font-numbers">
+                    {pendingPartners}
+                  </span>
+                )}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Desktop Sidebar */}
+      <aside className="hidden md:flex fixed right-0 top-0 h-full w-60 bg-[#0A0F1E] border-l border-white/5 z-30 flex-col">
         <div className="flex items-center gap-3 p-5 border-b border-white/5">
           <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#F59E0B] to-[#EF4444] flex items-center justify-center">
             <Shield className="w-5 h-5 text-white" />
@@ -972,9 +1021,10 @@ export default function AdminDashboard() {
       </aside>
 
       {/* Main Content */}
-      <main className="flex-1 mr-60 overflow-y-auto">
+      <main className="flex-1 md:mr-60 overflow-y-auto">
         {/* Header */}
-        <div className="sticky top-0 bg-[#060B18]/95 backdrop-blur-sm border-b border-white/5 px-8 py-4 flex items-center justify-between z-20">
+        {/* Header */}
+        <div className="hidden md:flex sticky top-0 bg-[#060B18]/95 backdrop-blur-sm border-b border-white/5 px-4 md:px-8 py-3 md:py-4 items-center justify-between z-20">
           <div>
             <h2 className="text-white font-black text-lg">
               {adminSections.find(s => s.id === activeSection)?.label}
@@ -1000,12 +1050,12 @@ export default function AdminDashboard() {
           </div>
         </div>
 
-        <div className="p-8">
+        <div className="p-4 md:p-8">
           {/* ═══════════════ OVERVIEW ═══════════════ */}
           {activeSection === "overview" && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
               {/* KPI Cards */}
-              <div className="grid grid-cols-4 gap-4 mb-7">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-7">
                 {[
                   {
                     label: "إجمالي المستخدمين",
@@ -1036,17 +1086,17 @@ export default function AdminDashboard() {
                     color: "#EF4444",
                   },
                 ].map((kpi, i) => (
-                  <div key={i} className="glass-card p-5 border border-white/7">
-                    <div className="flex items-start justify-between mb-3">
+                  <div key={i} className="glass-card p-4 md:p-5 border border-white/7">
+                    <div className="flex items-start justify-between mb-2 md:mb-3">
                       <div
-                        className="w-10 h-10 rounded-xl flex items-center justify-center"
+                        className="w-8 h-8 md:w-10 md:h-10 rounded-xl flex items-center justify-center"
                         style={{ background: `${kpi.color}15` }}
                       >
-                        <kpi.icon className="w-5 h-5" style={{ color: kpi.color }} />
+                        <kpi.icon className="w-4 h-4 md:w-5 md:h-5" style={{ color: kpi.color }} />
                       </div>
                       <TrendingUp className="w-4 h-4 text-[#10B981]" />
                     </div>
-                    <div className="text-white font-black text-2xl font-numbers mb-1">
+                    <div className="text-white font-black text-xl md:text-2xl font-numbers mb-1">
                       {typeof kpi.value === "number" ? kpi.value.toLocaleString("ar") : kpi.value}
                     </div>
                     <div className="text-white/50 text-xs mb-1">{kpi.label}</div>
@@ -1058,7 +1108,7 @@ export default function AdminDashboard() {
               </div>
 
               {/* Age & Test Distribution */}
-              <div className="grid grid-cols-3 gap-5 mb-7">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-5 mb-7">
                 {/* Age Groups */}
                 <div className="glass-card p-5 border border-white/7">
                   <h3 className="text-white font-bold mb-4 text-sm flex items-center gap-2">
@@ -1227,8 +1277,8 @@ export default function AdminDashboard() {
           {/* ═══════════════ USERS ═══════════════ */}
           {activeSection === "users" && (
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
-              <div className="flex items-center gap-3 mb-5">
-                <div className="relative flex-1 max-w-sm">
+              <div className="flex items-center gap-3 mb-5 flex-wrap">
+                <div className="relative flex-1 min-w-[200px]">
                   <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
                   <input
                     value={searchQuery}
@@ -1252,13 +1302,13 @@ export default function AdminDashboard() {
                   {filteredUsers.map(user => (
                     <div
                       key={user.id}
-                      className="glass-card p-4 border border-white/7 flex items-center gap-4"
+                      className="glass-card p-3 md:p-4 border border-white/7 flex items-start md:items-center gap-3 md:gap-4"
                     >
                       <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#00D4AA]/20 to-[#0EA5E9]/20 flex items-center justify-center font-black text-[#00D4AA]">
                         {user.name.charAt(0)}
                       </div>
                       <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2 mb-0.5">
+                        <div className="flex items-center gap-2 mb-0.5 flex-wrap">
                           <span className="text-white font-bold text-sm">{user.name}</span>
                           <span className="px-2 py-0.5 rounded-lg text-xs font-bold bg-[#00D4AA]/10 text-[#00D4AA]">
                             {user.ageGroup === "young"
@@ -1279,7 +1329,7 @@ export default function AdminDashboard() {
                             </span>
                           )}
                         </div>
-                        <div className="flex items-center gap-3 text-white/35 text-xs">
+                        <div className="flex items-center gap-2 md:gap-3 text-white/35 text-xs flex-wrap">
                           <span className="font-numbers">{user.phone}</span>
                           {user.email && (
                             <>
@@ -1473,7 +1523,7 @@ export default function AdminDashboard() {
                         {/* ── Media Source ── */}
                         <div className="mt-4 p-4 rounded-xl bg-white/3 border border-white/7">
                           <label className="text-white/50 text-xs font-bold mb-3 block">مصدر المحتوى</label>
-                          <div className="grid grid-cols-3 gap-2 mb-4">
+                          <div className="grid grid-cols-2 md:grid-cols-3 gap-2 mb-4">
                             {([
                               { value: "youtube" as const, label: "رابط يوتيوب", icon: "▶", desc: "فيديو من يوتيوب" },
                               { value: "upload" as const, label: "رفع ملف", icon: "📁", desc: "ملف من جهازك" },
@@ -1730,7 +1780,7 @@ export default function AdminDashboard() {
                         </div>
                         {/* Built-in lecture stats */}
                         {!lecture.custom && (
-                          <div className="mt-3 pt-3 border-t border-white/5 grid grid-cols-4 gap-3">
+                          <div className="mt-3 pt-3 border-t border-white/5 grid grid-cols-2 md:grid-cols-4 gap-3">
                             {[
                               { label: "الأقسام", value: (lecture as Lecture).sections.length },
                               { label: "أسئلة الاختبار", value: (lecture as Lecture).quiz.length },
