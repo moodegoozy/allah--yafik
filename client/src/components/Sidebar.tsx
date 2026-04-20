@@ -1,5 +1,5 @@
 /*
- * Design: Dark Luxury Wellness v2 - Sidebar Component
+ * Design: Modern Minimalist Sidebar
  * الهدف: الوقاية من الإدمان — "الله يعافيك"
  */
 import { Link, useLocation } from "wouter";
@@ -27,10 +27,12 @@ import {
   FileText,
   Lightbulb,
   User,
+  Settings as SettingsIcon,
 } from "lucide-react";
 import { useState } from "react";
 import { useLocation as useNavLocation } from "wouter";
 import { cn } from "@/lib/utils";
+import ThemeToggle from "@/components/ThemeToggle";
 
 const CONTACT_PHONE = "0546192019";
 
@@ -71,6 +73,7 @@ const navGroups = [
     label: "الحساب",
     items: [
       { icon: User, label: "حسابي", path: "/account" },
+      { icon: SettingsIcon, label: "الإعدادات", path: "/settings" },
       { icon: LogIn, label: "تسجيل الدخول", path: "/login" },
     ],
   },
@@ -101,7 +104,7 @@ export default function Sidebar() {
       {/* Mobile overlay */}
       {!collapsed && (
         <div
-          className="fixed inset-0 bg-black/50 z-20 lg:hidden"
+          className="fixed inset-0 bg-background/80 z-20 lg:hidden"
           onClick={() => setCollapsed(true)}
         />
       )}
@@ -109,28 +112,28 @@ export default function Sidebar() {
       <aside
         className={cn(
           "fixed right-0 top-0 h-full z-30 flex flex-col transition-all duration-300",
-          "bg-[#0A0F1E] border-l border-white/5",
+          "bg-sidebar border-l border-sidebar-border",
           collapsed ? "w-0 overflow-hidden lg:w-16" : "w-64"
         )}
       >
         {/* Logo */}
-        <div className="flex items-center gap-3 p-5 border-b border-white/5">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#00D4AA] to-[#0EA5E9] flex items-center justify-center flex-shrink-0">
-            <Shield className="w-5 h-5 text-[#060B18]" />
+        <div className="flex items-center gap-3 p-5 border-b border-sidebar-border">
+          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-[oklch(0.60_0.17_200)] flex items-center justify-center flex-shrink-0">
+            <Shield className="w-5 h-5 text-primary-foreground" />
           </div>
           {!collapsed && (
             <div className="flex-1 min-w-0">
-              <h1 className="text-white font-black text-sm leading-tight">
+              <h1 className="text-foreground font-black text-sm leading-tight">
                 الله يعافيك
               </h1>
-              <p className="text-[#00D4AA] text-xs opacity-80">
+              <p className="text-primary text-xs opacity-80">
                 برنامج الوقاية من الإدمان
               </p>
             </div>
           )}
           <button
             onClick={() => setCollapsed(!collapsed)}
-            className="text-white/40 hover:text-white transition-colors lg:hidden flex-shrink-0"
+            className="text-muted-foreground hover:text-foreground transition-colors lg:hidden flex-shrink-0"
           >
             <X className="w-5 h-5" />
           </button>
@@ -142,7 +145,7 @@ export default function Sidebar() {
             <div key={gi}>
               {!collapsed && (
                 <div className="px-3 mb-2">
-                  <span className="text-white/25 text-xs font-bold uppercase tracking-widest">
+                  <span className="text-muted-foreground/50 text-xs font-bold uppercase tracking-widest">
                     {group.label}
                   </span>
                 </div>
@@ -156,16 +159,16 @@ export default function Sidebar() {
                         className={cn(
                           "flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group",
                           isActive
-                            ? "bg-[#00D4AA]/10 border border-[#00D4AA]/20 text-white"
-                            : "text-white/50 hover:text-white hover:bg-white/5"
+                            ? "bg-primary/10 border border-primary/20 text-foreground"
+                            : "text-muted-foreground hover:text-foreground hover:bg-secondary"
                         )}
                       >
                         <item.icon
                           className={cn(
                             "flex-shrink-0 transition-all",
                             isActive
-                              ? "text-[#00D4AA]"
-                              : "group-hover:text-white"
+                              ? "text-primary"
+                              : "group-hover:text-foreground"
                           )}
                           size={18}
                         />
@@ -175,7 +178,7 @@ export default function Sidebar() {
                           </span>
                         )}
                         {isActive && !collapsed && (
-                          <div className="mr-auto w-1.5 h-1.5 rounded-full bg-[#00D4AA] animate-pulse" />
+                          <div className="mr-auto w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
                         )}
                       </div>
                     </Link>
@@ -194,16 +197,16 @@ export default function Sidebar() {
                 className={cn(
                   "flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group",
                   location === adminNavItem.path
-                    ? "bg-[#F59E0B]/10 border border-[#F59E0B]/20 text-white"
-                    : "text-[#F59E0B]/60 hover:text-[#F59E0B] hover:bg-[#F59E0B]/5 border border-[#F59E0B]/15"
+                    ? "bg-accent/10 border border-accent/20 text-foreground"
+                    : "text-accent/60 hover:text-accent hover:bg-accent/5 border border-accent/15"
                 )}
               >
                 <adminNavItem.icon
                   className={cn(
                     "flex-shrink-0 transition-all",
                     location === adminNavItem.path
-                      ? "text-[#F59E0B]"
-                      : "group-hover:text-[#F59E0B]"
+                      ? "text-accent"
+                      : "group-hover:text-accent"
                   )}
                   size={18}
                 />
@@ -220,16 +223,16 @@ export default function Sidebar() {
           <div className="px-3 pb-2">
             <a
               href={`tel:${CONTACT_PHONE}`}
-              className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl bg-[#00D4AA]/8 border border-[#00D4AA]/20 hover:bg-[#00D4AA]/15 transition-all group"
+              className="flex items-center gap-2.5 px-3 py-2.5 rounded-xl bg-primary/5 border border-primary/20 hover:bg-primary/10 transition-all group"
             >
-              <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-[#00D4AA] to-[#0EA5E9] flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
-                <Phone className="w-3.5 h-3.5 text-[#060B18]" />
+              <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-primary to-[oklch(0.60_0.17_200)] flex items-center justify-center flex-shrink-0 group-hover:scale-110 transition-transform">
+                <Phone className="w-3.5 h-3.5 text-primary-foreground" />
               </div>
               <div>
-                <div className="text-[#00D4AA] font-black text-xs font-numbers">
+                <div className="text-primary font-black text-xs font-numbers">
                   {CONTACT_PHONE}
                 </div>
-                <div className="text-white/30 text-xs">
+                <div className="text-muted-foreground text-xs">
                   خط الاستشارة الوقائية
                 </div>
               </div>
@@ -237,23 +240,30 @@ export default function Sidebar() {
           </div>
         )}
 
-        {/* User Profile + Logout */}
-        <div className="p-3 border-t border-white/5 space-y-2">
+        {/* Theme Toggle + User Profile + Logout */}
+        <div className="p-3 border-t border-sidebar-border space-y-2">
+          {/* Theme toggle */}
+          {!collapsed && (
+            <div className="flex items-center justify-between px-3 py-2">
+              <span className="text-sm text-muted-foreground">المظهر</span>
+              <ThemeToggle />
+            </div>
+          )}
           <div
             className={cn(
               "flex items-center gap-3 px-3 py-3 rounded-xl",
-              "bg-white/3 border border-white/5"
+              "bg-secondary/50 border border-border"
             )}
           >
-            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-[#00D4AA] to-[#0EA5E9] flex items-center justify-center flex-shrink-0">
-              <Shield className="w-4 h-4 text-[#060B18]" />
+            <div className="w-9 h-9 rounded-full bg-gradient-to-br from-primary to-[oklch(0.60_0.17_200)] flex items-center justify-center flex-shrink-0">
+              <Shield className="w-4 h-4 text-primary-foreground" />
             </div>
             {!collapsed && (
               <div className="flex-1 min-w-0">
-                <p className="text-white text-sm font-bold truncate">
+                <p className="text-foreground text-sm font-bold truncate">
                   مستخدم محمي
                 </p>
-                <p className="text-[#00D4AA] text-xs">مستوى الوقاية: ممتاز ✦</p>
+                <p className="text-primary text-xs">مستوى الوقاية: ممتاز ✦</p>
               </div>
             )}
           </div>
@@ -276,7 +286,7 @@ export default function Sidebar() {
       <button
         onClick={() => setCollapsed(false)}
         className={cn(
-          "fixed top-4 left-4 z-[60] p-2 rounded-xl bg-[#0A0F1E] border border-white/10 text-white",
+          "fixed top-4 left-4 z-[60] p-2 rounded-xl bg-card border border-border text-foreground",
           "lg:hidden",
           !collapsed && "hidden"
         )}

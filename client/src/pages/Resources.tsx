@@ -22,7 +22,7 @@ const articles = [
     category: "علمي",
     readTime: "٥ دقائق",
     icon: Brain,
-    color: "from-[#8B5CF6] to-[#EC4899]",
+    color: "from-violet-500 to-pink-500",
     excerpt: "فهم آليات الإدمان العصبية يمنحك سلاحاً قوياً للوقاية منه قبل الوقوع فيه...",
     popular: true,
   },
@@ -32,7 +32,7 @@ const articles = [
     category: "عملي",
     readTime: "٧ دقائق",
     icon: Shield,
-    color: "from-[#00D4AA] to-[#0EA5E9]",
+    color: "from-primary to-sky-500",
     excerpt: "مهارات الرفض والوعي الذاتي وإدارة الضغط — أدوات الوقاية الأساسية...",
     popular: true,
   },
@@ -42,7 +42,7 @@ const articles = [
     category: "أسري",
     readTime: "٦ دقائق",
     icon: Users,
-    color: "from-[#F59E0B] to-[#EF4444]",
+    color: "from-amber-500 to-red-500",
     excerpt: "كيف تبني أسرتك درعاً واقياً لأبنائك قبل أن يواجهوا الخطر...",
     popular: false,
   },
@@ -52,7 +52,7 @@ const articles = [
     category: "رقمي",
     readTime: "٨ دقائق",
     icon: Zap,
-    color: "from-[#EC4899] to-[#8B5CF6]",
+    color: "from-pink-500 to-violet-500",
     excerpt: "الألعاب والسوشيال ميديا والإنترنت — كيف تحمي نفسك وأبناءك...",
     popular: true,
   },
@@ -62,7 +62,7 @@ const articles = [
     category: "ديني",
     readTime: "٦ دقائق",
     icon: Heart,
-    color: "from-[#10B981] to-[#3B82F6]",
+    color: "from-emerald-500 to-blue-500",
     excerpt: "القرآن والسنة والأذكار — سلاح روحي قوي في مواجهة الإغراءات...",
     popular: false,
   },
@@ -72,7 +72,7 @@ const articles = [
     category: "اجتماعي",
     readTime: "٥ دقائق",
     icon: Lightbulb,
-    color: "from-[#F59E0B] to-[#10B981]",
+    color: "from-amber-500 to-emerald-500",
     excerpt: "البيئة الاجتماعية أكبر عامل خطر — تعلم كيف تختار محيطك بحكمة...",
     popular: false,
   },
@@ -106,14 +106,14 @@ export default function Resources() {
 
   return (
     <div className="app-container bg-gradient-navy">
-      <div className="orb w-64 h-64 opacity-8 top-10 -left-20" style={{ background: "#F59E0B" }} />
+      <div className="orb w-64 h-64 opacity-8 top-10 -left-20" style={{ background: "oklch(0.80 0.18 80)" }} />
 
       {/* Header */}
       <div className="mobile-header px-5 py-4">
         <div>
-          <div className="text-[#00D4AA] text-xs font-bold uppercase tracking-wider mb-1">الموارد</div>
-          <h1 className="text-white font-black text-xl">مكتبة الوقاية</h1>
-          <p className="text-white/40 text-xs mt-0.5">معلومات وأدوات وقائية متخصصة</p>
+          <div className="text-primary text-xs font-bold uppercase tracking-wider mb-1">الموارد</div>
+          <h1 className="text-foreground font-black text-xl">مكتبة الوقاية</h1>
+          <p className="text-muted-foreground text-xs mt-0.5">معلومات وأدوات وقائية متخصصة</p>
         </div>
       </div>
 
@@ -121,13 +121,13 @@ export default function Resources() {
 
         {/* Search */}
         <div className="px-4 mt-3">
-          <div className="flex items-center gap-2 p-3 rounded-2xl glass-card border border-white/8">
-            <Search className="w-4 h-4 text-white/30" />
+          <div className="flex items-center gap-2 p-3 rounded-2xl glass-card border border-border">
+            <Search className="w-4 h-4 text-muted-foreground/70" />
             <input
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
               placeholder="ابحث في المكتبة الوقائية..."
-              className="flex-1 bg-transparent text-white/70 text-sm outline-none placeholder-white/25"
+              className="flex-1 bg-transparent text-foreground/70 text-sm outline-none placeholder:text-muted-foreground/50"
               dir="rtl"
             />
           </div>
@@ -135,18 +135,18 @@ export default function Resources() {
 
         {/* Prevention Tools */}
         <div className="px-4 mt-4">
-          <h2 className="text-white font-black text-sm mb-3">أدوات الوقاية</h2>
+          <h2 className="text-foreground font-black text-sm mb-3">أدوات الوقاية</h2>
           <div className="grid grid-cols-2 gap-3">
             {preventionTools.map((tool, idx) => (
               <motion.a
                 key={idx}
                 href={tool.link}
                 whileTap={{ scale: 0.95 }}
-                className="p-3 rounded-2xl glass-card border border-white/8 block"
+                className="p-3 rounded-2xl glass-card border border-border block"
               >
                 <div className="text-2xl mb-2">{tool.icon}</div>
-                <div className="text-white font-black text-xs mb-1">{tool.title}</div>
-                <div className="text-white/40 text-[10px] leading-relaxed">{tool.desc}</div>
+                <div className="text-foreground font-black text-xs mb-1">{tool.title}</div>
+                <div className="text-muted-foreground text-[10px] leading-relaxed">{tool.desc}</div>
               </motion.a>
             ))}
           </div>
@@ -155,8 +155,8 @@ export default function Resources() {
         {/* Emergency Contacts */}
         <div className="px-4 mt-5">
           <div className="flex items-center gap-2 mb-3">
-            <AlertTriangle className="w-4 h-4 text-[#EF4444]" />
-            <h2 className="text-white font-black text-sm">أرقام الدعم والطوارئ</h2>
+            <AlertTriangle className="w-4 h-4 text-destructive" />
+            <h2 className="text-foreground font-black text-sm">أرقام الدعم والطوارئ</h2>
           </div>
           <div className="space-y-2">
             {emergencyContacts.map((contact, idx) => (
@@ -164,16 +164,16 @@ export default function Resources() {
                 key={idx}
                 href={`tel:${contact.number}`}
                 whileTap={{ scale: 0.97 }}
-                className="flex items-center gap-3 p-3 rounded-2xl glass-card border border-white/8"
+                className="flex items-center gap-3 p-3 rounded-2xl glass-card border border-border"
               >
                 <span className="text-xl">{contact.icon}</span>
                 <div className="flex-1">
-                  <div className="text-white font-black text-xs">{contact.name}</div>
-                  <div className="text-white/40 text-[10px]">{contact.desc}</div>
+                  <div className="text-foreground font-black text-xs">{contact.name}</div>
+                  <div className="text-muted-foreground text-[10px]">{contact.desc}</div>
                 </div>
                 <div className="text-right">
                   <div className="font-black text-sm font-numbers" style={{ color: contact.color }}>{contact.number}</div>
-                  <div className="text-white/30 text-[10px]">اتصل الآن</div>
+                  <div className="text-muted-foreground/70 text-[10px]">اتصل الآن</div>
                 </div>
               </motion.a>
             ))}
@@ -182,7 +182,7 @@ export default function Resources() {
 
         {/* Articles */}
         <div className="px-4 mt-5">
-          <h2 className="text-white font-black text-sm mb-3">مقالات توعوية</h2>
+          <h2 className="text-foreground font-black text-sm mb-3">مقالات توعوية</h2>
 
           {/* Category Filter */}
           <div className="flex gap-2 overflow-x-auto pb-2 mb-3">
@@ -193,8 +193,8 @@ export default function Resources() {
                 className={cn(
                   "flex-shrink-0 px-3 py-1.5 rounded-xl text-xs font-bold transition-all",
                   activeCategory === cat
-                    ? "bg-[#00D4AA] text-[#060B18]"
-                    : "glass-card border border-white/10 text-white/50"
+                    ? "bg-primary text-primary-foreground"
+                    : "glass-card border border-border text-muted-foreground"
                 )}
               >
                 {cat}
@@ -211,28 +211,28 @@ export default function Resources() {
                 transition={{ delay: idx * 0.06 }}
                 whileTap={{ scale: 0.97 }}
                 onClick={() => toast.info("المقال كامل قادم قريباً")}
-                className="w-full flex items-start gap-3 p-4 rounded-2xl glass-card border border-white/8 text-right"
+                className="w-full flex items-start gap-3 p-4 rounded-2xl glass-card border border-border text-right"
               >
                 <div className={cn("w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 bg-gradient-to-br", article.color)}>
-                  <article.icon className="w-5 h-5 text-white" />
+                  <article.icon className="w-5 h-5 text-foreground" />
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
-                    <span className="text-white font-black text-xs">{article.title}</span>
+                    <span className="text-foreground font-black text-xs">{article.title}</span>
                     {article.popular && (
-                      <Star className="w-3 h-3 text-[#F59E0B] fill-[#F59E0B] flex-shrink-0" />
+                      <Star className="w-3 h-3 text-accent fill-amber-500 flex-shrink-0" />
                     )}
                   </div>
-                  <p className="text-white/45 text-[11px] leading-relaxed mb-2">{article.excerpt}</p>
+                  <p className="text-muted-foreground text-[11px] leading-relaxed mb-2">{article.excerpt}</p>
                   <div className="flex items-center gap-3">
-                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-white/8 text-white/40">{article.category}</span>
-                    <div className="flex items-center gap-1 text-white/30 text-[10px]">
+                    <span className="px-2 py-0.5 rounded-full text-[10px] font-bold bg-secondary/80 text-muted-foreground">{article.category}</span>
+                    <div className="flex items-center gap-1 text-muted-foreground/70 text-[10px]">
                       <Clock className="w-3 h-3" />
                       {article.readTime}
                     </div>
                   </div>
                 </div>
-                <ChevronRight className="w-4 h-4 text-white/20 flex-shrink-0 mt-1" />
+                <ChevronRight className="w-4 h-4 text-muted-foreground/60 flex-shrink-0 mt-1" />
               </motion.button>
             ))}
           </div>

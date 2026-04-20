@@ -26,6 +26,7 @@ import {
   Eye,
   EyeOff,
   Lock,
+  Settings as SettingsIcon,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
@@ -235,13 +236,13 @@ export default function Account() {
             >
               حسابي
             </div>
-            <h1 className="text-white font-black text-xl">الملف الشخصي</h1>
+            <h1 className="text-foreground font-black text-xl">الملف الشخصي</h1>
           </div>
           <button
             onClick={() => navigate("/dashboard")}
-            className="p-2 rounded-xl glass-card border border-white/8"
+            className="p-2 rounded-xl glass-card border border-border"
           >
-            <ChevronLeft className="w-4 h-4 text-white/50" />
+            <ChevronLeft className="w-4 h-4 text-muted-foreground" />
           </button>
         </div>
       </div>
@@ -249,7 +250,7 @@ export default function Account() {
       <div className="page-content overflow-y-auto">
         <div className="px-4 pt-3 pb-6 space-y-4">
           {/* Profile Card */}
-          <div className="rounded-2xl glass-card border border-white/8 p-5">
+          <div className="rounded-2xl glass-card border border-border p-5">
             <div className="flex items-center gap-4 mb-4">
               <div
                 className="w-16 h-16 rounded-2xl flex items-center justify-center text-3xl"
@@ -258,7 +259,7 @@ export default function Account() {
                 {ageCfg.emoji}
               </div>
               <div className="flex-1 min-w-0">
-                <h2 className="text-white font-black text-lg truncate">
+                <h2 className="text-foreground font-black text-lg truncate">
                   {user.name}
                 </h2>
                 <div className="flex items-center gap-2 mt-1">
@@ -277,44 +278,44 @@ export default function Account() {
 
             {/* Stats Row */}
             <div className="grid grid-cols-3 gap-2">
-              <div className="text-center p-2.5 rounded-xl bg-white/5 border border-white/5">
+              <div className="text-center p-2.5 rounded-xl bg-secondary/60 border border-border">
                 <Clock
                   className="w-4 h-4 mx-auto mb-1"
                   style={{ color: ageCfg.color }}
                 />
-                <div className="text-white font-black text-sm">
+                <div className="text-foreground font-black text-sm">
                   {daysSinceJoin}
                 </div>
-                <div className="text-white/40 text-xs">يوم معنا</div>
+                <div className="text-muted-foreground text-xs">يوم معنا</div>
               </div>
-              <div className="text-center p-2.5 rounded-xl bg-white/5 border border-white/5">
-                <Award className="w-4 h-4 mx-auto mb-1 text-[#F59E0B]" />
-                <div className="text-white font-black text-sm">
+              <div className="text-center p-2.5 rounded-xl bg-secondary/60 border border-border">
+                <Award className="w-4 h-4 mx-auto mb-1 text-accent" />
+                <div className="text-foreground font-black text-sm">
                   {getRecoveryAchievementCount()}
                 </div>
-                <div className="text-white/40 text-xs">إنجاز</div>
+                <div className="text-muted-foreground text-xs">إنجاز</div>
               </div>
-              <div className="text-center p-2.5 rounded-xl bg-white/5 border border-white/5">
-                <BookOpen className="w-4 h-4 mx-auto mb-1 text-[#8B5CF6]" />
-                <div className="text-white font-black text-sm">
+              <div className="text-center p-2.5 rounded-xl bg-secondary/60 border border-border">
+                <BookOpen className="w-4 h-4 mx-auto mb-1 text-violet-500" />
+                <div className="text-foreground font-black text-sm">
                   {user.completedLectures?.length || 0}
                 </div>
-                <div className="text-white/40 text-xs">محاضرة</div>
+                <div className="text-muted-foreground text-xs">محاضرة</div>
               </div>
             </div>
           </div>
 
           {/* Test Result */}
           {user.testResult && (
-            <div className="rounded-2xl glass-card border border-white/8 p-4">
+            <div className="rounded-2xl glass-card border border-border p-4">
               <div className="flex items-center justify-between mb-3">
-                <h3 className="text-white font-bold text-sm flex items-center gap-2">
+                <h3 className="text-foreground font-bold text-sm flex items-center gap-2">
                   <Brain className="w-4 h-4" style={{ color: ageCfg.color }} />
                   نتيجة الاختبار النفسي
                 </h3>
                 <button
                   onClick={handleRetakeTest}
-                  className="text-xs px-3 py-1.5 rounded-lg border border-white/10 text-white/50 hover:text-white hover:border-white/20 transition-all"
+                  className="text-xs px-3 py-1.5 rounded-lg border border-border text-muted-foreground hover:text-foreground hover:border-border transition-all"
                 >
                   إعادة الاختبار
                 </button>
@@ -331,14 +332,14 @@ export default function Account() {
                     return (
                       <div key={key}>
                         <div className="flex items-center justify-between mb-1">
-                          <span className="text-white/60 text-xs">
+                          <span className="text-muted-foreground text-xs">
                             {labels[key] || key}
                           </span>
-                          <span className="text-white font-bold text-xs">
+                          <span className="text-foreground font-bold text-xs">
                             {Math.round(pct)}%
                           </span>
                         </div>
-                        <div className="h-1.5 rounded-full bg-white/10 overflow-hidden">
+                        <div className="h-1.5 rounded-full bg-secondary overflow-hidden">
                           <motion.div
                             initial={{ width: 0 }}
                             animate={{ width: `${pct}%` }}
@@ -356,16 +357,16 @@ export default function Account() {
           )}
 
           {/* Personal Info */}
-          <div className="rounded-2xl glass-card border border-white/8 p-4">
+          <div className="rounded-2xl glass-card border border-border p-4">
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-white font-bold text-sm flex items-center gap-2">
+              <h3 className="text-foreground font-bold text-sm flex items-center gap-2">
                 <User className="w-4 h-4" style={{ color: ageCfg.color }} />
                 البيانات الشخصية
               </h3>
               {!editing ? (
                 <button
                   onClick={() => setEditing(true)}
-                  className="flex items-center gap-1 text-xs px-3 py-1.5 rounded-lg border border-white/10 text-white/50 hover:text-white hover:border-white/20 transition-all"
+                  className="flex items-center gap-1 text-xs px-3 py-1.5 rounded-lg border border-border text-muted-foreground hover:text-foreground hover:border-border transition-all"
                 >
                   <Edit3 className="w-3 h-3" />
                   تعديل
@@ -381,14 +382,14 @@ export default function Account() {
                         addictionType: user.addictionType || "",
                       });
                     }}
-                    className="flex items-center gap-1 text-xs px-3 py-1.5 rounded-lg border border-white/10 text-white/50 hover:text-white transition-all"
+                    className="flex items-center gap-1 text-xs px-3 py-1.5 rounded-lg border border-border text-muted-foreground hover:text-foreground transition-all"
                   >
                     <X className="w-3 h-3" />
                     إلغاء
                   </button>
                   <button
                     onClick={handleSaveProfile}
-                    className="flex items-center gap-1 text-xs px-3 py-1.5 rounded-lg text-white font-bold transition-all"
+                    className="flex items-center gap-1 text-xs px-3 py-1.5 rounded-lg text-foreground font-bold transition-all"
                     style={{ background: ageCfg.color }}
                   >
                     <Save className="w-3 h-3" />
@@ -400,22 +401,22 @@ export default function Account() {
 
             <div className="space-y-3">
               {/* Name */}
-              <div className="flex items-center gap-3 p-3 rounded-xl bg-white/3 border border-white/5">
-                <User className="w-4 h-4 text-white/30 flex-shrink-0" />
+              <div className="flex items-center gap-3 p-3 rounded-xl bg-secondary/40 border border-border">
+                <User className="w-4 h-4 text-muted-foreground/70 flex-shrink-0" />
                 {editing ? (
                   <input
                     value={editForm.name}
                     onChange={e =>
                       setEditForm(f => ({ ...f, name: e.target.value }))
                     }
-                    className="flex-1 bg-transparent text-white text-sm outline-none placeholder:text-white/20"
+                    className="flex-1 bg-transparent text-foreground text-sm outline-none placeholder:text-muted-foreground/60"
                     placeholder="الاسم"
                     dir="rtl"
                   />
                 ) : (
                   <div className="flex-1 min-w-0">
-                    <div className="text-white/40 text-xs mb-0.5">الاسم</div>
-                    <div className="text-white text-sm font-bold truncate">
+                    <div className="text-muted-foreground text-xs mb-0.5">الاسم</div>
+                    <div className="text-foreground text-sm font-bold truncate">
                       {user.name}
                     </div>
                   </div>
@@ -423,12 +424,12 @@ export default function Account() {
               </div>
 
               {/* Phone (read-only) */}
-              <div className="flex items-center gap-3 p-3 rounded-xl bg-white/3 border border-white/5">
-                <Phone className="w-4 h-4 text-white/30 flex-shrink-0" />
+              <div className="flex items-center gap-3 p-3 rounded-xl bg-secondary/40 border border-border">
+                <Phone className="w-4 h-4 text-muted-foreground/70 flex-shrink-0" />
                 <div className="flex-1 min-w-0">
-                  <div className="text-white/40 text-xs mb-0.5">رقم الجوال</div>
+                  <div className="text-muted-foreground text-xs mb-0.5">رقم الجوال</div>
                   <div
-                    className="text-white text-sm font-bold font-numbers"
+                    className="text-foreground text-sm font-bold font-numbers"
                     dir="ltr"
                   >
                     {user.phone}
@@ -437,25 +438,25 @@ export default function Account() {
               </div>
 
               {/* Email */}
-              <div className="flex items-center gap-3 p-3 rounded-xl bg-white/3 border border-white/5">
-                <Mail className="w-4 h-4 text-white/30 flex-shrink-0" />
+              <div className="flex items-center gap-3 p-3 rounded-xl bg-secondary/40 border border-border">
+                <Mail className="w-4 h-4 text-muted-foreground/70 flex-shrink-0" />
                 {editing ? (
                   <input
                     value={editForm.email}
                     onChange={e =>
                       setEditForm(f => ({ ...f, email: e.target.value }))
                     }
-                    className="flex-1 bg-transparent text-white text-sm outline-none placeholder:text-white/20"
+                    className="flex-1 bg-transparent text-foreground text-sm outline-none placeholder:text-muted-foreground/60"
                     placeholder="البريد الإلكتروني (اختياري)"
                     dir="ltr"
                   />
                 ) : (
                   <div className="flex-1 min-w-0">
-                    <div className="text-white/40 text-xs mb-0.5">
+                    <div className="text-muted-foreground text-xs mb-0.5">
                       البريد الإلكتروني
                     </div>
                     <div
-                      className="text-white text-sm font-bold truncate"
+                      className="text-foreground text-sm font-bold truncate"
                       dir="ltr"
                     >
                       {user.email || "غير محدد"}
@@ -465,11 +466,11 @@ export default function Account() {
               </div>
 
               {/* Age */}
-              <div className="flex items-center gap-3 p-3 rounded-xl bg-white/3 border border-white/5">
-                <Calendar className="w-4 h-4 text-white/30 flex-shrink-0" />
+              <div className="flex items-center gap-3 p-3 rounded-xl bg-secondary/40 border border-border">
+                <Calendar className="w-4 h-4 text-muted-foreground/70 flex-shrink-0" />
                 <div className="flex-1 min-w-0">
-                  <div className="text-white/40 text-xs mb-0.5">العمر</div>
-                  <div className="text-white text-sm font-bold">
+                  <div className="text-muted-foreground text-xs mb-0.5">العمر</div>
+                  <div className="text-foreground text-sm font-bold">
                     {user.age} سنة —{" "}
                     <span style={{ color: ageCfg.color }}>{ageCfg.label}</span>
                   </div>
@@ -477,11 +478,11 @@ export default function Account() {
               </div>
 
               {/* Addiction Type */}
-              <div className="flex items-center gap-3 p-3 rounded-xl bg-white/3 border border-white/5">
-                <Shield className="w-4 h-4 text-white/30 flex-shrink-0" />
+              <div className="flex items-center gap-3 p-3 rounded-xl bg-secondary/40 border border-border">
+                <Shield className="w-4 h-4 text-muted-foreground/70 flex-shrink-0" />
                 {editing ? (
                   <div className="flex-1">
-                    <div className="text-white/40 text-xs mb-1.5">
+                    <div className="text-muted-foreground text-xs mb-1.5">
                       نوع ما تريد الوقاية منه
                     </div>
                     <div className="flex flex-wrap gap-1.5">
@@ -501,8 +502,8 @@ export default function Account() {
                                 }
                               : {
                                   background: "transparent",
-                                  borderColor: "rgba(255,255,255,0.1)",
-                                  color: "rgba(255,255,255,0.4)",
+                                  borderColor: "var(--border)",
+                                  color: "var(--muted-foreground)",
                                 }
                           }
                         >
@@ -513,10 +514,10 @@ export default function Account() {
                   </div>
                 ) : (
                   <div className="flex-1 min-w-0">
-                    <div className="text-white/40 text-xs mb-0.5">
+                    <div className="text-muted-foreground text-xs mb-0.5">
                       نوع الوقاية
                     </div>
-                    <div className="text-white text-sm font-bold truncate">
+                    <div className="text-foreground text-sm font-bold truncate">
                       {user.addictionType || "غير محدد"}
                     </div>
                   </div>
@@ -524,13 +525,13 @@ export default function Account() {
               </div>
 
               {/* Join Date */}
-              <div className="flex items-center gap-3 p-3 rounded-xl bg-white/3 border border-white/5">
-                <Star className="w-4 h-4 text-white/30 flex-shrink-0" />
+              <div className="flex items-center gap-3 p-3 rounded-xl bg-secondary/40 border border-border">
+                <Star className="w-4 h-4 text-muted-foreground/70 flex-shrink-0" />
                 <div className="flex-1 min-w-0">
-                  <div className="text-white/40 text-xs mb-0.5">
+                  <div className="text-muted-foreground text-xs mb-0.5">
                     تاريخ الانضمام
                   </div>
-                  <div className="text-white text-sm font-bold">
+                  <div className="text-foreground text-sm font-bold">
                     {user.joinDate
                       ? new Date(user.joinDate).toLocaleDateString("ar-SA", {
                           year: "numeric",
@@ -545,16 +546,16 @@ export default function Account() {
           </div>
 
           {/* Change Password */}
-          <div className="rounded-2xl glass-card border border-white/8 p-4">
+          <div className="rounded-2xl glass-card border border-border p-4">
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-white font-bold text-sm flex items-center gap-2">
+              <h3 className="text-foreground font-bold text-sm flex items-center gap-2">
                 <Lock className="w-4 h-4" style={{ color: ageCfg.color }} />
                 كلمة المرور
               </h3>
               {!changingPassword && (
                 <button
                   onClick={() => setChangingPassword(true)}
-                  className="flex items-center gap-1 text-xs px-3 py-1.5 rounded-lg border border-white/10 text-white/50 hover:text-white hover:border-white/20 transition-all"
+                  className="flex items-center gap-1 text-xs px-3 py-1.5 rounded-lg border border-border text-muted-foreground hover:text-foreground hover:border-border transition-all"
                 >
                   <Edit3 className="w-3 h-3" />
                   تغيير
@@ -571,8 +572,8 @@ export default function Account() {
                   className="space-y-3 overflow-hidden"
                 >
                   {/* Current Password */}
-                  <div className="flex items-center gap-3 p-3 rounded-xl bg-white/3 border border-white/5">
-                    <Lock className="w-4 h-4 text-white/30 flex-shrink-0" />
+                  <div className="flex items-center gap-3 p-3 rounded-xl bg-secondary/40 border border-border">
+                    <Lock className="w-4 h-4 text-muted-foreground/70 flex-shrink-0" />
                     <input
                       type={showCurrentPass ? "text" : "password"}
                       value={passwordForm.current}
@@ -582,13 +583,13 @@ export default function Account() {
                           current: e.target.value,
                         }))
                       }
-                      className="flex-1 bg-transparent text-white text-sm outline-none placeholder:text-white/20"
+                      className="flex-1 bg-transparent text-foreground text-sm outline-none placeholder:text-muted-foreground/60"
                       placeholder="كلمة المرور الحالية"
                       dir="rtl"
                     />
                     <button
                       onClick={() => setShowCurrentPass(!showCurrentPass)}
-                      className="text-white/30"
+                      className="text-muted-foreground/70"
                     >
                       {showCurrentPass ? (
                         <EyeOff className="w-4 h-4" />
@@ -599,8 +600,8 @@ export default function Account() {
                   </div>
 
                   {/* New Password */}
-                  <div className="flex items-center gap-3 p-3 rounded-xl bg-white/3 border border-white/5">
-                    <Lock className="w-4 h-4 text-white/30 flex-shrink-0" />
+                  <div className="flex items-center gap-3 p-3 rounded-xl bg-secondary/40 border border-border">
+                    <Lock className="w-4 h-4 text-muted-foreground/70 flex-shrink-0" />
                     <input
                       type={showNewPass ? "text" : "password"}
                       value={passwordForm.newPass}
@@ -610,13 +611,13 @@ export default function Account() {
                           newPass: e.target.value,
                         }))
                       }
-                      className="flex-1 bg-transparent text-white text-sm outline-none placeholder:text-white/20"
+                      className="flex-1 bg-transparent text-foreground text-sm outline-none placeholder:text-muted-foreground/60"
                       placeholder="كلمة المرور الجديدة"
                       dir="rtl"
                     />
                     <button
                       onClick={() => setShowNewPass(!showNewPass)}
-                      className="text-white/30"
+                      className="text-muted-foreground/70"
                     >
                       {showNewPass ? (
                         <EyeOff className="w-4 h-4" />
@@ -627,8 +628,8 @@ export default function Account() {
                   </div>
 
                   {/* Confirm New Password */}
-                  <div className="flex items-center gap-3 p-3 rounded-xl bg-white/3 border border-white/5">
-                    <Lock className="w-4 h-4 text-white/30 flex-shrink-0" />
+                  <div className="flex items-center gap-3 p-3 rounded-xl bg-secondary/40 border border-border">
+                    <Lock className="w-4 h-4 text-muted-foreground/70 flex-shrink-0" />
                     <input
                       type="password"
                       value={passwordForm.confirm}
@@ -638,7 +639,7 @@ export default function Account() {
                           confirm: e.target.value,
                         }))
                       }
-                      className="flex-1 bg-transparent text-white text-sm outline-none placeholder:text-white/20"
+                      className="flex-1 bg-transparent text-foreground text-sm outline-none placeholder:text-muted-foreground/60"
                       placeholder="تأكيد كلمة المرور الجديدة"
                       dir="rtl"
                     />
@@ -654,14 +655,14 @@ export default function Account() {
                           confirm: "",
                         });
                       }}
-                      className="flex-1 py-2.5 rounded-xl border border-white/10 text-white/50 text-xs font-bold hover:text-white transition-all"
+                      className="flex-1 py-2.5 rounded-xl border border-border text-muted-foreground text-xs font-bold hover:text-foreground transition-all"
                     >
                       إلغاء
                     </button>
                     <button
                       onClick={handleChangePassword}
                       disabled={loading}
-                      className="flex-1 py-2.5 rounded-xl text-white text-xs font-bold transition-all disabled:opacity-50"
+                      className="flex-1 py-2.5 rounded-xl text-foreground text-xs font-bold transition-all disabled:opacity-50"
                       style={{ background: ageCfg.color }}
                     >
                       {loading ? "جاري التغيير..." : "تغيير كلمة المرور"}
@@ -672,16 +673,16 @@ export default function Account() {
             </AnimatePresence>
 
             {!changingPassword && (
-              <div className="flex items-center gap-3 p-3 rounded-xl bg-white/3 border border-white/5">
-                <Lock className="w-4 h-4 text-white/30" />
-                <span className="text-white/40 text-sm">••••••••</span>
+              <div className="flex items-center gap-3 p-3 rounded-xl bg-secondary/40 border border-border">
+                <Lock className="w-4 h-4 text-muted-foreground/70" />
+                <span className="text-muted-foreground text-sm">••••••••</span>
               </div>
             )}
           </div>
 
           {/* Quick Links */}
-          <div className="rounded-2xl glass-card border border-white/8 p-4">
-            <h3 className="text-white font-bold text-sm mb-3 flex items-center gap-2">
+          <div className="rounded-2xl glass-card border border-border p-4">
+            <h3 className="text-foreground font-bold text-sm mb-3 flex items-center gap-2">
               <Star className="w-4 h-4" style={{ color: ageCfg.color }} />
               روابط سريعة
             </h3>
@@ -711,11 +712,17 @@ export default function Account() {
                   path: "/lectures",
                   color: "#0EA5E9",
                 },
+                {
+                  icon: SettingsIcon,
+                  label: "الإعدادات",
+                  path: "/settings",
+                  color: "#EC4899",
+                },
               ].map(link => (
                 <button
                   key={link.path}
                   onClick={() => navigate(link.path)}
-                  className="flex items-center gap-3 w-full p-3 rounded-xl bg-white/3 border border-white/5 hover:bg-white/5 transition-all text-right"
+                  className="flex items-center gap-3 w-full p-3 rounded-xl bg-secondary/40 border border-border hover:bg-secondary/60 transition-all text-right"
                 >
                   <div
                     className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
@@ -726,10 +733,10 @@ export default function Account() {
                       style={{ color: link.color }}
                     />
                   </div>
-                  <span className="text-white text-sm font-bold flex-1">
+                  <span className="text-foreground text-sm font-bold flex-1">
                     {link.label}
                   </span>
-                  <ChevronLeft className="w-4 h-4 text-white/20" />
+                  <ChevronLeft className="w-4 h-4 text-muted-foreground/60" />
                 </button>
               ))}
             </div>
@@ -738,10 +745,10 @@ export default function Account() {
           {/* Logout */}
           <button
             onClick={handleLogout}
-            className="w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-[#EF4444]/10 border border-[#EF4444]/20 hover:bg-[#EF4444]/20 transition-all"
+            className="w-full flex items-center justify-center gap-2 py-3.5 rounded-2xl bg-destructive/10 border border-destructive/20 hover:bg-destructive/20 transition-all"
           >
-            <LogOut className="w-4 h-4 text-[#EF4444]" />
-            <span className="text-[#EF4444] text-sm font-bold">
+            <LogOut className="w-4 h-4 text-destructive" />
+            <span className="text-destructive text-sm font-bold">
               تسجيل الخروج
             </span>
           </button>

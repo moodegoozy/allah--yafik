@@ -95,7 +95,7 @@ export default function LectureView() {
         <div className="flex items-center justify-center min-h-[60vh]">
           <div className="text-center">
             <div className="text-6xl mb-4">📚</div>
-            <h2 className="text-white text-2xl font-black mb-2">
+            <h2 className="text-foreground text-2xl font-black mb-2">
               المحاضرة غير موجودة
             </h2>
             <button
@@ -139,12 +139,12 @@ export default function LectureView() {
   return (
     <div className="app-container bg-gradient-navy">
       {/* Top Progress Bar */}
-      <div className="h-1 bg-white/5 fixed top-0 left-0 right-0 z-50">
+      <div className="h-1 bg-secondary/60 fixed top-0 left-0 right-0 z-50">
         <div
           className="h-full transition-all duration-300"
           style={{
             width: `${readProgress}%`,
-            background: `linear-gradient(to right, ${lecture.color}, #00D4AA)`,
+            background: `linear-gradient(to right, ${lecture.color}, oklch(0.75 0.18 175))`,
           }}
         />
       </div>
@@ -154,19 +154,19 @@ export default function LectureView() {
         <div className="flex items-center gap-3">
           <button
             onClick={() => navigate("/lectures")}
-            className="w-8 h-8 rounded-xl bg-white/5 flex items-center justify-center text-white/50"
+            className="w-8 h-8 rounded-xl bg-secondary/60 flex items-center justify-center text-muted-foreground"
           >
             <ChevronRight className="w-4 h-4" />
           </button>
           <div className="flex-1 min-w-0">
-            <h1 className="text-white font-black text-sm truncate">
+            <h1 className="text-foreground font-black text-sm truncate">
               {lecture.title}
             </h1>
-            <p className="text-white/40 text-xs">{lecture.speaker}</p>
+            <p className="text-muted-foreground text-xs">{lecture.speaker}</p>
           </div>
           <button
             onClick={() => setBookmarked(!bookmarked)}
-            className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all ${bookmarked ? "bg-[#F59E0B]/20 text-[#F59E0B]" : "bg-white/5 text-white/40"}`}
+            className={`w-8 h-8 rounded-xl flex items-center justify-center transition-all ${bookmarked ? "bg-accent/20 text-accent" : "bg-secondary/60 text-muted-foreground"}`}
           >
             <Bookmark
               className="w-4 h-4"
@@ -216,13 +216,13 @@ export default function LectureView() {
                     {lecture.category}
                   </span>
                 </div>
-                <h2 className="text-white font-black text-lg leading-tight">
+                <h2 className="text-foreground font-black text-lg leading-tight">
                   {lecture.title}
                 </h2>
               </div>
             </div>
 
-            <p className="text-white/50 text-xs mb-3">{lecture.subtitle}</p>
+            <p className="text-muted-foreground text-xs mb-3">{lecture.subtitle}</p>
 
             {/* Speaker */}
             <div className="flex items-center gap-2.5 mb-3">
@@ -236,23 +236,23 @@ export default function LectureView() {
                 {lecture.speaker.split(" ").slice(-1)[0].charAt(0)}
               </div>
               <div className="flex-1 min-w-0">
-                <div className="text-white font-bold text-xs">
+                <div className="text-foreground font-bold text-xs">
                   {lecture.speaker}
                 </div>
-                <div className="text-white/40 text-[10px]">
+                <div className="text-muted-foreground text-[10px]">
                   {lecture.speakerTitle}
                 </div>
               </div>
               <div className="flex items-center gap-1">
-                <Star className="w-3.5 h-3.5 text-[#F59E0B] fill-[#F59E0B]" />
-                <span className="text-white font-bold text-xs">
+                <Star className="w-3.5 h-3.5 text-accent fill-amber-500" />
+                <span className="text-foreground font-bold text-xs">
                   {lecture.rating}
                 </span>
               </div>
             </div>
 
             {/* Meta */}
-            <div className="flex items-center gap-3 text-white/40 text-xs flex-wrap">
+            <div className="flex items-center gap-3 text-muted-foreground text-xs flex-wrap">
               <span className="flex items-center gap-1">
                 <Clock className="w-3.5 h-3.5" />
                 {lecture.duration}
@@ -274,10 +274,10 @@ export default function LectureView() {
         </div>
 
         {/* Objectives */}
-        <div className="px-4 py-4 border-t border-white/5">
+        <div className="px-4 py-4 border-t border-border">
           <div className="flex items-center gap-2 mb-3">
-            <Target className="w-4 h-4 text-[#00D4AA]" />
-            <h2 className="text-white font-bold text-sm">أهداف المحاضرة</h2>
+            <Target className="w-4 h-4 text-primary" />
+            <h2 className="text-foreground font-bold text-sm">أهداف المحاضرة</h2>
           </div>
           <div className="space-y-2">
             {lecture.objectives.map((obj, i) => (
@@ -300,7 +300,7 @@ export default function LectureView() {
                     {i + 1}
                   </span>
                 </div>
-                <span className="text-white/70 text-xs leading-relaxed">
+                <span className="text-foreground/70 text-xs leading-relaxed">
                   {obj}
                 </span>
               </div>
@@ -310,10 +310,10 @@ export default function LectureView() {
 
         {/* Audio Player */}
         {lecture.type === "audio" && (
-          <div className="px-4 py-4 border-t border-white/5">
+          <div className="px-4 py-4 border-t border-border">
             <div className="flex items-center gap-2 mb-3">
               <Music2 className="w-4 h-4" style={{ color: lecture.color }} />
-              <h2 className="text-white font-bold text-sm">
+              <h2 className="text-foreground font-bold text-sm">
                 مشغّل المحاضرة الصوتية
               </h2>
             </div>
@@ -327,16 +327,16 @@ export default function LectureView() {
         )}
 
         {/* Sections */}
-        <div className="px-4 py-4 border-t border-white/5">
+        <div className="px-4 py-4 border-t border-border">
           <div className="flex items-center gap-2 mb-3">
-            <BookOpen className="w-4 h-4 text-[#00D4AA]" />
-            <h2 className="text-white font-bold text-sm">محتوى المحاضرة</h2>
+            <BookOpen className="w-4 h-4 text-primary" />
+            <h2 className="text-foreground font-bold text-sm">محتوى المحاضرة</h2>
           </div>
           <div className="space-y-3">
             {lecture.sections.map((section, idx) => (
               <div
                 key={idx}
-                className="rounded-xl border border-white/7 overflow-hidden bg-white/[0.02]"
+                className="rounded-xl border border-border overflow-hidden bg-foreground/[0.02]"
               >
                 <button
                   className="w-full flex items-center justify-between p-3.5 text-right"
@@ -352,14 +352,14 @@ export default function LectureView() {
                     >
                       {idx + 1}
                     </div>
-                    <span className="text-white font-bold text-sm">
+                    <span className="text-foreground font-bold text-sm">
                       {section.title}
                     </span>
                   </div>
                   {expandedSections.has(idx) ? (
-                    <ChevronUp className="w-4 h-4 text-white/40" />
+                    <ChevronUp className="w-4 h-4 text-muted-foreground" />
                   ) : (
-                    <ChevronDown className="w-4 h-4 text-white/40" />
+                    <ChevronDown className="w-4 h-4 text-muted-foreground" />
                   )}
                 </button>
 
@@ -371,14 +371,14 @@ export default function LectureView() {
                       exit={{ height: 0, opacity: 0 }}
                       transition={{ duration: 0.3 }}
                     >
-                      <div className="px-3.5 pb-3.5 border-t border-white/5">
-                        <div className="mt-3 text-white/70 text-xs leading-loose whitespace-pre-line">
+                      <div className="px-3.5 pb-3.5 border-t border-border">
+                        <div className="mt-3 text-foreground/70 text-xs leading-loose whitespace-pre-line">
                           {section.content.split("\n").map((line, li) => {
                             if (line.startsWith("**") && line.endsWith("**")) {
                               return (
                                 <p
                                   key={li}
-                                  className="text-white font-bold mt-3 mb-1"
+                                  className="text-foreground font-bold mt-3 mb-1"
                                 >
                                   {line.replace(/\*\*/g, "")}
                                 </p>
@@ -392,7 +392,7 @@ export default function LectureView() {
                                     pi % 2 === 1 ? (
                                       <strong
                                         key={pi}
-                                        className="text-white font-bold"
+                                        className="text-foreground font-bold"
                                       >
                                         {part}
                                       </strong>
@@ -425,7 +425,7 @@ export default function LectureView() {
                               className="w-4 h-4 flex-shrink-0 mt-0.5"
                               style={{ color: lecture.color }}
                             />
-                            <p className="text-white font-bold text-xs leading-relaxed">
+                            <p className="text-foreground font-bold text-xs leading-relaxed">
                               {section.highlight}
                             </p>
                           </div>
@@ -436,7 +436,7 @@ export default function LectureView() {
                             {section.stats.map((stat, si) => (
                               <div
                                 key={si}
-                                className="p-2.5 rounded-xl bg-white/[0.03] border border-white/5 text-center"
+                                className="p-2.5 rounded-xl bg-foreground/[0.03] border border-border text-center"
                               >
                                 <div
                                   className="text-lg font-black font-numbers mb-0.5"
@@ -444,7 +444,7 @@ export default function LectureView() {
                                 >
                                   {stat.value}
                                 </div>
-                                <div className="text-white/40 text-[10px]">
+                                <div className="text-muted-foreground text-[10px]">
                                   {stat.label}
                                 </div>
                               </div>
@@ -461,24 +461,24 @@ export default function LectureView() {
         </div>
 
         {/* Quiz Section */}
-        <div className="px-4 py-4 border-t border-white/5">
+        <div className="px-4 py-4 border-t border-border">
           <div className="flex items-center gap-2 mb-4">
-            <Brain className="w-4 h-4 text-[#8B5CF6]" />
-            <h2 className="text-white font-bold text-sm">اختبر فهمك</h2>
+            <Brain className="w-4 h-4 text-violet-500" />
+            <h2 className="text-foreground font-bold text-sm">اختبر فهمك</h2>
             <span className="badge-purple text-[10px]">
               {lecture.quiz.length} أسئلة
             </span>
           </div>
 
           {!quizStarted && !quizCompleted && (
-            <div className="p-6 rounded-xl border border-[#8B5CF6]/20 bg-[#8B5CF6]/[0.05] text-center">
-              <div className="w-14 h-14 rounded-xl bg-[#8B5CF6]/20 flex items-center justify-center mx-auto mb-3">
-                <Brain className="w-7 h-7 text-[#8B5CF6]" />
+            <div className="p-6 rounded-xl border border-violet-500/20 bg-violet-500/[0.05] text-center">
+              <div className="w-14 h-14 rounded-xl bg-violet-500/20 flex items-center justify-center mx-auto mb-3">
+                <Brain className="w-7 h-7 text-violet-500" />
               </div>
-              <h3 className="text-white font-black text-base mb-1">
+              <h3 className="text-foreground font-black text-base mb-1">
                 هل أنت مستعد؟
               </h3>
-              <p className="text-white/50 text-xs mb-4">
+              <p className="text-muted-foreground text-xs mb-4">
                 {lecture.quiz.length} أسئلة لاختبار ما تعلمته
               </p>
               <button
@@ -491,10 +491,10 @@ export default function LectureView() {
           )}
 
           {quizStarted && !quizCompleted && (
-            <div className="p-4 rounded-xl border border-[#8B5CF6]/20 bg-white/[0.02]">
+            <div className="p-4 rounded-xl border border-violet-500/20 bg-foreground/[0.02]">
               {/* Progress */}
               <div className="flex items-center justify-between mb-3">
-                <span className="text-white/40 text-xs">
+                <span className="text-muted-foreground text-xs">
                   السؤال {currentQuestion + 1} من {lecture.quiz.length}
                 </span>
                 <div className="flex gap-1">
@@ -510,14 +510,14 @@ export default function LectureView() {
                               : "#EF4444"
                             : qi === currentQuestion
                               ? "#8B5CF6"
-                              : "rgba(255,255,255,0.1)",
+                              : "var(--border)",
                       }}
                     />
                   ))}
                 </div>
               </div>
 
-              <h3 className="text-white font-bold text-sm mb-4 leading-relaxed">
+              <h3 className="text-foreground font-bold text-sm mb-4 leading-relaxed">
                 {lecture.quiz[currentQuestion].question}
               </h3>
 
@@ -528,14 +528,14 @@ export default function LectureView() {
                     oi === lecture.quiz[currentQuestion].correct;
                   const showResult = selectedAnswer !== null;
 
-                  let bg = "bg-white/[0.03] border border-white/7";
-                  let textColor = "text-white/70";
+                  let bg = "bg-foreground/[0.03] border border-border";
+                  let textColor = "text-foreground/70";
                   if (showResult && isCorrect) {
-                    bg = "border border-[#10B981]/50 bg-[#10B981]/10";
-                    textColor = "text-[#10B981]";
+                    bg = "border border-emerald-500/50 bg-emerald-500/10";
+                    textColor = "text-emerald-500";
                   } else if (showResult && isSelected && !isCorrect) {
-                    bg = "border border-[#EF4444]/50 bg-[#EF4444]/10";
-                    textColor = "text-[#EF4444]";
+                    bg = "border border-destructive/50 bg-destructive/10";
+                    textColor = "text-destructive";
                   }
 
                   return (
@@ -548,10 +548,10 @@ export default function LectureView() {
                       <div
                         className={`w-6 h-6 rounded-lg flex items-center justify-center flex-shrink-0 text-xs font-black transition-all ${
                           showResult && isCorrect
-                            ? "bg-[#10B981]/20 text-[#10B981]"
+                            ? "bg-emerald-500/20 text-emerald-500"
                             : showResult && isSelected && !isCorrect
-                              ? "bg-[#EF4444]/20 text-[#EF4444]"
-                              : "bg-white/5 text-white/40"
+                              ? "bg-destructive/20 text-destructive"
+                              : "bg-secondary/60 text-muted-foreground"
                         }`}
                       >
                         {showResult && isCorrect ? (
@@ -589,9 +589,9 @@ export default function LectureView() {
                   <div className="flex items-center gap-2 mb-1">
                     {answeredQuestions[answeredQuestions.length - 1]
                       ?.correct ? (
-                      <CheckCircle2 className="w-3.5 h-3.5 text-[#10B981]" />
+                      <CheckCircle2 className="w-3.5 h-3.5 text-emerald-500" />
                     ) : (
-                      <XCircle className="w-3.5 h-3.5 text-[#EF4444]" />
+                      <XCircle className="w-3.5 h-3.5 text-destructive" />
                     )}
                     <span
                       className="font-bold text-xs"
@@ -607,7 +607,7 @@ export default function LectureView() {
                         : "إجابة خاطئة"}
                     </span>
                   </div>
-                  <p className="text-white/65 text-[11px] leading-relaxed">
+                  <p className="text-muted-foreground text-[11px] leading-relaxed">
                     {lecture.quiz[currentQuestion].explanation}
                   </p>
                 </motion.div>
@@ -638,31 +638,31 @@ export default function LectureView() {
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
-              className="p-6 rounded-xl border border-[#00D4AA]/20 bg-white/[0.02] text-center"
+              className="p-6 rounded-xl border border-primary/20 bg-foreground/[0.02] text-center"
             >
               <div
                 className="w-16 h-16 rounded-full mx-auto mb-3 flex items-center justify-center"
                 style={{
                   background:
                     score === lecture.quiz.length
-                      ? "linear-gradient(135deg, #F59E0B, #FBBF24)"
+                      ? "linear-gradient(135deg, oklch(0.80 0.16 85), oklch(0.85 0.15 85))"
                       : score >= lecture.quiz.length * 0.6
-                        ? "linear-gradient(135deg, #00D4AA, #0EA5E9)"
-                        : "linear-gradient(135deg, #8B5CF6, #EC4899)",
+                        ? "linear-gradient(135deg, oklch(0.75 0.18 175), oklch(0.68 0.16 230))"
+                        : "linear-gradient(135deg, oklch(0.55 0.24 290), oklch(0.65 0.24 350))",
                 }}
               >
-                <Award className="w-8 h-8 text-[#060B18]" />
+                <Award className="w-8 h-8 text-primary-foreground" />
               </div>
-              <h3 className="text-white font-black text-lg mb-1">
+              <h3 className="text-foreground font-black text-lg mb-1">
                 {score === lecture.quiz.length
                   ? "ممتاز! إجابات مثالية"
                   : score >= lecture.quiz.length * 0.6
                     ? "جيد جداً! استمر"
                     : "تحتاج مراجعة"}
               </h3>
-              <p className="text-white/50 text-xs mb-4">
+              <p className="text-muted-foreground text-xs mb-4">
                 أجبت على{" "}
-                <span className="text-[#00D4AA] font-black">{score}</span> من{" "}
+                <span className="text-primary font-black">{score}</span> من{" "}
                 <span className="font-black">{lecture.quiz.length}</span> أسئلة
                 بشكل صحيح
               </p>
@@ -684,8 +684,8 @@ export default function LectureView() {
                     onClick={() => setShowCertificate(true)}
                     className="w-full py-2.5 rounded-xl font-bold text-sm flex items-center justify-center gap-2 transition-all"
                     style={{
-                      background: "linear-gradient(135deg, #F59E0B, #FBBF24)",
-                      color: "#060B18",
+                      background: "linear-gradient(135deg, oklch(0.80 0.16 85), oklch(0.85 0.15 85))",
+                      color: "var(--background)",
                     }}
                   >
                     <Award className="w-4 h-4" />
@@ -704,11 +704,11 @@ export default function LectureView() {
         </div>
 
         {/* Key Takeaways */}
-        <div className="px-4 py-4 border-t border-white/5">
+        <div className="px-4 py-4 border-t border-border">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-[#F59E0B]" />
-              <h2 className="text-white font-bold text-sm">النقاط الرئيسية</h2>
+              <Sparkles className="w-4 h-4 text-accent" />
+              <h2 className="text-foreground font-bold text-sm">النقاط الرئيسية</h2>
             </div>
             <LectureSummaryExport
               title={lecture.title}
@@ -725,12 +725,12 @@ export default function LectureView() {
             {lecture.keyTakeaways.map((point, i) => (
               <div
                 key={i}
-                className="flex items-start gap-2.5 p-2.5 rounded-xl bg-white/[0.03] border border-white/5"
+                className="flex items-start gap-2.5 p-2.5 rounded-xl bg-foreground/[0.03] border border-border"
               >
-                <div className="w-5 h-5 rounded-full bg-[#F59E0B]/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <CheckCircle2 className="w-3 h-3 text-[#F59E0B]" />
+                <div className="w-5 h-5 rounded-full bg-accent/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <CheckCircle2 className="w-3 h-3 text-accent" />
                 </div>
-                <span className="text-white/75 text-xs leading-relaxed">
+                <span className="text-foreground/75 text-xs leading-relaxed">
                   {point}
                 </span>
               </div>
@@ -739,22 +739,22 @@ export default function LectureView() {
         </div>
 
         {/* Resources */}
-        <div className="px-4 py-4 border-t border-white/5">
+        <div className="px-4 py-4 border-t border-border">
           <div className="flex items-center gap-2 mb-3">
-            <FileText className="w-4 h-4 text-[#0EA5E9]" />
-            <h2 className="text-white font-bold text-sm">مصادر إضافية</h2>
+            <FileText className="w-4 h-4 text-sky-500" />
+            <h2 className="text-foreground font-bold text-sm">مصادر إضافية</h2>
           </div>
           <div className="space-y-2">
             {lecture.resources.map((res, i) => (
               <div
                 key={i}
-                className="flex items-center justify-between p-2.5 rounded-xl bg-white/[0.03] border border-white/5"
+                className="flex items-center justify-between p-2.5 rounded-xl bg-foreground/[0.03] border border-border"
               >
                 <div className="flex items-center gap-2.5">
-                  <div className="w-7 h-7 rounded-lg bg-[#0EA5E9]/15 flex items-center justify-center">
-                    <BookOpen className="w-3.5 h-3.5 text-[#0EA5E9]" />
+                  <div className="w-7 h-7 rounded-lg bg-sky-500/15 flex items-center justify-center">
+                    <BookOpen className="w-3.5 h-3.5 text-sky-500" />
                   </div>
-                  <span className="text-white/70 text-xs">{res.title}</span>
+                  <span className="text-foreground/70 text-xs">{res.title}</span>
                 </div>
                 <span className="badge-teal text-[10px]">{res.type}</span>
               </div>
@@ -763,8 +763,8 @@ export default function LectureView() {
         </div>
 
         {/* Speaker Bio */}
-        <div className="px-4 py-4 border-t border-white/5">
-          <div className="p-3.5 rounded-xl bg-white/[0.03] border border-white/7">
+        <div className="px-4 py-4 border-t border-border">
+          <div className="p-3.5 rounded-xl bg-foreground/[0.03] border border-border">
             <div className="flex items-center gap-2.5 mb-2">
               <div
                 className="w-10 h-10 rounded-xl flex items-center justify-center font-black"
@@ -776,18 +776,18 @@ export default function LectureView() {
                 {lecture.speaker.split(" ").slice(-1)[0].charAt(0)}
               </div>
               <div>
-                <div className="text-white font-bold text-xs">
+                <div className="text-foreground font-bold text-xs">
                   {lecture.speaker}
                 </div>
-                <div className="text-white/40 text-[10px]">
+                <div className="text-muted-foreground text-[10px]">
                   {lecture.speakerTitle}
                 </div>
               </div>
             </div>
-            <p className="text-white/50 text-[11px] leading-relaxed">
+            <p className="text-muted-foreground text-[11px] leading-relaxed">
               {lecture.speakerBio}
             </p>
-            <div className="mt-2 pt-2 border-t border-white/5 flex items-center gap-1.5 text-white/30 text-[10px]">
+            <div className="mt-2 pt-2 border-t border-border flex items-center gap-1.5 text-muted-foreground/70 text-[10px]">
               <Shield className="w-3 h-3" />
               <span>{lecture.institution}</span>
             </div>
@@ -795,7 +795,7 @@ export default function LectureView() {
         </div>
 
         {/* Tags */}
-        <div className="px-4 py-4 border-t border-white/5">
+        <div className="px-4 py-4 border-t border-border">
           <div className="flex flex-wrap gap-1.5">
             {lecture.tags.map((tag, i) => (
               <span key={i} className="badge-teal text-[10px]">
@@ -806,18 +806,18 @@ export default function LectureView() {
         </div>
 
         {/* Rating */}
-        <div className="px-4 py-4 border-t border-white/5 mb-4">
+        <div className="px-4 py-4 border-t border-border mb-4">
           <LectureRating lectureId={lecture.id} color={lecture.color} />
         </div>
 
         {/* CTA */}
         <div className="px-4 pb-6">
-          <div className="p-4 rounded-xl border border-[#00D4AA]/15 bg-[#00D4AA]/[0.05] relative overflow-hidden">
+          <div className="p-4 rounded-xl border border-primary/15 bg-primary/[0.05] relative overflow-hidden">
             <div className="relative z-10">
-              <h3 className="text-white font-black text-sm mb-1">
+              <h3 className="text-foreground font-black text-sm mb-1">
                 هل تحتاج دعماً شخصياً؟
               </h3>
-              <p className="text-white/50 text-[11px] mb-3">
+              <p className="text-muted-foreground text-[11px] mb-3">
                 فريق "الله يعافيك" متاح للمساعدة والإرشاد
               </p>
               <a

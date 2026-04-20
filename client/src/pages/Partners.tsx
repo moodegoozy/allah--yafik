@@ -36,7 +36,7 @@ const partnerSectors = [
     title: "القطاع الصحي",
     subtitle: "الدعم الطبي والعلاجي",
     color: "#EF4444",
-    gradient: "from-[#EF4444] to-[#F97316]",
+    gradient: "from-red-500 to-orange-500",
     bgGlow: "rgba(239, 68, 68, 0.08)",
     borderColor: "rgba(239, 68, 68, 0.3)",
     description:
@@ -79,7 +79,7 @@ const partnerSectors = [
     title: "القطاع الأكاديمي",
     subtitle: "الدعم التعليمي والبحثي",
     color: "#3B82F6",
-    gradient: "from-[#3B82F6] to-[#8B5CF6]",
+    gradient: "from-blue-500 to-violet-500",
     bgGlow: "rgba(59, 130, 246, 0.08)",
     borderColor: "rgba(59, 130, 246, 0.3)",
     description:
@@ -110,7 +110,7 @@ const partnerSectors = [
     title: "القطاع الأمني والعسكري",
     subtitle: "الدعم الأمني والحماية",
     color: "#10B981",
-    gradient: "from-[#10B981] to-[#0EA5E9]",
+    gradient: "from-emerald-500 to-sky-500",
     bgGlow: "rgba(16, 185, 129, 0.08)",
     borderColor: "rgba(16, 185, 129, 0.3)",
     description:
@@ -141,7 +141,7 @@ const partnerSectors = [
     title: "القطاع الديني",
     subtitle: "التوعية الدينية والروحية",
     color: "#F59E0B",
-    gradient: "from-[#F59E0B] to-[#FBBF24]",
+    gradient: "from-amber-500 to-amber-400",
     bgGlow: "rgba(245, 158, 11, 0.08)",
     borderColor: "rgba(245, 158, 11, 0.3)",
     description:
@@ -172,7 +172,7 @@ const partnerSectors = [
     title: "مكافحة المخدرات",
     subtitle: "الدعم والإحصائيات الرسمية",
     color: "#8B5CF6",
-    gradient: "from-[#8B5CF6] to-[#EC4899]",
+    gradient: "from-violet-500 to-pink-500",
     bgGlow: "rgba(139, 92, 246, 0.08)",
     borderColor: "rgba(139, 92, 246, 0.3)",
     description:
@@ -242,28 +242,28 @@ export default function Partners() {
   return (
     <div className="app-container bg-gradient-navy overflow-hidden">
       {/* Ambient Orbs */}
-      <div className="orb w-72 h-72 opacity-10 -top-16 -right-16" style={{ background: "#8B5CF6" }} />
-      <div className="orb w-56 h-56 opacity-6 top-40 -left-16" style={{ background: "#00D4AA" }} />
+      <div className="orb w-72 h-72 opacity-10 -top-16 -right-16" style={{ background: "oklch(0.55 0.25 290)" }} />
+      <div className="orb w-56 h-56 opacity-6 top-40 -left-16" style={{ background: "oklch(0.75 0.18 175)" }} />
 
       {/* Mobile Header */}
       <div className="mobile-header px-4 py-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <Link href="/dashboard">
-              <div className="p-2 rounded-xl glass-card border border-white/8">
-                <ArrowRight className="w-4 h-4 text-white/50" />
+              <div className="p-2 rounded-xl glass-card border border-border">
+                <ArrowRight className="w-4 h-4 text-muted-foreground" />
               </div>
             </Link>
             <div>
-              <h1 className="text-white font-black text-base">شبكة الدعم المؤسسي</h1>
-              <p className="text-white/40 text-[10px]">٥ قطاعات متخصصة</p>
+              <h1 className="text-foreground font-black text-base">شبكة الدعم المؤسسي</h1>
+              <p className="text-muted-foreground text-[10px]">٥ قطاعات متخصصة</p>
             </div>
           </div>
           <a
             href={`tel:${CONTACT_PHONE}`}
-            className="p-2.5 rounded-xl glass-card border border-[#00D4AA]/25"
+            className="p-2.5 rounded-xl glass-card border border-primary/25"
           >
-            <Phone className="w-4 h-4 text-[#00D4AA]" />
+            <Phone className="w-4 h-4 text-primary" />
           </a>
         </div>
       </div>
@@ -273,7 +273,7 @@ export default function Partners() {
         {/* National Stats - 2x2 grid */}
         <div className="grid grid-cols-2 gap-2.5">
           {nationalStats.map((stat, i) => (
-            <div key={i} className="glass-card p-3 rounded-xl border border-white/5">
+            <div key={i} className="glass-card p-3 rounded-xl border border-border">
               <div className="flex items-center gap-2 mb-1.5">
                 <div
                   className="w-6 h-6 rounded-lg flex items-center justify-center"
@@ -281,9 +281,9 @@ export default function Partners() {
                 >
                   <stat.icon className="w-3 h-3" style={{ color: stat.color }} />
                 </div>
-                <span className="text-white/40 text-[10px] leading-tight">{stat.label}</span>
+                <span className="text-muted-foreground text-[10px] leading-tight">{stat.label}</span>
               </div>
-              <div className="text-lg font-black text-white font-numbers">{stat.value}</div>
+              <div className="text-lg font-black text-foreground font-numbers">{stat.value}</div>
               <div className="text-[10px] mt-0.5" style={{ color: stat.color }}>{stat.change}</div>
             </div>
           ))}
@@ -293,7 +293,7 @@ export default function Partners() {
         <div className="flex items-center gap-2 overflow-x-auto pb-1 scrollbar-hide -mx-4 px-4">
           <button
             onClick={() => setActiveTab("all")}
-            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap flex-shrink-0 ${activeTab === "all" ? "bg-[#00D4AA] text-[#060B18]" : "glass-card text-white/50"}`}
+            className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap flex-shrink-0 ${activeTab === "all" ? "bg-primary text-primary-foreground" : "glass-card text-muted-foreground"}`}
           >
             الكل
           </button>
@@ -301,7 +301,7 @@ export default function Partners() {
             <button
               key={s.id}
               onClick={() => setActiveTab(s.id)}
-              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1 whitespace-nowrap flex-shrink-0 ${activeTab === s.id ? "text-white" : "glass-card text-white/50"}`}
+              className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1 whitespace-nowrap flex-shrink-0 ${activeTab === s.id ? "text-foreground" : "glass-card text-muted-foreground"}`}
               style={
                 activeTab === s.id
                   ? {
@@ -323,11 +323,11 @@ export default function Partners() {
           {filteredSectors.map(sector => (
             <div
               key={sector.id}
-              className="glass-card rounded-xl border border-white/5 overflow-hidden"
+              className="glass-card rounded-xl border border-border overflow-hidden"
             >
               {/* Sector Header */}
               <div
-                className="p-3.5 cursor-pointer active:bg-white/2"
+                className="p-3.5 cursor-pointer active:bg-secondary/30"
                 onClick={() =>
                   setExpandedSector(expandedSector === sector.id ? null : sector.id)
                 }
@@ -344,16 +344,16 @@ export default function Partners() {
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-0.5">
-                      <h3 className="text-sm font-black text-white truncate">{sector.title}</h3>
+                      <h3 className="text-sm font-black text-foreground truncate">{sector.title}</h3>
                     </div>
-                    <p className="text-white/40 text-[10px] leading-snug line-clamp-1">
+                    <p className="text-muted-foreground text-[10px] leading-snug line-clamp-1">
                       {sector.subtitle}
                     </p>
                   </div>
                   <div
                     className={`w-7 h-7 rounded-lg glass-card flex items-center justify-center transition-transform flex-shrink-0 ${expandedSector === sector.id ? "rotate-90" : ""}`}
                   >
-                    <ChevronLeft className="w-3.5 h-3.5 text-white/40" />
+                    <ChevronLeft className="w-3.5 h-3.5 text-muted-foreground" />
                   </div>
                 </div>
 
@@ -371,7 +371,7 @@ export default function Partners() {
                       <div className="text-sm font-black font-numbers" style={{ color: sector.color }}>
                         {st.value}
                       </div>
-                      <div className="text-white/30 text-[9px] leading-tight">{st.label}</div>
+                      <div className="text-muted-foreground/70 text-[9px] leading-tight">{st.label}</div>
                     </div>
                   ))}
                 </div>
@@ -379,15 +379,15 @@ export default function Partners() {
 
               {/* Expanded Content */}
               {expandedSector === sector.id && (
-                <div className="px-3.5 pb-3.5 border-t border-white/5">
+                <div className="px-3.5 pb-3.5 border-t border-border">
                   {/* Description */}
-                  <p className="text-white/50 text-xs leading-relaxed mt-3 mb-3">
+                  <p className="text-muted-foreground text-xs leading-relaxed mt-3 mb-3">
                     {sector.description}
                   </p>
 
                   {/* Services */}
                   <div className="mb-3">
-                    <h4 className="text-white text-xs font-bold mb-2 flex items-center gap-1.5">
+                    <h4 className="text-foreground text-xs font-bold mb-2 flex items-center gap-1.5">
                       <Zap className="w-3 h-3" style={{ color: sector.color }} />
                       الخدمات المقدمة
                     </h4>
@@ -405,7 +405,7 @@ export default function Partners() {
                             className="w-3 h-3 flex-shrink-0"
                             style={{ color: sector.color }}
                           />
-                          <span className="text-white/65 text-[11px]">{service}</span>
+                          <span className="text-muted-foreground text-[11px]">{service}</span>
                         </div>
                       ))}
                     </div>
@@ -413,7 +413,7 @@ export default function Partners() {
 
                   {/* Partners */}
                   <div className="mb-3">
-                    <h4 className="text-white text-xs font-bold mb-2 flex items-center gap-1.5">
+                    <h4 className="text-foreground text-xs font-bold mb-2 flex items-center gap-1.5">
                       <Building2 className="w-3 h-3" style={{ color: sector.color }} />
                       الجهات الشريكة
                     </h4>
@@ -421,7 +421,7 @@ export default function Partners() {
                       {sector.partners.map((partner, i) => (
                         <div
                           key={i}
-                          className="flex items-center justify-between p-2.5 rounded-lg glass-card border border-white/5"
+                          className="flex items-center justify-between p-2.5 rounded-lg glass-card border border-border"
                         >
                           <div className="flex items-center gap-2 min-w-0">
                             <div
@@ -431,10 +431,10 @@ export default function Partners() {
                               <Star className="w-3 h-3" style={{ color: sector.color }} />
                             </div>
                             <div className="min-w-0">
-                              <div className="text-white text-[11px] font-bold truncate">
+                              <div className="text-foreground text-[11px] font-bold truncate">
                                 {partner.name}
                               </div>
-                              <div className="text-white/30 text-[9px]">{partner.type}</div>
+                              <div className="text-muted-foreground/70 text-[9px]">{partner.type}</div>
                             </div>
                           </div>
                           <span
@@ -460,7 +460,7 @@ export default function Partners() {
                       border: `1px solid ${sector.color}20`,
                     }}
                   >
-                    <p className="text-white/50 text-[10px] mb-2">
+                    <p className="text-muted-foreground text-[10px] mb-2">
                       للتواصل والانضمام كشريك في هذا القطاع
                     </p>
                     <div className="flex gap-2">
@@ -477,7 +477,7 @@ export default function Partners() {
                         اتصل
                       </a>
                       <button
-                        className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-[11px] font-bold glass-card text-white/50 transition-all flex-1 justify-center"
+                        className="flex items-center gap-1.5 px-3 py-2 rounded-lg text-[11px] font-bold glass-card text-muted-foreground transition-all flex-1 justify-center"
                         onClick={() => {
                           window.location.href = `mailto:info@allahyeafik.sa`;
                         }}
@@ -494,29 +494,29 @@ export default function Partners() {
         </div>
 
         {/* Partnership CTA Banner */}
-        <div className="glass-card p-4 rounded-xl border border-[#00D4AA]/20 relative overflow-hidden">
-          <div className="orb w-40 h-40 opacity-20 -top-10 -right-10" style={{ background: "#00D4AA" }} />
+        <div className="glass-card p-4 rounded-xl border border-primary/20 relative overflow-hidden">
+          <div className="orb w-40 h-40 opacity-20 -top-10 -right-10" style={{ background: "oklch(0.75 0.18 175)" }} />
           <div className="relative z-10">
             <div className="flex items-center gap-2 mb-2">
-              <Sparkles className="w-3.5 h-3.5 text-[#00D4AA]" />
-              <span className="text-[#00D4AA] text-[10px] font-bold">انضم إلى المنظومة</span>
+              <Sparkles className="w-3.5 h-3.5 text-primary" />
+              <span className="text-primary text-[10px] font-bold">انضم إلى المنظومة</span>
             </div>
-            <h3 className="text-sm font-black text-white mb-1">
+            <h3 className="text-sm font-black text-foreground mb-1">
               هل مؤسستك مهتمة بالشراكة؟
             </h3>
-            <p className="text-white/45 text-[11px] mb-3 leading-relaxed">
+            <p className="text-muted-foreground text-[11px] mb-3 leading-relaxed">
               نرحب بجميع المؤسسات الحكومية والخاصة والأهلية للانضمام إلى منظومة الوقاية
             </p>
             <div className="flex gap-2">
               <a
                 href={`tel:${CONTACT_PHONE}`}
-                className="bg-[#00D4AA] text-[#060B18] px-4 py-2.5 rounded-xl font-bold flex items-center gap-1.5 text-xs flex-1 justify-center"
+                className="bg-primary text-primary-foreground px-4 py-2.5 rounded-xl font-bold flex items-center gap-1.5 text-xs flex-1 justify-center"
               >
                 <Phone className="w-3.5 h-3.5" />
                 اتصل الآن
               </a>
               <Link href="/join-partner">
-                <button className="glass-card border border-[#00D4AA]/25 text-[#00D4AA] px-4 py-2.5 rounded-xl font-bold flex items-center gap-1.5 text-xs">
+                <button className="glass-card border border-primary/25 text-primary px-4 py-2.5 rounded-xl font-bold flex items-center gap-1.5 text-xs">
                   <FileText className="w-3.5 h-3.5" />
                   تقديم طلب
                 </button>

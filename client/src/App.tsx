@@ -28,6 +28,7 @@ import Chat from "./pages/Chat";
 import RehabPlan from "./pages/RehabPlan";
 import RehabAssessment from "./pages/RehabAssessment";
 import MentalHealthTest from "./pages/MentalHealthTest";
+import Settings from "./pages/Settings";
 import SOSButton from "./components/SOSButton";
 import BottomNav from "./components/BottomNav";
 
@@ -52,6 +53,7 @@ function Router() {
       <Route path="/notifications" component={Notifications} />
       <Route path="/login" component={Login} />
       <Route path="/account" component={Account} />
+      <Route path="/settings" component={Settings} />
       <Route path="/admin" component={AdminDashboard} />
       {/* <Route path="/chat" component={Chat} /> */}
       <Route path="/rehab-plan" component={RehabPlan} />
@@ -66,7 +68,7 @@ function Router() {
 function App() {
   return (
     <ErrorBoundary>
-      <ThemeProvider defaultTheme="dark">
+      <ThemeProvider>
         <TooltipProvider>
           <Toaster richColors position="top-center" />
           <AuthGuard>

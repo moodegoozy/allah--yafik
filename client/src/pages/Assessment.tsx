@@ -319,16 +319,16 @@ export default function Assessment() {
 
   return (
     <div className="app-container bg-gradient-navy overflow-hidden">
-      <div className="orb w-64 h-64 opacity-8 -top-20 -right-20" style={{ background: "#8B5CF6" }} />
+      <div className="orb w-64 h-64 opacity-8 -top-20 -right-20" style={{ background: "oklch(0.55 0.25 290)" }} />
 
       {/* Header */}
       <div className="mobile-header px-5 py-4">
         <div>
-          <div className="text-[#8B5CF6] text-xs font-bold uppercase tracking-wider mb-1">
+          <div className="text-violet-500 text-xs font-bold uppercase tracking-wider mb-1">
             التقييم الشخصي
           </div>
-          <h1 className="text-white font-black text-xl">اختبار تقييم الإدمان</h1>
-          <p className="text-white/40 text-xs mt-0.5">اختبار علمي سري — معايير DSM-5</p>
+          <h1 className="text-foreground font-black text-xl">اختبار تقييم الإدمان</h1>
+          <p className="text-muted-foreground text-xs mt-0.5">اختبار علمي سري — معايير DSM-5</p>
         </div>
       </div>
 
@@ -343,22 +343,22 @@ export default function Assessment() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
               >
-                <div className="glass-card p-5 border border-[#8B5CF6]/25 mb-4 text-center relative overflow-hidden">
+                <div className="glass-card p-5 border border-violet-500/25 mb-4 text-center relative overflow-hidden">
                   <div className="orb orb-purple w-60 h-60 -top-10 -right-10 opacity-20" />
                   <div className="relative z-10">
-                    <div className="w-14 h-14 rounded-2xl bg-[#8B5CF6]/20 flex items-center justify-center mx-auto mb-5 glow-purple">
-                      <Brain className="w-7 h-7 text-[#8B5CF6]" />
+                    <div className="w-14 h-14 rounded-2xl bg-violet-500/20 flex items-center justify-center mx-auto mb-5 glow-purple">
+                      <Brain className="w-7 h-7 text-violet-500" />
                     </div>
-                    <h2 className="text-lg font-black text-white mb-2">
+                    <h2 className="text-lg font-black text-foreground mb-2">
                       اختبار التقييم الشخصي
                     </h2>
-                    <p className="text-white/55 leading-relaxed mb-6">
+                    <p className="text-foreground/55 leading-relaxed mb-6">
                       هذا الاختبار العلمي المبني على معايير{" "}
-                      <strong className="text-white">DSM-5</strong> الدولية
+                      <strong className="text-foreground">DSM-5</strong> الدولية
                       يساعدك على فهم مستوى خطر الإدمان وتحديد الخطة المناسبة لك.
-                      يتكون من <strong className="text-white">٨ أسئلة</strong>{" "}
+                      يتكون من <strong className="text-foreground">٨ أسئلة</strong>{" "}
                       ويستغرق حوالي{" "}
-                      <strong className="text-white">٣ دقائق</strong>.
+                      <strong className="text-foreground">٣ دقائق</strong>.
                     </p>
 
                     <div className="grid grid-cols-3 gap-4 mb-8">
@@ -379,7 +379,7 @@ export default function Assessment() {
                             className="w-5 h-5 mx-auto mb-1.5"
                             style={{ color: item.color }}
                           />
-                          <div className="text-white/70 text-xs">
+                          <div className="text-foreground/70 text-xs">
                             {item.label}
                           </div>
                         </div>
@@ -388,14 +388,14 @@ export default function Assessment() {
 
                     <button
                       onClick={() => setPhase("questions")}
-                      className="w-full py-4 rounded-2xl font-black text-lg text-[#060B18] transition-all hover:scale-105"
+                      className="w-full py-4 rounded-2xl font-black text-lg text-primary-foreground transition-all hover:scale-105"
                       style={{
-                        background: "linear-gradient(135deg, #8B5CF6, #6D28D9)",
+                        background: "linear-gradient(135deg, oklch(0.55 0.24 290), oklch(0.44 0.27 290))",
                       }}
                     >
                       ابدأ الاختبار الآن
                     </button>
-                    <p className="text-white/25 text-xs mt-3">
+                    <p className="text-muted-foreground/60 text-xs mt-3">
                       لا يُستخدم هذا الاختبار كتشخيص طبي - للاستشارة الطبية اتصل
                       بـ {CONTACT_PHONE}
                     </p>
@@ -416,19 +416,19 @@ export default function Assessment() {
                 {/* Progress */}
                 <div className="mb-6">
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-white/40 text-sm">
+                    <span className="text-muted-foreground text-sm">
                       السؤال {currentQ + 1} من {questions.length}
                     </span>
-                    <span className="text-white/40 text-sm">
+                    <span className="text-muted-foreground text-sm">
                       {currentQuestion.section}
                     </span>
                   </div>
-                  <div className="h-2 bg-white/8 rounded-full overflow-hidden">
+                  <div className="h-2 bg-secondary/80 rounded-full overflow-hidden">
                     <div
                       className="h-full rounded-full transition-all duration-500"
                       style={{
                         width: `${((currentQ + 1) / questions.length) * 100}%`,
-                        background: `linear-gradient(to right, ${currentQuestion.color}, #00D4AA)`,
+                        background: `linear-gradient(to right, ${currentQuestion.color}, oklch(0.75 0.18 175))`,
                       }}
                     />
                   </div>
@@ -459,11 +459,11 @@ export default function Assessment() {
                           style={{ color: currentQuestion.color }}
                         />
                       </div>
-                      <span className="text-white/40 text-sm">
+                      <span className="text-muted-foreground text-sm">
                         {currentQuestion.section}
                       </span>
                     </div>
-                    <h3 className="text-white font-black text-lg leading-relaxed mb-6">
+                    <h3 className="text-foreground font-black text-lg leading-relaxed mb-6">
                       {currentQuestion.question}
                     </h3>
 
@@ -476,8 +476,8 @@ export default function Assessment() {
                           }
                           className={`w-full text-right p-4 rounded-xl transition-all border ${
                             selectedAnswer === currentQuestion.weights[i]
-                              ? "text-white"
-                              : "glass-card text-white/60 border-white/8 hover:border-white/20 hover:text-white/80"
+                              ? "text-foreground"
+                              : "glass-card text-muted-foreground border-border hover:border-border hover:text-foreground/80"
                           }`}
                           style={
                             selectedAnswer === currentQuestion.weights[i]
@@ -495,7 +495,7 @@ export default function Assessment() {
                                 borderColor:
                                   selectedAnswer === currentQuestion.weights[i]
                                     ? currentQuestion.color
-                                    : "rgba(255,255,255,0.2)",
+                                    : "var(--muted-foreground)",
                                 background:
                                   selectedAnswer === currentQuestion.weights[i]
                                     ? `${currentQuestion.color}30`
@@ -529,7 +529,7 @@ export default function Assessment() {
                       }
                     }}
                     disabled={currentQ === 0}
-                    className="flex items-center gap-2 px-5 py-2.5 rounded-xl glass-card border border-white/8 text-white/40 hover:text-white disabled:opacity-30 transition-all text-sm"
+                    className="flex items-center gap-2 px-5 py-2.5 rounded-xl glass-card border border-border text-muted-foreground hover:text-foreground disabled:opacity-30 transition-all text-sm"
                   >
                     <ChevronRight className="w-4 h-4" />
                     السابق
@@ -541,12 +541,12 @@ export default function Assessment() {
                     style={{
                       background:
                         selectedAnswer !== null
-                          ? `linear-gradient(135deg, ${currentQuestion.color}, #00D4AA)`
-                          : "rgba(255,255,255,0.05)",
+                          ? `linear-gradient(135deg, ${currentQuestion.color}, oklch(0.75 0.18 175))`
+                          : "var(--secondary)",
                       color:
                         selectedAnswer !== null
-                          ? "#060B18"
-                          : "rgba(255,255,255,0.3)",
+                          ? "var(--background)"
+                          : "var(--muted-foreground)",
                     }}
                   >
                     {currentQ === questions.length - 1
@@ -590,7 +590,7 @@ export default function Assessment() {
                         style={{ color: risk.color }}
                       />
                     </div>
-                    <div className="text-white/40 text-sm mb-1">
+                    <div className="text-muted-foreground text-sm mb-1">
                       مستوى الخطر
                     </div>
                     <h2
@@ -599,23 +599,23 @@ export default function Assessment() {
                     >
                       {risk.level}
                     </h2>
-                    <p className="text-white/60 text-sm mb-5">{risk.desc}</p>
+                    <p className="text-muted-foreground text-sm mb-5">{risk.desc}</p>
 
                     {/* Score Meter */}
                     <div className="max-w-xs mx-auto mb-4">
-                      <div className="flex justify-between text-xs text-white/30 mb-2">
+                      <div className="flex justify-between text-xs text-muted-foreground/70 mb-2">
                         <span>منخفض</span>
                         <span className="font-numbers">{percentage}%</span>
                         <span>مرتفع</span>
                       </div>
-                      <div className="h-3 bg-white/8 rounded-full overflow-hidden">
+                      <div className="h-3 bg-secondary/80 rounded-full overflow-hidden">
                         <motion.div
                           initial={{ width: 0 }}
                           animate={{ width: `${percentage}%` }}
                           transition={{ duration: 1, ease: "easeOut" }}
                           className="h-full rounded-full"
                           style={{
-                            background: `linear-gradient(to right, #10B981, #F59E0B, ${risk.color})`,
+                            background: `linear-gradient(to right, oklch(0.70 0.17 160), oklch(0.80 0.16 85), ${risk.color})`,
                           }}
                         />
                       </div>
@@ -637,7 +637,7 @@ export default function Assessment() {
                                       : "#DC262640",
                             }}
                           />
-                          <div className="text-white/20 text-xs font-numbers">
+                          <div className="text-muted-foreground/60 text-xs font-numbers">
                             {i + 1}
                           </div>
                         </div>
@@ -648,8 +648,8 @@ export default function Assessment() {
 
                 {/* Personalized Plan */}
                 <div className="mb-6">
-                  <h3 className="text-white font-black text-lg mb-4 flex items-center gap-2">
-                    <Sparkles className="w-5 h-5 text-[#00D4AA]" />
+                  <h3 className="text-foreground font-black text-lg mb-4 flex items-center gap-2">
+                    <Sparkles className="w-5 h-5 text-primary" />
                     خطتك الشخصية المقترحة
                   </h3>
                   <div className="space-y-3">
@@ -664,7 +664,7 @@ export default function Assessment() {
                             ? window.open(item.action)
                             : navigate(item.action)
                         }
-                        className="w-full flex items-center gap-4 p-4 rounded-xl glass-card border border-white/7 hover:border-white/15 transition-all group text-right"
+                        className="w-full flex items-center gap-4 p-4 rounded-xl glass-card border border-border hover:border-border transition-all group text-right"
                       >
                         <div
                           className="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0"
@@ -679,12 +679,12 @@ export default function Assessment() {
                           />
                         </div>
                         <div className="flex-1">
-                          <h4 className="text-white font-bold text-sm">
+                          <h4 className="text-foreground font-bold text-sm">
                             {item.title}
                           </h4>
-                          <p className="text-white/40 text-xs">{item.desc}</p>
+                          <p className="text-muted-foreground text-xs">{item.desc}</p>
                         </div>
-                        <ArrowRight className="w-4 h-4 text-white/20 group-hover:text-white/50 transition-colors rotate-180" />
+                        <ArrowRight className="w-4 h-4 text-muted-foreground/60 group-hover:text-muted-foreground transition-colors rotate-180" />
                       </motion.button>
                     ))}
                   </div>
@@ -692,25 +692,25 @@ export default function Assessment() {
 
                 {/* Emergency Contact */}
                 {(risk.level === "مرتفع" || risk.level === "مرتفع جداً") && (
-                  <div className="glass-card p-5 border border-[#EF4444]/30 mb-6">
+                  <div className="glass-card p-5 border border-destructive/30 mb-6">
                     <div className="flex items-center gap-3 mb-3">
-                      <div className="w-10 h-10 rounded-xl bg-[#EF4444]/20 flex items-center justify-center">
-                        <Phone className="w-5 h-5 text-[#EF4444]" />
+                      <div className="w-10 h-10 rounded-xl bg-destructive/20 flex items-center justify-center">
+                        <Phone className="w-5 h-5 text-destructive" />
                       </div>
                       <div>
-                        <h4 className="text-white font-bold text-sm">
+                        <h4 className="text-foreground font-bold text-sm">
                           تواصل معنا الآن
                         </h4>
-                        <p className="text-white/40 text-xs">
+                        <p className="text-muted-foreground text-xs">
                           متخصصون متاحون للمساعدة
                         </p>
                       </div>
                     </div>
                     <a
                       href={`tel:${CONTACT_PHONE}`}
-                      className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-black text-[#060B18] transition-all hover:scale-105"
+                      className="w-full flex items-center justify-center gap-2 py-3 rounded-xl font-black text-primary-foreground transition-all hover:scale-105"
                       style={{
-                        background: "linear-gradient(135deg, #EF4444, #DC2626)",
+                        background: "linear-gradient(135deg, oklch(0.63 0.24 29), oklch(0.56 0.24 27))",
                       }}
                     >
                       <Phone className="w-4 h-4" />
@@ -723,7 +723,7 @@ export default function Assessment() {
                 <div className="flex gap-3">
                   <button
                     onClick={handleReset}
-                    className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl glass-card border border-white/10 text-white/60 hover:text-white font-bold text-sm transition-all"
+                    className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl glass-card border border-border text-muted-foreground hover:text-foreground font-bold text-sm transition-all"
                   >
                     <RefreshCw className="w-4 h-4" />
                     إعادة الاختبار
@@ -732,8 +732,8 @@ export default function Assessment() {
                     onClick={() => navigate("/dashboard")}
                     className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl font-bold text-sm transition-all"
                     style={{
-                      background: "linear-gradient(135deg, #00D4AA, #0EA5E9)",
-                      color: "#060B18",
+                      background: "linear-gradient(135deg, oklch(0.75 0.18 175), oklch(0.68 0.16 230))",
+                      color: "var(--background)",
                     }}
                   >
                     <BarChart3 className="w-4 h-4" />

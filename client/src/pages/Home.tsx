@@ -10,7 +10,8 @@ import {
   BookOpen, MessageCircle, BarChart3,
   Phone, Star, ChevronLeft,
   Shield, Users, Award, Brain,
-  Heart, Lightbulb, Bell, FileText
+  Heart, Lightbulb, Bell, FileText,
+  Settings,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -89,19 +90,24 @@ export default function Home() {
       <div className="mobile-header px-5 py-4">
         <div className="flex items-center justify-between">
           <div>
-            <p className="text-white/40 text-xs">{greeting}{userName ? ` يا ${userName}` : ""}</p>
-            <h1 className="text-white font-black text-lg">الله يعافيك</h1>
+            <p className="text-muted-foreground text-xs">{greeting}{userName ? ` يا ${userName}` : ""}</p>
+            <h1 className="text-foreground font-black text-lg">الله يعافيك</h1>
           </div>
           <div className="flex items-center gap-2">
-            <Link href="/notifications">
-              <div className="relative p-2 rounded-xl glass-card border border-white/8">
-                <Bell className="w-4 h-4 text-white/50" />
-                <div className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-[#EF4444]" />
+            <Link href="/settings">
+              <div className="p-2 rounded-xl glass-card border border-border">
+                <Settings className="w-4 h-4 text-muted-foreground" />
               </div>
             </Link>
-            <a href={`tel:${CONTACT_PHONE}`} className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-[#00D4AA]/15 border border-[#00D4AA]/25">
-              <Phone className="w-3.5 h-3.5 text-[#00D4AA]" />
-              <span className="text-[#00D4AA] text-xs font-black">تواصل</span>
+            <Link href="/notifications">
+              <div className="relative p-2 rounded-xl glass-card border border-border">
+                <Bell className="w-4 h-4 text-muted-foreground" />
+                <div className="absolute -top-0.5 -right-0.5 w-2 h-2 rounded-full bg-destructive" />
+              </div>
+            </Link>
+            <a href={`tel:${CONTACT_PHONE}`} className="flex items-center gap-1.5 px-3 py-2 rounded-xl bg-primary/15 border border-primary/25">
+              <Phone className="w-3.5 h-3.5 text-primary" />
+              <span className="text-primary text-xs font-black">تواصل</span>
             </a>
           </div>
         </div>
@@ -121,31 +127,31 @@ export default function Home() {
 
             <div className="flex items-start gap-3 mb-4">
               <div className="w-12 h-12 rounded-2xl flex items-center justify-center flex-shrink-0" style={{ background: "linear-gradient(135deg, #00D4AA, #0EA5E9)" }}>
-                <Shield className="w-6 h-6 text-[#060B18]" />
+                <Shield className="w-6 h-6 text-background" />
               </div>
               <div>
-                <div className="text-[#00D4AA] font-black text-xs uppercase tracking-wider mb-1">برنامج الوقاية</div>
-                <h2 className="text-white font-black text-xl leading-tight">حصّن نفسك<br />قبل أن تحتاج</h2>
+                <div className="text-primary font-black text-xs uppercase tracking-wider mb-1">برنامج الوقاية</div>
+                <h2 className="text-foreground font-black text-xl leading-tight">حصّن نفسك<br />قبل أن تحتاج</h2>
               </div>
             </div>
 
-            <p className="text-white/50 text-xs leading-relaxed mb-4">
+            <p className="text-muted-foreground text-xs leading-relaxed mb-4">
               الوقاية من الإدمان تبدأ بالمعرفة والوعي — اكتشف مستوى خطرك واحصل على خطة وقائية مخصصة
             </p>
 
             {/* Risk Level */}
             {riskScore !== null ? (
-              <div className="flex items-center gap-2 p-3 rounded-2xl bg-white/4 border border-white/8 mb-3">
-                <Award className="w-4 h-4 text-[#00D4AA]" />
+              <div className="flex items-center gap-2 p-3 rounded-2xl bg-secondary/40 border border-border mb-3">
+                <Award className="w-4 h-4 text-primary" />
                 <div className="flex-1">
-                  <div className="text-white/60 text-xs">مستوى الوعي الوقائي</div>
-                  <div className="text-white font-bold text-sm">
+                  <div className="text-muted-foreground text-xs">مستوى الوعي الوقائي</div>
+                  <div className="text-foreground font-bold text-sm">
                     {riskScore >= 70 ? "ممتاز — استمر!" : riskScore >= 50 ? "متوسط — طوّر مهاراتك" : "يحتاج تحسين — تابع الخطة"}
                   </div>
                 </div>
                 <Link href="/assessment">
-                  <div className="p-1.5 rounded-xl bg-[#00D4AA]/15">
-                    <ChevronLeft className="w-4 h-4 text-[#00D4AA]" />
+                  <div className="p-1.5 rounded-xl bg-primary/15">
+                    <ChevronLeft className="w-4 h-4 text-primary" />
                   </div>
                 </Link>
               </div>
@@ -153,7 +159,7 @@ export default function Home() {
               <Link href="/assessment">
                 <motion.button
                   whileTap={{ scale: 0.96 }}
-                  className="w-full py-3 rounded-2xl font-black text-[#060B18] text-sm mb-3"
+                  className="w-full py-3 rounded-2xl font-black text-background text-sm mb-3"
                   style={{ background: "linear-gradient(135deg, #00D4AA, #0EA5E9)" }}
                 >
                   ابدأ تقييم مستوى الخطر مجاناً
@@ -168,15 +174,15 @@ export default function Home() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.2 }}
-          className="mx-4 mt-4 p-4 rounded-2xl glass-card border border-white/8"
+          className="mx-4 mt-4 p-4 rounded-2xl glass-card border border-border"
         >
           <div className="flex items-start gap-3">
-            <div className="w-8 h-8 rounded-xl bg-[#F59E0B]/15 flex items-center justify-center flex-shrink-0">
-              <Star className="w-4 h-4 text-[#F59E0B]" />
+            <div className="w-8 h-8 rounded-xl bg-accent/15 flex items-center justify-center flex-shrink-0">
+              <Star className="w-4 h-4 text-accent" />
             </div>
             <div>
-              <p className="text-white/75 text-sm leading-relaxed italic">"{quote.text}"</p>
-              <p className="text-[#00D4AA] text-xs mt-1.5 font-bold">— {quote.author}</p>
+              <p className="text-foreground text-sm leading-relaxed italic">"{quote.text}"</p>
+              <p className="text-primary text-xs mt-1.5 font-bold">— {quote.author}</p>
             </div>
           </div>
         </motion.div>
@@ -184,7 +190,7 @@ export default function Home() {
         {/* Quick Actions Grid */}
         <div className="px-4 mt-5">
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-white font-black text-sm">الوصول السريع</h2>
+            <h2 className="text-foreground font-black text-sm">الوصول السريع</h2>
           </div>
           <div className="grid grid-cols-3 gap-3">
             {quickActions.map((action, idx) => (
@@ -197,14 +203,14 @@ export default function Home() {
                 <Link href={action.path}>
                   <motion.div
                     whileTap={{ scale: 0.92 }}
-                    className={`p-3.5 rounded-2xl border border-white/8 bg-gradient-to-br ${action.bg} flex flex-col items-center gap-2 card-hover`}
+                    className={`p-3.5 rounded-2xl border border-border bg-gradient-to-br ${action.bg} flex flex-col items-center gap-2 card-hover`}
                   >
                     <div className="w-10 h-10 rounded-xl flex items-center justify-center" style={{ background: `${action.color}20` }}>
                       <action.icon className="w-5 h-5" style={{ color: action.color }} />
                     </div>
                     <div className="text-center">
-                      <div className="text-white font-black text-xs">{action.label}</div>
-                      <div className="text-white/35 text-[10px]">{action.sublabel}</div>
+                      <div className="text-foreground font-black text-xs">{action.label}</div>
+                      <div className="text-muted-foreground/70 text-[10px]">{action.sublabel}</div>
                     </div>
                   </motion.div>
                 </Link>
@@ -216,9 +222,9 @@ export default function Home() {
         {/* أركان الوقاية */}
         <div className="px-4 mt-5">
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-white font-black text-sm">أركان الوقاية الأربعة</h2>
+            <h2 className="text-foreground font-black text-sm">أركان الوقاية الأربعة</h2>
             <Link href="/resources">
-              <span className="text-[#00D4AA] text-xs font-bold">تفاصيل</span>
+              <span className="text-primary text-xs font-bold">تفاصيل</span>
             </Link>
           </div>
           <div className="grid grid-cols-2 gap-3">
@@ -228,11 +234,11 @@ export default function Home() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.1 + idx * 0.07 }}
-                className="p-4 rounded-2xl glass-card border border-white/8"
+                className="p-4 rounded-2xl glass-card border border-border"
               >
                 <div className="text-2xl mb-2">{pillar.icon}</div>
-                <div className="text-white font-black text-xs mb-1">{pillar.title}</div>
-                <div className="text-white/40 text-[10px] leading-relaxed">{pillar.desc}</div>
+                <div className="text-foreground font-black text-xs mb-1">{pillar.title}</div>
+                <div className="text-muted-foreground text-[10px] leading-relaxed">{pillar.desc}</div>
               </motion.div>
             ))}
           </div>
@@ -245,7 +251,7 @@ export default function Home() {
           transition={{ delay: 0.3 }}
           className="mx-4 mt-5"
         >
-          <div className="rounded-3xl overflow-hidden border border-white/10" style={{ background: "linear-gradient(135deg, rgba(139,92,246,0.12), rgba(59,130,246,0.06))" }}>
+          <div className="rounded-3xl overflow-hidden border border-border" style={{ background: "linear-gradient(135deg, rgba(139,92,246,0.12), rgba(59,130,246,0.06))" }}>
             <div className="p-5">
               <div className="flex items-center gap-2 mb-2">
                 <div className="w-6 h-6 rounded-lg bg-[#8B5CF6]/20 flex items-center justify-center">
@@ -253,15 +259,15 @@ export default function Home() {
                 </div>
                 <span className="text-[#8B5CF6] font-black text-xs uppercase tracking-wider">محاضرات توعوية</span>
               </div>
-              <h3 className="text-white font-black text-lg mb-1">٦ محاضرات علمية متخصصة</h3>
-              <p className="text-white/45 text-xs leading-relaxed mb-4">
+              <h3 className="text-foreground font-black text-lg mb-1">٦ محاضرات علمية متخصصة</h3>
+              <p className="text-foreground/45 text-xs leading-relaxed mb-4">
                 محتوى توعوي بجودة الذكاء الاصطناعي — لجميع الفئات العمرية من الأطفال حتى الآباء
               </p>
               <div className="flex gap-2">
                 <Link href="/lectures" className="flex-1">
                   <motion.button
                     whileTap={{ scale: 0.96 }}
-                    className="w-full py-3 rounded-2xl font-black text-white text-sm"
+                    className="w-full py-3 rounded-2xl font-black text-foreground text-sm"
                     style={{ background: "linear-gradient(135deg, #8B5CF6, #3B82F6)" }}
                   >
                     ابدأ التعلم
@@ -270,7 +276,7 @@ export default function Home() {
                 <Link href="/achievements">
                   <motion.button
                     whileTap={{ scale: 0.96 }}
-                    className="px-4 py-3 rounded-2xl font-black text-white/60 text-sm glass-card border border-white/10"
+                    className="px-4 py-3 rounded-2xl font-black text-muted-foreground text-sm glass-card border border-border"
                   >
                     شهاداتي
                   </motion.button>
@@ -283,9 +289,9 @@ export default function Home() {
         {/* Partners Strip */}
         <div className="px-4 mt-5">
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-white font-black text-sm">منظومة الشراكات</h2>
+            <h2 className="text-foreground font-black text-sm">منظومة الشراكات</h2>
             <Link href="/partners">
-              <span className="text-[#00D4AA] text-xs font-bold">عرض الكل</span>
+              <span className="text-primary text-xs font-bold">عرض الكل</span>
             </Link>
           </div>
           <div className="flex gap-2 overflow-x-auto pb-1">
@@ -295,10 +301,10 @@ export default function Home() {
                 initial={{ opacity: 0, x: 10 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: idx * 0.07 }}
-                className="flex-shrink-0 flex flex-col items-center gap-1.5 p-3 rounded-2xl glass-card border border-white/8 w-20"
+                className="flex-shrink-0 flex flex-col items-center gap-1.5 p-3 rounded-2xl glass-card border border-border w-20"
               >
                 <span className="text-2xl">{partner.icon}</span>
-                <span className="text-white/70 font-bold text-[10px] text-center">{partner.label}</span>
+                <span className="text-foreground/70 font-bold text-[10px] text-center">{partner.label}</span>
                 <span className="text-xs font-bold" style={{ color: partner.color }}>{partner.desc}</span>
               </motion.div>
             ))}
@@ -315,16 +321,16 @@ export default function Home() {
             style={{ background: "linear-gradient(135deg, rgba(239,68,68,0.08), rgba(249,115,22,0.04))" }}
           >
             <div className="flex items-center gap-2 mb-3">
-              <Lightbulb className="w-4 h-4 text-[#F59E0B]" />
-              <span className="text-[#F59E0B] font-black text-xs">هل تعلم؟</span>
+              <Lightbulb className="w-4 h-4 text-accent" />
+              <span className="text-accent font-black text-xs">هل تعلم؟</span>
             </div>
-            <p className="text-white/70 text-sm leading-relaxed">
-              <span className="text-white font-black">٧٠٪</span> من حالات الإدمان تبدأ قبل سن <span className="text-white font-black">٢٥ عاماً</span> — الوقاية المبكرة تُنقذ مستقبلاً كاملاً
+            <p className="text-foreground/70 text-sm leading-relaxed">
+              <span className="text-foreground font-black">٧٠٪</span> من حالات الإدمان تبدأ قبل سن <span className="text-foreground font-black">٢٥ عاماً</span> — الوقاية المبكرة تُنقذ مستقبلاً كاملاً
             </p>
             <Link href="/statistics">
               <div className="flex items-center gap-1 mt-2">
-                <span className="text-[#00D4AA] text-xs font-bold">اطلع على الإحصائيات الكاملة</span>
-                <ChevronLeft className="w-3 h-3 text-[#00D4AA]" />
+                <span className="text-primary text-xs font-bold">اطلع على الإحصائيات الكاملة</span>
+                <ChevronLeft className="w-3 h-3 text-primary" />
               </div>
             </Link>
           </motion.div>
@@ -339,18 +345,18 @@ export default function Home() {
         >
           <a
             href={`tel:${CONTACT_PHONE}`}
-            className="flex items-center gap-4 p-4 rounded-2xl border border-[#00D4AA]/25 active:scale-98 transition-transform"
+            className="flex items-center gap-4 p-4 rounded-2xl border border-primary/25 active:scale-98 transition-transform"
             style={{ background: "linear-gradient(135deg, rgba(0,212,170,0.10), rgba(14,165,233,0.05))" }}
           >
             <div className="w-12 h-12 rounded-2xl bg-[#00D4AA]/20 flex items-center justify-center flex-shrink-0 pulse-teal">
-              <Phone className="w-5 h-5 text-[#00D4AA]" />
+              <Phone className="w-5 h-5 text-primary" />
             </div>
             <div className="flex-1">
-              <div className="text-white font-black text-sm">خط الاستشارة الوقائية</div>
-              <div className="text-[#00D4AA] font-black text-base font-numbers">{CONTACT_PHONE}</div>
-              <div className="text-white/30 text-xs">استشارة مجانية — متاح ٢٤/٧</div>
+              <div className="text-foreground font-black text-sm">خط الاستشارة الوقائية</div>
+              <div className="text-primary font-black text-base font-numbers">{CONTACT_PHONE}</div>
+              <div className="text-foreground/30 text-xs">استشارة مجانية — متاح ٢٤/٧</div>
             </div>
-            <ChevronLeft className="w-5 h-5 text-[#00D4AA]" />
+            <ChevronLeft className="w-5 h-5 text-primary" />
           </a>
         </motion.div>
 

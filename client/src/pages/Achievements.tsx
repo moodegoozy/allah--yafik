@@ -176,40 +176,40 @@ export default function Achievements() {
 
   return (
     <div className="app-container bg-gradient-navy overflow-hidden">
-      <div className="orb w-64 h-64 opacity-8 top-10 -left-20" style={{ background: "#F59E0B" }} />
+      <div className="orb w-64 h-64 opacity-8 top-10 -left-20" style={{ background: "oklch(0.80 0.18 80)" }} />
 
       {/* Header */}
       <div className="mobile-header px-5 py-4">
         <div className="flex items-center justify-between">
           <div>
-            <div className="text-[#F59E0B] text-xs font-bold uppercase tracking-wider mb-1">
+            <div className="text-accent text-xs font-bold uppercase tracking-wider mb-1">
               مركز الإنجازات
             </div>
-            <h1 className="text-white font-black text-xl">إنجازاتي وشهاداتي</h1>
+            <h1 className="text-foreground font-black text-xl">إنجازاتي وشهاداتي</h1>
           </div>
           <div className="flex items-center gap-2">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#F59E0B] to-[#FBBF24] flex items-center justify-center">
-              <Crown className="w-4 h-4 text-[#060B18]" />
+            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-amber-500 to-amber-400 flex items-center justify-center">
+              <Crown className="w-4 h-4 text-primary-foreground" />
             </div>
             <div>
-              <div className="text-white font-black text-sm">Lv.{level}</div>
-              <div className="text-white/30 text-[10px]">{totalXP} XP</div>
+              <div className="text-foreground font-black text-sm">Lv.{level}</div>
+              <div className="text-muted-foreground/70 text-[10px]">{totalXP} XP</div>
             </div>
           </div>
         </div>
 
         {/* XP Progress */}
         <div className="mt-2">
-          <div className="h-1.5 bg-white/8 rounded-full overflow-hidden">
+          <div className="h-1.5 bg-secondary/80 rounded-full overflow-hidden">
             <div
               className="h-full rounded-full transition-all"
               style={{
                 width: `${progressToNext}%`,
-                background: "linear-gradient(to right, #F59E0B, #FBBF24)",
+                background: "linear-gradient(to right, oklch(0.80 0.16 85), oklch(0.85 0.15 85))",
               }}
             />
           </div>
-          <div className="text-white/25 text-[10px] mt-1 text-center">
+          <div className="text-muted-foreground/60 text-[10px] mt-1 text-center">
             {nextLevelXP - totalXP} XP للمستوى التالي
           </div>
         </div>
@@ -223,10 +223,10 @@ export default function Achievements() {
               { icon: Zap, label: "XP", value: `${totalXP}`, color: "#8B5CF6" },
               { icon: Flame, label: "مستوى", value: `${level}`, color: "#EF4444" },
             ].map((stat, i) => (
-              <div key={i} className="glass-card p-2 border border-white/5 text-center rounded-xl">
+              <div key={i} className="glass-card p-2 border border-border text-center rounded-xl">
                 <stat.icon className="w-3.5 h-3.5 mx-auto mb-1" style={{ color: stat.color }} />
-                <div className="text-white font-black text-xs font-numbers">{stat.value}</div>
-                <div className="text-white/25 text-[10px]">{stat.label}</div>
+                <div className="text-foreground font-black text-xs font-numbers">{stat.value}</div>
+                <div className="text-muted-foreground/60 text-[10px]">{stat.label}</div>
               </div>
             ))}
           </div>
@@ -262,15 +262,15 @@ export default function Achievements() {
                 onClick={() => setActiveTab(tab.id as typeof activeTab)}
                 className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
                   activeTab === tab.id
-                    ? "bg-[#F59E0B]/15 text-[#F59E0B] border border-[#F59E0B]/30"
-                    : "glass-card text-white/50 border border-white/7 hover:text-white/80"
+                    ? "bg-accent/15 text-accent border border-accent/30"
+                    : "glass-card text-muted-foreground border border-border hover:text-foreground/80"
                 }`}
               >
                 <tab.icon className="w-4 h-4" />
                 {tab.label}
                 {tab.count !== null && (
                   <span
-                    className={`text-xs px-1.5 py-0.5 rounded-full font-numbers ${activeTab === tab.id ? "bg-[#F59E0B]/20 text-[#F59E0B]" : "bg-white/10 text-white/40"}`}
+                    className={`text-xs px-1.5 py-0.5 rounded-full font-numbers ${activeTab === tab.id ? "bg-accent/20 text-accent" : "bg-secondary text-muted-foreground"}`}
                   >
                     {tab.count}
                   </span>
@@ -286,11 +286,11 @@ export default function Achievements() {
                 a => !a.unlocked && (a.progress ?? 0) === 0
               ) ? (
                 <div className="text-center py-16">
-                  <Trophy className="w-12 h-12 text-white/10 mx-auto mb-4" />
-                  <h3 className="text-white/40 font-bold">
+                  <Trophy className="w-12 h-12 text-muted-foreground/40 mx-auto mb-4" />
+                  <h3 className="text-muted-foreground font-bold">
                     لا توجد إنجازات بعد
                   </h3>
-                  <p className="text-white/25 text-sm mt-2">
+                  <p className="text-muted-foreground/60 text-sm mt-2">
                     أكمل أهداف خطتك الوقائية لفتح الإنجازات
                   </p>
                   <button
@@ -303,17 +303,17 @@ export default function Achievements() {
               ) : (
                 <>
                   <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-white font-bold">
+                    <h3 className="text-foreground font-bold">
                       {allAchievements.filter(a => a.unlocked).length} /{" "}
                       {allAchievements.length} إنجاز مفتوح
                     </h3>
-                    <div className="h-2 w-48 bg-white/8 rounded-full overflow-hidden">
+                    <div className="h-2 w-48 bg-secondary/80 rounded-full overflow-hidden">
                       <div
                         className="h-full rounded-full"
                         style={{
                           width: `${(allAchievements.filter(a => a.unlocked).length / allAchievements.length) * 100}%`,
                           background:
-                            "linear-gradient(to right, #F59E0B, #FBBF24)",
+                            "linear-gradient(to right, oklch(0.80 0.16 85), oklch(0.85 0.15 85))",
                         }}
                       />
                     </div>
@@ -328,18 +328,18 @@ export default function Achievements() {
                         transition={{ delay: i * 0.05 }}
                         className={`glass-card p-5 border transition-all relative overflow-hidden ${
                           ach.unlocked
-                            ? "border-white/10 hover:border-white/20"
-                            : "border-white/5 opacity-60"
+                            ? "border-border hover:border-border"
+                            : "border-border opacity-60"
                         }`}
                       >
                         {ach.unlocked && (
                           <div className="absolute top-3 left-3">
-                            <CheckCircle2 className="w-4 h-4 text-[#10B981]" />
+                            <CheckCircle2 className="w-4 h-4 text-emerald-500" />
                           </div>
                         )}
                         {!ach.unlocked && (
                           <div className="absolute top-3 left-3">
-                            <Lock className="w-4 h-4 text-white/20" />
+                            <Lock className="w-4 h-4 text-muted-foreground/60" />
                           </div>
                         )}
 
@@ -356,17 +356,17 @@ export default function Achievements() {
                               style={{
                                 color: ach.unlocked
                                   ? ach.color
-                                  : "rgba(255,255,255,0.3)",
+                                  : "var(--muted-foreground)",
                               }}
                             />
                           </div>
                           <div className="flex-1">
                             <h4
-                              className={`font-bold text-sm mb-1 ${ach.unlocked ? "text-white" : "text-white/40"}`}
+                              className={`font-bold text-sm mb-1 ${ach.unlocked ? "text-foreground" : "text-muted-foreground"}`}
                             >
                               {ach.title}
                             </h4>
-                            <p className="text-white/35 text-xs mb-2">
+                            <p className="text-muted-foreground/70 text-xs mb-2">
                               {ach.desc}
                             </p>
                             <div className="flex items-center justify-between">
@@ -375,7 +375,7 @@ export default function Achievements() {
                                 style={{
                                   color: ach.unlocked
                                     ? ach.color
-                                    : "rgba(255,255,255,0.2)",
+                                    : "var(--muted-foreground)",
                                 }}
                               >
                                 +{ach.xp} XP
@@ -385,7 +385,7 @@ export default function Achievements() {
                               ach.progress !== undefined &&
                               ach.target && (
                                 <div className="mt-2">
-                                  <div className="flex justify-between text-xs text-white/25 mb-1">
+                                  <div className="flex justify-between text-xs text-muted-foreground/60 mb-1">
                                     <span>
                                       {ach.progress}/{ach.target}
                                     </span>
@@ -396,7 +396,7 @@ export default function Achievements() {
                                       %
                                     </span>
                                   </div>
-                                  <div className="h-1.5 bg-white/5 rounded-full overflow-hidden">
+                                  <div className="h-1.5 bg-secondary/60 rounded-full overflow-hidden">
                                     <div
                                       className="h-full rounded-full"
                                       style={{
@@ -422,11 +422,11 @@ export default function Achievements() {
             <div className="pb-8">
               {completedLectures.length === 0 ? (
                 <div className="text-center py-16">
-                  <Award className="w-12 h-12 text-white/10 mx-auto mb-4" />
-                  <h3 className="text-white/40 font-bold">
+                  <Award className="w-12 h-12 text-muted-foreground/40 mx-auto mb-4" />
+                  <h3 className="text-muted-foreground font-bold">
                     لا توجد شهادات بعد
                   </h3>
-                  <p className="text-white/25 text-sm mt-2">
+                  <p className="text-muted-foreground/60 text-sm mt-2">
                     أكمل محاضرة واجتز اختبارها للحصول على شهادتك
                   </p>
                   <button
@@ -462,10 +462,10 @@ export default function Achievements() {
                         transition={{ delay: i * 0.1 }}
                         className="relative overflow-hidden rounded-2xl p-0.5"
                         style={{
-                          background: `linear-gradient(135deg, ${cert.color}50, #00D4AA30)`,
+                          background: `linear-gradient(135deg, ${cert.color}50, oklch(0.75 0.18 175 / 0.19))`,
                         }}
                       >
-                        <div className="bg-[#0A0F1E] rounded-[14px] p-5">
+                        <div className="bg-background rounded-[14px] p-5">
                           {/* Header */}
                           <div className="flex items-center justify-between mb-4">
                             <div
@@ -492,31 +492,31 @@ export default function Achievements() {
                           </div>
 
                           {/* Title */}
-                          <h4 className="text-white font-black text-sm mb-1 leading-snug">
+                          <h4 className="text-foreground font-black text-sm mb-1 leading-snug">
                             {cert.title}
                           </h4>
-                          <p className="text-white/40 text-xs mb-4">
+                          <p className="text-muted-foreground text-xs mb-4">
                             {cert.speaker}
                           </p>
 
                           {/* Score */}
                           <div className="flex items-center gap-3 mb-4">
-                            <div className="flex-1 h-2 bg-white/8 rounded-full overflow-hidden">
+                            <div className="flex-1 h-2 bg-secondary/80 rounded-full overflow-hidden">
                               <div
                                 className="h-full rounded-full"
                                 style={{
                                   width: `${percentage}%`,
-                                  background: `linear-gradient(to right, ${cert.color}, #00D4AA)`,
+                                  background: `linear-gradient(to right, ${cert.color}, oklch(0.75 0.18 175))`,
                                 }}
                               />
                             </div>
-                            <span className="text-white font-black font-numbers text-sm">
+                            <span className="text-foreground font-black font-numbers text-sm">
                               {percentage}%
                             </span>
                           </div>
 
                           {/* Details */}
-                          <div className="flex items-center justify-between text-xs text-white/30 mb-4">
+                          <div className="flex items-center justify-between text-xs text-muted-foreground/70 mb-4">
                             <span>{cert.date}</span>
                             <span className="font-numbers">
                               {cert.certId.split("-").slice(-1)[0]}
@@ -539,7 +539,7 @@ export default function Achievements() {
                             </button>
                             <button
                               onClick={() => navigate(`/lectures/${cert.id}`)}
-                              className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs glass-card border border-white/8 text-white/50 hover:text-white transition-all"
+                              className="flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl text-xs glass-card border border-border text-muted-foreground hover:text-foreground transition-all"
                             >
                               <Eye className="w-3.5 h-3.5" />
                               عرض
@@ -554,16 +554,16 @@ export default function Achievements() {
                   {[1, 2].map(i => (
                     <div
                       key={i}
-                      className="glass-card p-5 border border-white/5 opacity-40 relative overflow-hidden"
+                      className="glass-card p-5 border border-border opacity-40 relative overflow-hidden"
                     >
                       <div className="absolute inset-0 flex items-center justify-center">
-                        <Lock className="w-8 h-8 text-white/20" />
+                        <Lock className="w-8 h-8 text-muted-foreground/60" />
                       </div>
                       <div className="blur-sm">
-                        <div className="w-10 h-10 rounded-xl bg-white/5 mb-4" />
-                        <div className="h-3 bg-white/5 rounded mb-2 w-3/4" />
-                        <div className="h-2 bg-white/5 rounded mb-4 w-1/2" />
-                        <div className="h-2 bg-white/5 rounded-full" />
+                        <div className="w-10 h-10 rounded-xl bg-secondary/60 mb-4" />
+                        <div className="h-3 bg-secondary/60 rounded mb-2 w-3/4" />
+                        <div className="h-2 bg-secondary/60 rounded mb-4 w-1/2" />
+                        <div className="h-2 bg-secondary/60 rounded-full" />
                       </div>
                     </div>
                   ))}
@@ -577,11 +577,11 @@ export default function Achievements() {
             <div className="pb-8">
               {doneGoals === 0 ? (
                 <div className="text-center py-16">
-                  <TrendingUp className="w-12 h-12 text-white/10 mx-auto mb-4" />
-                  <h3 className="text-white/40 font-bold">
+                  <TrendingUp className="w-12 h-12 text-muted-foreground/40 mx-auto mb-4" />
+                  <h3 className="text-muted-foreground font-bold">
                     لا توجد إحصائيات بعد
                   </h3>
-                  <p className="text-white/25 text-sm mt-2">
+                  <p className="text-muted-foreground/60 text-sm mt-2">
                     ابدأ خطتك الوقائية لتظهر إحصائياتك
                   </p>
                   <button
@@ -593,8 +593,8 @@ export default function Achievements() {
                 </div>
               ) : (
                 <div className="space-y-5">
-                  <div className="glass-card p-5 border border-white/7">
-                    <h3 className="text-white font-bold text-sm mb-4">
+                  <div className="glass-card p-5 border border-border">
+                    <h3 className="text-foreground font-bold text-sm mb-4">
                       تقدم المراحل
                     </h3>
                     <div className="space-y-4">
@@ -606,7 +606,7 @@ export default function Achievements() {
                                 className="w-4 h-4"
                                 style={{ color: ach.color }}
                               />
-                              <span className="text-white/70 text-sm font-bold">
+                              <span className="text-foreground/70 text-sm font-bold">
                                 {ach.title}
                               </span>
                             </div>
@@ -617,7 +617,7 @@ export default function Achievements() {
                               {ach.progress}/{ach.target}
                             </span>
                           </div>
-                          <div className="h-2 bg-white/8 rounded-full overflow-hidden">
+                          <div className="h-2 bg-secondary/80 rounded-full overflow-hidden">
                             <div
                               className="h-full rounded-full transition-all duration-500"
                               style={{
@@ -632,17 +632,17 @@ export default function Achievements() {
                   </div>
 
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="glass-card p-5 border border-white/7 text-center">
-                      <div className="text-3xl font-black font-numbers text-[#00D4AA] mb-1">
+                    <div className="glass-card p-5 border border-border text-center">
+                      <div className="text-3xl font-black font-numbers text-primary mb-1">
                         {Math.round((doneGoals / totalGoals) * 100)}%
                       </div>
-                      <div className="text-white/40 text-xs">التقدم الكلي</div>
+                      <div className="text-muted-foreground text-xs">التقدم الكلي</div>
                     </div>
-                    <div className="glass-card p-5 border border-white/7 text-center">
-                      <div className="text-3xl font-black font-numbers text-[#F59E0B] mb-1">
+                    <div className="glass-card p-5 border border-border text-center">
+                      <div className="text-3xl font-black font-numbers text-accent mb-1">
                         {totalXP}
                       </div>
-                      <div className="text-white/40 text-xs">نقاط الخبرة</div>
+                      <div className="text-muted-foreground text-xs">نقاط الخبرة</div>
                     </div>
                   </div>
                 </div>

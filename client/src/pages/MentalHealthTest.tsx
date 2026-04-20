@@ -99,7 +99,7 @@ export default function MentalHealthTest() {
   };
 
   return (
-    <div className="min-h-screen bg-[#060B18] flex items-center justify-center p-4 relative overflow-hidden">
+    <div className="min-h-screen bg-background flex items-center justify-center p-4 relative overflow-hidden">
       {/* Background orbs */}
       <div className="orb orb-teal w-96 h-96 -top-32 -right-32 opacity-20" />
       <div className="orb orb-gold w-72 h-72 -bottom-20 -left-20 opacity-15" />
@@ -110,9 +110,9 @@ export default function MentalHealthTest() {
           <div
             className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${groupInfo.gradient} flex items-center justify-center mx-auto mb-3`}
           >
-            <Brain className="w-7 h-7 text-[#060B18]" />
+            <Brain className="w-7 h-7 text-primary-foreground" />
           </div>
-          <h1 className="text-2xl font-black text-white mb-1">
+          <h1 className="text-2xl font-black text-foreground mb-1">
             اختبار الصحة النفسية
           </h1>
           <p className="text-sm" style={{ color: groupInfo.color }}>
@@ -122,14 +122,14 @@ export default function MentalHealthTest() {
 
         {/* Progress Bar */}
         <div className="mb-6">
-          <div className="flex justify-between text-xs text-white/40 mb-1.5">
+          <div className="flex justify-between text-xs text-muted-foreground mb-1.5">
             <span>
               السؤال {Math.min(currentQ + 1, questions.length)} من{" "}
               {questions.length}
             </span>
             <span>{Math.round(progress)}%</span>
           </div>
-          <div className="w-full h-2 rounded-full bg-white/5 overflow-hidden">
+          <div className="w-full h-2 rounded-full bg-secondary/60 overflow-hidden">
             <motion.div
               className="h-full rounded-full"
               style={{ background: groupInfo.color }}
@@ -149,7 +149,7 @@ export default function MentalHealthTest() {
               transition={{ duration: 0.25 }}
             >
               {/* Question Card */}
-              <div className="glass-card p-6 border border-white/10 mb-4">
+              <div className="glass-card p-6 border border-border mb-4">
                 {/* Dimension badge */}
                 <div className="flex items-center gap-2 mb-4">
                   {(() => {
@@ -170,7 +170,7 @@ export default function MentalHealthTest() {
                   })()}
                 </div>
 
-                <h2 className="text-white font-black text-lg leading-relaxed mb-6">
+                <h2 className="text-foreground font-black text-lg leading-relaxed mb-6">
                   {question.text}
                 </h2>
 
@@ -184,18 +184,18 @@ export default function MentalHealthTest() {
                         onClick={() => handleAnswer(opt.score)}
                         className={`w-full flex items-center gap-3 p-4 rounded-xl border transition-all text-right ${
                           isSelected
-                            ? "border-[#00D4AA]/40 bg-[#00D4AA]/10"
-                            : "border-white/8 bg-white/3 hover:bg-white/6 hover:border-white/15"
+                            ? "border-primary/40 bg-primary/10"
+                            : "border-border bg-secondary/40 hover:bg-secondary/70 hover:border-border"
                         }`}
                       >
                         <span className="text-2xl flex-shrink-0">
                           {opt.emoji}
                         </span>
-                        <span className="text-white text-sm font-medium flex-1">
+                        <span className="text-foreground text-sm font-medium flex-1">
                           {opt.label}
                         </span>
                         {isSelected && (
-                          <CheckCircle2 className="w-5 h-5 text-[#00D4AA] flex-shrink-0" />
+                          <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0" />
                         )}
                       </motion.button>
                     );
@@ -207,7 +207,7 @@ export default function MentalHealthTest() {
               {currentQ > 0 && (
                 <button
                   onClick={() => setCurrentQ(currentQ - 1)}
-                  className="flex items-center gap-2 text-white/40 hover:text-white text-sm transition-colors mx-auto"
+                  className="flex items-center gap-2 text-muted-foreground hover:text-foreground text-sm transition-colors mx-auto"
                 >
                   <ArrowRight className="w-4 h-4" />
                   السؤال السابق
@@ -222,7 +222,7 @@ export default function MentalHealthTest() {
               transition={{ duration: 0.4 }}
             >
               {/* Result Card */}
-              <div className="glass-card p-7 border border-white/10">
+              <div className="glass-card p-7 border border-border">
                 <div className="text-center mb-6">
                   <div
                     className="w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4"
@@ -238,7 +238,7 @@ export default function MentalHealthTest() {
                       {result.total}%
                     </span>
                   </div>
-                  <h2 className="text-white font-black text-xl mb-1">
+                  <h2 className="text-foreground font-black text-xl mb-1">
                     نتيجة التقييم
                   </h2>
                   <p
@@ -259,15 +259,15 @@ export default function MentalHealthTest() {
                       return (
                         <div key={dim}>
                           <div className="flex items-center justify-between mb-1">
-                            <span className="flex items-center gap-2 text-white/60 text-sm">
+                            <span className="flex items-center gap-2 text-muted-foreground text-sm">
                               <Icon size={14} style={{ color: meta.color }} />
                               {meta.label}
                             </span>
-                            <span className="text-white font-bold text-sm">
+                            <span className="text-foreground font-bold text-sm">
                               {value}%
                             </span>
                           </div>
-                          <div className="w-full h-2.5 rounded-full bg-white/5 overflow-hidden">
+                          <div className="w-full h-2.5 rounded-full bg-secondary/60 overflow-hidden">
                             <motion.div
                               className="h-full rounded-full"
                               style={{ background: meta.color }}
@@ -302,7 +302,7 @@ export default function MentalHealthTest() {
                         style={{ color: result.color }}
                       />
                     )}
-                    <p className="text-white/70 text-sm leading-relaxed">
+                    <p className="text-foreground/70 text-sm leading-relaxed">
                       {result.recommendation}
                     </p>
                   </div>
@@ -319,7 +319,7 @@ export default function MentalHealthTest() {
                       <p className="text-red-400 font-bold text-sm">
                         خط المساعدة الفوري
                       </p>
-                      <p className="text-white/40 text-xs font-numbers">
+                      <p className="text-muted-foreground text-xs font-numbers">
                         {CONTACT_PHONE}
                       </p>
                     </div>
@@ -328,7 +328,7 @@ export default function MentalHealthTest() {
 
                 <button
                   onClick={goToDashboard}
-                  className="w-full py-3.5 rounded-xl font-black text-[#060B18] transition-all hover:scale-105 flex items-center justify-center gap-2"
+                  className="w-full py-3.5 rounded-xl font-black text-primary-foreground transition-all hover:scale-105 flex items-center justify-center gap-2"
                   style={{
                     background: `linear-gradient(135deg, ${groupInfo.color}, ${groupInfo.color}99)`,
                   }}

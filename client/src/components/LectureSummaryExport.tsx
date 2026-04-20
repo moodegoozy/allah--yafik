@@ -124,9 +124,9 @@ ${keyTakeaways.map((k, i) => `${i + 1}. ${k}`).join("\n")}
         onClick={() => setShowPanel(!showPanel)}
         className="flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-bold transition-all"
         style={{
-          background: showPanel ? `${color}20` : "rgba(255,255,255,0.05)",
-          border: `1px solid ${showPanel ? color + "40" : "rgba(255,255,255,0.08)"}`,
-          color: showPanel ? color : "rgba(255,255,255,0.6)",
+          background: showPanel ? `${color}20` : "var(--secondary)",
+          border: `1px solid ${showPanel ? color + "40" : "var(--border)"}`,
+          color: showPanel ? color : "var(--foreground)",
         }}
       >
         <Share2 className="w-4 h-4" />
@@ -140,19 +140,19 @@ ${keyTakeaways.map((k, i) => `${i + 1}. ${k}`).join("\n")}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.95 }}
             transition={{ duration: 0.2 }}
-            className="absolute left-0 top-full mt-2 z-50 w-72 glass-deep rounded-2xl border border-white/10 p-4 shadow-2xl"
+            className="absolute left-0 top-full mt-2 z-50 w-72 glass-deep rounded-2xl border border-border p-4 shadow-2xl"
           >
             {/* رأس اللوحة */}
             <div className="flex items-center justify-between mb-4">
-              <h4 className="text-white font-bold text-sm">مشاركة وتصدير</h4>
-              <button onClick={() => setShowPanel(false)} className="text-white/30 hover:text-white transition-colors">
+              <h4 className="text-foreground font-bold text-sm">مشاركة وتصدير</h4>
+              <button onClick={() => setShowPanel(false)} className="text-muted-foreground/70 hover:text-foreground transition-colors">
                 <X className="w-4 h-4" />
               </button>
             </div>
 
             {/* معاينة الملخص */}
-            <div className="bg-white/4 rounded-xl p-3 mb-4 max-h-28 overflow-y-auto">
-              <p className="text-white/50 text-xs leading-relaxed whitespace-pre-line">{summaryText.split("\n").slice(0, 5).join("\n")}...</p>
+            <div className="bg-secondary/50 rounded-xl p-3 mb-4 max-h-28 overflow-y-auto">
+              <p className="text-muted-foreground text-xs leading-relaxed whitespace-pre-line">{summaryText.split("\n").slice(0, 5).join("\n")}...</p>
             </div>
 
             {/* أزرار المشاركة */}
@@ -160,7 +160,7 @@ ${keyTakeaways.map((k, i) => `${i + 1}. ${k}`).join("\n")}
               <button
                 onClick={handleCopy}
                 className="flex items-center gap-2 p-3 rounded-xl transition-all text-sm"
-                style={{ background: copied ? "#10B98115" : "rgba(255,255,255,0.05)", border: `1px solid ${copied ? "#10B98130" : "rgba(255,255,255,0.08)"}`, color: copied ? "#10B981" : "rgba(255,255,255,0.7)" }}
+                style={{ background: copied ? "oklch(0.70 0.17 160 / 0.1)" : "var(--secondary)", border: `1px solid ${copied ? "oklch(0.70 0.17 160 / 0.2)" : "var(--border)"}`, color: copied ? "oklch(0.70 0.17 160)" : "var(--foreground)" }}
               >
                 {copied ? <Check className="w-4 h-4" /> : <Copy className="w-4 h-4" />}
                 {copied ? "تم النسخ!" : "نسخ"}
@@ -168,7 +168,7 @@ ${keyTakeaways.map((k, i) => `${i + 1}. ${k}`).join("\n")}
 
               <button
                 onClick={handleWhatsApp}
-                className="flex items-center gap-2 p-3 rounded-xl bg-[#25D36615] border border-[#25D36625] text-[#25D366] text-sm transition-all hover:bg-[#25D36625]"
+                className="flex items-center gap-2 p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/15 text-emerald-500 text-sm transition-all hover:bg-emerald-500/15"
               >
                 <MessageCircle className="w-4 h-4" />
                 واتساب
@@ -176,7 +176,7 @@ ${keyTakeaways.map((k, i) => `${i + 1}. ${k}`).join("\n")}
 
               <button
                 onClick={handleEmail}
-                className="flex items-center gap-2 p-3 rounded-xl bg-white/5 border border-white/8 text-white/60 text-sm transition-all hover:bg-white/8"
+                className="flex items-center gap-2 p-3 rounded-xl bg-secondary/60 border border-border text-muted-foreground text-sm transition-all hover:bg-secondary/80"
               >
                 <Mail className="w-4 h-4" />
                 بريد
@@ -196,7 +196,7 @@ ${keyTakeaways.map((k, i) => `${i + 1}. ${k}`).join("\n")}
             <button
               onClick={handleNativeShare}
               className="w-full flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-bold transition-all"
-              style={{ background: `linear-gradient(135deg, ${color}20, #00D4AA15)`, border: `1px solid ${color}25`, color }}
+              style={{ background: `linear-gradient(135deg, ${color}20, oklch(0.75 0.18 175)15)`, border: `1px solid ${color}25`, color }}
             >
               <Link2 className="w-4 h-4" />
               مشاركة عبر التطبيقات

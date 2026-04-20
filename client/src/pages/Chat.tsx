@@ -170,49 +170,49 @@ export default function Chat() {
   );
 
   return (
-    <div className="flex h-screen bg-[#060B18] overflow-hidden">
+    <div className="flex h-screen bg-background overflow-hidden">
       {/* Chat List Sidebar */}
       <div
-        className={`w-80 flex-shrink-0 bg-[#0A0F1E] border-l border-white/5 flex flex-col ${showMobileList ? "flex" : "hidden md:flex"}`}
+        className={`w-80 flex-shrink-0 bg-background border-l border-border flex flex-col ${showMobileList ? "flex" : "hidden md:flex"}`}
       >
         {/* Header */}
-        <div className="p-5 border-b border-white/5">
+        <div className="p-5 border-b border-border">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-white font-black text-lg">الدردشة</h2>
+            <h2 className="text-foreground font-black text-lg">الدردشة</h2>
             <div className="flex items-center gap-1.5">
-              <div className="w-2 h-2 rounded-full bg-[#10B981] animate-pulse" />
-              <span className="text-[#10B981] text-xs font-bold">متصل</span>
+              <div className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
+              <span className="text-emerald-500 text-xs font-bold">متصل</span>
             </div>
           </div>
           <div className="relative">
-            <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/30" />
+            <Search className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/70" />
             <input
               value={searchQuery}
               onChange={e => setSearchQuery(e.target.value)}
               placeholder="بحث في المحادثات..."
-              className="w-full bg-white/4 border border-white/10 rounded-xl pr-10 pl-4 py-2.5 text-white placeholder-white/25 focus:outline-none focus:border-white/20 text-sm"
+              className="w-full bg-secondary/50 border border-border rounded-xl pr-10 pl-4 py-2.5 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-border text-sm"
             />
           </div>
         </div>
 
         {/* Emergency Button */}
-        <div className="px-4 py-3 border-b border-white/5">
+        <div className="px-4 py-3 border-b border-border">
           <a
             href={`tel:${CONTACT_PHONE}`}
-            className="flex items-center gap-3 p-3 rounded-xl bg-[#EF4444]/10 border border-[#EF4444]/25 hover:bg-[#EF4444]/20 transition-all group"
+            className="flex items-center gap-3 p-3 rounded-xl bg-destructive/10 border border-destructive/25 hover:bg-destructive/20 transition-all group"
           >
-            <div className="w-9 h-9 rounded-xl bg-[#EF4444]/20 flex items-center justify-center group-hover:scale-110 transition-transform">
-              <AlertTriangle className="w-4.5 h-4.5 text-[#EF4444]" />
+            <div className="w-9 h-9 rounded-xl bg-destructive/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+              <AlertTriangle className="w-4.5 h-4.5 text-destructive" />
             </div>
             <div>
-              <div className="text-[#EF4444] font-black text-sm">
+              <div className="text-destructive font-black text-sm">
                 خط الطوارئ
               </div>
-              <div className="text-white/35 text-xs font-numbers">
+              <div className="text-muted-foreground/70 text-xs font-numbers">
                 {CONTACT_PHONE}
               </div>
             </div>
-            <Phone className="w-4 h-4 text-[#EF4444] mr-auto" />
+            <Phone className="w-4 h-4 text-destructive mr-auto" />
           </a>
         </div>
 
@@ -224,8 +224,8 @@ export default function Chat() {
               onClick={() => selectChat(chat)}
               className={`w-full flex items-center gap-3 p-3 rounded-xl transition-all text-right ${
                 activeChat?.id === chat.id
-                  ? "bg-[#00D4AA]/10 border border-[#00D4AA]/20"
-                  : "hover:bg-white/4"
+                  ? "bg-primary/10 border border-primary/20"
+                  : "hover:bg-secondary/50"
               }`}
             >
               {/* Avatar */}
@@ -233,10 +233,10 @@ export default function Chat() {
                 <div
                   className={`w-11 h-11 rounded-xl flex items-center justify-center font-black text-lg ${
                     chat.type === "ai"
-                      ? "bg-gradient-to-br from-[#8B5CF6] to-[#3B82F6] text-white"
+                      ? "bg-gradient-to-br from-violet-500 to-blue-500 text-foreground"
                       : chat.type === "group"
-                        ? "bg-gradient-to-br from-[#F59E0B] to-[#EF4444] text-white"
-                        : "bg-gradient-to-br from-[#00D4AA]/30 to-[#0EA5E9]/30 text-[#00D4AA]"
+                        ? "bg-gradient-to-br from-amber-500 to-red-500 text-foreground"
+                        : "bg-gradient-to-br from-primary/30 to-sky-500/30 text-primary"
                   }`}
                 >
                   {chat.type === "ai" ? (
@@ -246,25 +246,25 @@ export default function Chat() {
                   )}
                 </div>
                 {chat.online && (
-                  <div className="absolute -bottom-0.5 -left-0.5 w-3 h-3 rounded-full bg-[#10B981] border-2 border-[#0A0F1E]" />
+                  <div className="absolute -bottom-0.5 -left-0.5 w-3 h-3 rounded-full bg-emerald-500 border-2 border-background" />
                 )}
               </div>
 
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between mb-0.5">
-                  <span className="text-white font-bold text-sm truncate">
+                  <span className="text-foreground font-bold text-sm truncate">
                     {chat.name}
                   </span>
-                  <span className="text-white/30 text-xs flex-shrink-0 mr-2">
+                  <span className="text-muted-foreground/70 text-xs flex-shrink-0 mr-2">
                     {chat.lastTime}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-white/40 text-xs truncate">
+                  <span className="text-muted-foreground text-xs truncate">
                     {chat.lastMsg}
                   </span>
                   {chat.unread > 0 && (
-                    <span className="flex-shrink-0 mr-2 w-5 h-5 rounded-full bg-[#00D4AA] text-[#060B18] text-xs font-black flex items-center justify-center font-numbers">
+                    <span className="flex-shrink-0 mr-2 w-5 h-5 rounded-full bg-primary text-primary-foreground text-xs font-black flex items-center justify-center font-numbers">
                       {chat.unread}
                     </span>
                   )}
@@ -281,19 +281,19 @@ export default function Chat() {
       >
         {!activeChat ? (
           <div className="flex-1 flex flex-col items-center justify-center text-center p-8">
-            <MessageSquare className="w-16 h-16 text-white/10 mb-4" />
-            <h3 className="text-white/40 font-bold text-lg mb-2">
+            <MessageSquare className="w-16 h-16 text-muted-foreground/40 mb-4" />
+            <h3 className="text-muted-foreground font-bold text-lg mb-2">
               لا توجد محادثات
             </h3>
-            <p className="text-white/25 text-sm">ستتوفر المحادثات قريباً</p>
+            <p className="text-muted-foreground/60 text-sm">ستتوفر المحادثات قريباً</p>
           </div>
         ) : (
           <>
             {/* Chat Header */}
-            <div className="flex items-center gap-4 px-6 py-4 border-b border-white/5 bg-[#0A0F1E]/50 backdrop-blur-sm">
+            <div className="flex items-center gap-4 px-6 py-4 border-b border-border bg-background/50 backdrop-blur-sm">
               <button
                 onClick={() => setShowMobileList(true)}
-                className="md:hidden text-white/40 hover:text-white"
+                className="md:hidden text-muted-foreground hover:text-foreground"
               >
                 <ArrowRight className="w-5 h-5" />
               </button>
@@ -301,10 +301,10 @@ export default function Chat() {
               <div
                 className={`w-10 h-10 rounded-xl flex items-center justify-center font-black ${
                   activeChat.type === "ai"
-                    ? "bg-gradient-to-br from-[#8B5CF6] to-[#3B82F6] text-white"
+                    ? "bg-gradient-to-br from-violet-500 to-blue-500 text-foreground"
                     : activeChat.type === "group"
-                      ? "bg-gradient-to-br from-[#F59E0B] to-[#EF4444] text-white"
-                      : "bg-gradient-to-br from-[#00D4AA]/30 to-[#0EA5E9]/30 text-[#00D4AA]"
+                      ? "bg-gradient-to-br from-amber-500 to-red-500 text-foreground"
+                      : "bg-gradient-to-br from-primary/30 to-sky-500/30 text-primary"
                 }`}
               >
                 {activeChat.type === "ai" ? (
@@ -315,14 +315,14 @@ export default function Chat() {
               </div>
 
               <div className="flex-1">
-                <div className="text-white font-bold text-sm">
+                <div className="text-foreground font-bold text-sm">
                   {activeChat.name}
                 </div>
                 <div className="flex items-center gap-1.5">
                   {activeChat.online && (
-                    <div className="w-1.5 h-1.5 rounded-full bg-[#10B981]" />
+                    <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
                   )}
-                  <span className="text-white/35 text-xs">
+                  <span className="text-muted-foreground/70 text-xs">
                     {activeChat.role}
                   </span>
                 </div>
@@ -331,13 +331,13 @@ export default function Chat() {
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => toast.info("جاري الاتصال...")}
-                  className="p-2 rounded-xl glass-card border border-white/8 text-white/40 hover:text-[#00D4AA] transition-colors"
+                  className="p-2 rounded-xl glass-card border border-border text-muted-foreground hover:text-primary transition-colors"
                 >
                   <Phone className="w-4 h-4" />
                 </button>
                 <button
                   onClick={() => toast.info("جاري بدء مكالمة فيديو...")}
-                  className="p-2 rounded-xl glass-card border border-white/8 text-white/40 hover:text-[#00D4AA] transition-colors"
+                  className="p-2 rounded-xl glass-card border border-border text-muted-foreground hover:text-primary transition-colors"
                 >
                   <Video className="w-4 h-4" />
                 </button>
@@ -349,7 +349,7 @@ export default function Chat() {
               {/* AI Disclaimer */}
               {activeChat.type === "ai" && (
                 <div className="flex justify-center">
-                  <div className="px-4 py-2 rounded-xl bg-[#8B5CF6]/10 border border-[#8B5CF6]/20 text-[#8B5CF6] text-xs flex items-center gap-2">
+                  <div className="px-4 py-2 rounded-xl bg-violet-500/10 border border-violet-500/20 text-violet-500 text-xs flex items-center gap-2">
                     <Bot className="w-3.5 h-3.5" />
                     مساعد ذكاء اصطناعي - للحالات الطارئة اتصل بـ {CONTACT_PHONE}
                   </div>
@@ -371,21 +371,21 @@ export default function Chat() {
                       <div
                         className={`px-4 py-3 rounded-2xl text-sm leading-relaxed ${
                           msg.sender === "me"
-                            ? "bg-gradient-to-br from-[#00D4AA] to-[#0EA5E9] text-[#060B18] font-medium rounded-tr-sm"
+                            ? "bg-gradient-to-br from-primary to-sky-500 text-primary-foreground font-medium rounded-tr-sm"
                             : activeChat.type === "ai"
-                              ? "bg-[#8B5CF6]/15 border border-[#8B5CF6]/20 text-white rounded-tl-sm"
-                              : "bg-white/8 border border-white/8 text-white rounded-tl-sm"
+                              ? "bg-violet-500/15 border border-violet-500/20 text-foreground rounded-tl-sm"
+                              : "bg-secondary/80 border border-border text-foreground rounded-tl-sm"
                         }`}
                       >
                         {msg.text}
                       </div>
                       <div
-                        className={`flex items-center gap-1 text-white/25 text-xs ${msg.sender === "me" ? "" : "flex-row-reverse"}`}
+                        className={`flex items-center gap-1 text-muted-foreground/60 text-xs ${msg.sender === "me" ? "" : "flex-row-reverse"}`}
                       >
                         <span>{msg.time}</span>
                         {msg.sender === "me" &&
                           (msg.status === "read" ? (
-                            <CheckCheck className="w-3 h-3 text-[#00D4AA]" />
+                            <CheckCheck className="w-3 h-3 text-primary" />
                           ) : (
                             <Check className="w-3 h-3" />
                           ))}
@@ -411,7 +411,7 @@ export default function Chat() {
                     onClick={() => {
                       setInputText(q);
                     }}
-                    className="flex-shrink-0 px-3 py-1.5 rounded-xl bg-[#8B5CF6]/10 border border-[#8B5CF6]/20 text-[#8B5CF6] text-xs font-bold hover:bg-[#8B5CF6]/20 transition-colors"
+                    className="flex-shrink-0 px-3 py-1.5 rounded-xl bg-violet-500/10 border border-violet-500/20 text-violet-500 text-xs font-bold hover:bg-violet-500/20 transition-colors"
                   >
                     {q}
                   </button>
@@ -420,11 +420,11 @@ export default function Chat() {
             )}
 
             {/* Input Area */}
-            <div className="px-6 py-4 border-t border-white/5 bg-[#0A0F1E]/30">
+            <div className="px-6 py-4 border-t border-border bg-background/30">
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => toast.info("ميزة الملفات قادمة قريباً")}
-                  className="p-2.5 rounded-xl glass-card border border-white/8 text-white/30 hover:text-white/60 transition-colors flex-shrink-0"
+                  className="p-2.5 rounded-xl glass-card border border-border text-muted-foreground/70 hover:text-muted-foreground transition-colors flex-shrink-0"
                 >
                   <Paperclip className="w-4 h-4" />
                 </button>
@@ -437,11 +437,11 @@ export default function Chat() {
                       e.key === "Enter" && !e.shiftKey && sendMessage()
                     }
                     placeholder="اكتب رسالتك..."
-                    className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder-white/25 focus:outline-none focus:border-white/20 text-sm pr-4 pl-10"
+                    className="w-full bg-secondary/60 border border-border rounded-xl px-4 py-3 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-border text-sm pr-4 pl-10"
                   />
                   <button
                     onClick={() => toast.info("الرموز التعبيرية قادمة قريباً")}
-                    className="absolute left-3 top-1/2 -translate-y-1/2 text-white/25 hover:text-white/50"
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground/60 hover:text-muted-foreground"
                   >
                     <Smile className="w-4 h-4" />
                   </button>
@@ -453,12 +453,12 @@ export default function Chat() {
                   className="p-2.5 rounded-xl flex items-center justify-center transition-all hover:scale-110 disabled:opacity-40 disabled:scale-100 flex-shrink-0"
                   style={{
                     background: inputText.trim()
-                      ? "linear-gradient(135deg, #00D4AA, #0EA5E9)"
-                      : "rgba(255,255,255,0.05)",
+                      ? "linear-gradient(135deg, oklch(0.75 0.18 175), oklch(0.68 0.16 230))"
+                      : "var(--secondary)",
                   }}
                 >
                   <Send
-                    className={`w-4 h-4 ${inputText.trim() ? "text-[#060B18]" : "text-white/30"}`}
+                    className={`w-4 h-4 ${inputText.trim() ? "text-primary-foreground" : "text-muted-foreground/70"}`}
                   />
                 </button>
               </div>

@@ -122,24 +122,24 @@ export default function AudioPlayer({ title, speaker, duration, color }: AudioPl
             </AnimatePresence>
           </div>
           <div className="flex-1 min-w-0">
-            <h4 className="text-white font-bold text-sm leading-snug line-clamp-1">{title}</h4>
-            <p className="text-white/40 text-xs mt-0.5">{speaker}</p>
+            <h4 className="text-foreground font-bold text-sm leading-snug line-clamp-1">{title}</h4>
+            <p className="text-muted-foreground text-xs mt-0.5">{speaker}</p>
             <div className="flex items-center gap-2 mt-1">
-              <span className="text-white/25 text-xs font-numbers">{formatTime(elapsed)}</span>
-              <span className="text-white/15 text-xs">/</span>
-              <span className="text-white/25 text-xs">{duration}</span>
+              <span className="text-muted-foreground/60 text-xs font-numbers">{formatTime(elapsed)}</span>
+              <span className="text-muted-foreground/40 text-xs">/</span>
+              <span className="text-muted-foreground/60 text-xs">{duration}</span>
             </div>
           </div>
         </div>
 
         {/* شريط التقدم */}
         <div
-          className="h-2 bg-white/8 rounded-full mb-4 cursor-pointer relative group"
+          className="h-2 bg-secondary/80 rounded-full mb-4 cursor-pointer relative group"
           onClick={handleProgressClick}
         >
           <div
             className="h-full rounded-full transition-all duration-300 relative"
-            style={{ width: `${progress}%`, background: `linear-gradient(to right, ${color}, #00D4AA)` }}
+            style={{ width: `${progress}%`, background: `linear-gradient(to right, ${color}, oklch(0.75 0.18 175))` }}
           >
             <div
               className="absolute left-0 top-1/2 -translate-y-1/2 w-3.5 h-3.5 rounded-full bg-white shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
@@ -158,8 +158,8 @@ export default function AudioPlayer({ title, speaker, duration, color }: AudioPl
                 onClick={() => setSpeed(s)}
                 className={`px-2 py-1 rounded-lg text-xs font-bold transition-all ${
                   speed === s
-                    ? "text-white"
-                    : "text-white/30 hover:text-white/60"
+                    ? "text-foreground"
+                    : "text-muted-foreground/70 hover:text-muted-foreground"
                 }`}
                 style={speed === s ? { background: `${color}25`, color } : {}}
               >
@@ -172,13 +172,13 @@ export default function AudioPlayer({ title, speaker, duration, color }: AudioPl
           <div className="flex items-center gap-3">
             <button
               onClick={() => skip(-15)}
-              className="w-8 h-8 rounded-xl glass-card flex items-center justify-center text-white/40 hover:text-white transition-all"
+              className="w-8 h-8 rounded-xl glass-card flex items-center justify-center text-muted-foreground hover:text-foreground transition-all"
             >
               <Rewind className="w-4 h-4" />
             </button>
             <button
               onClick={() => skip(-5)}
-              className="w-8 h-8 rounded-xl glass-card flex items-center justify-center text-white/40 hover:text-white transition-all"
+              className="w-8 h-8 rounded-xl glass-card flex items-center justify-center text-muted-foreground hover:text-foreground transition-all"
             >
               <SkipBack className="w-4 h-4" />
             </button>
@@ -187,24 +187,24 @@ export default function AudioPlayer({ title, speaker, duration, color }: AudioPl
             <button
               onClick={() => setIsPlaying(!isPlaying)}
               className="w-12 h-12 rounded-full flex items-center justify-center transition-all hover:scale-105 active:scale-95"
-              style={{ background: `linear-gradient(135deg, ${color}, #00D4AA)` }}
+              style={{ background: `linear-gradient(135deg, ${color}, oklch(0.75 0.18 175))` }}
             >
               {isPlaying ? (
-                <Pause className="w-5 h-5 text-[#060B18]" />
+                <Pause className="w-5 h-5 text-primary-foreground" />
               ) : (
-                <Play className="w-5 h-5 text-[#060B18] mr-0.5" />
+                <Play className="w-5 h-5 text-primary-foreground mr-0.5" />
               )}
             </button>
 
             <button
               onClick={() => skip(5)}
-              className="w-8 h-8 rounded-xl glass-card flex items-center justify-center text-white/40 hover:text-white transition-all"
+              className="w-8 h-8 rounded-xl glass-card flex items-center justify-center text-muted-foreground hover:text-foreground transition-all"
             >
               <SkipForward className="w-4 h-4" />
             </button>
             <button
               onClick={() => skip(15)}
-              className="w-8 h-8 rounded-xl glass-card flex items-center justify-center text-white/40 hover:text-white transition-all"
+              className="w-8 h-8 rounded-xl glass-card flex items-center justify-center text-muted-foreground hover:text-foreground transition-all"
             >
               <FastForward className="w-4 h-4" />
             </button>
@@ -214,12 +214,12 @@ export default function AudioPlayer({ title, speaker, duration, color }: AudioPl
           <div className="flex items-center gap-2">
             <button
               onClick={() => setIsMuted(!isMuted)}
-              className="text-white/40 hover:text-white transition-colors"
+              className="text-muted-foreground hover:text-foreground transition-colors"
             >
               {isMuted ? <VolumeX className="w-4 h-4" /> : <Volume2 className="w-4 h-4" />}
             </button>
             <div
-              className="w-16 h-1.5 bg-white/8 rounded-full cursor-pointer relative"
+              className="w-16 h-1.5 bg-secondary/80 rounded-full cursor-pointer relative"
               onClick={(e) => {
                 const rect = e.currentTarget.getBoundingClientRect();
                 const x = e.clientX - rect.left;

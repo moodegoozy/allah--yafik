@@ -135,21 +135,21 @@ export default function Notifications() {
 
   return (
     <div className="app-container bg-gradient-navy overflow-hidden">
-      <div className="orb w-64 h-64 opacity-8 top-20 -left-20" style={{ background: "#F59E0B" }} />
+      <div className="orb w-64 h-64 opacity-8 top-20 -left-20" style={{ background: "oklch(0.80 0.18 80)" }} />
 
       {/* Header */}
       <div className="mobile-header px-5 py-4">
         <div className="flex items-center justify-between">
           <div>
-            <div className="text-[#F59E0B] text-xs font-bold uppercase tracking-wider mb-1">
+            <div className="text-accent text-xs font-bold uppercase tracking-wider mb-1">
               الإشعارات والتذكيرات
             </div>
-            <h1 className="text-white font-black text-xl">نظام التذكيرات</h1>
+            <h1 className="text-foreground font-black text-xl">نظام التذكيرات</h1>
           </div>
           {unreadCount > 0 && (
-            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#EF4444]/15 border border-[#EF4444]/25">
-              <BellRing className="w-3.5 h-3.5 text-[#EF4444] animate-pulse" />
-              <span className="text-[#EF4444] font-black text-xs">{unreadCount}</span>
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-destructive/15 border border-destructive/25">
+              <BellRing className="w-3.5 h-3.5 text-destructive animate-pulse" />
+              <span className="text-destructive font-black text-xs">{unreadCount}</span>
             </div>
           )}
         </div>
@@ -158,7 +158,7 @@ export default function Notifications() {
       <div className="page-content overflow-y-auto">
         <div className="px-4 pt-3">
           {/* Tabs */}
-          <div className="flex gap-1 p-1 glass-card border border-white/8 rounded-2xl mb-5 overflow-x-auto">
+          <div className="flex gap-1 p-1 glass-card border border-border rounded-2xl mb-5 overflow-x-auto">
             {[
               { id: "reminders", label: "التذكيرات", icon: Clock },
               {
@@ -174,14 +174,14 @@ export default function Notifications() {
                 onClick={() => setActiveTab(tab.id as any)}
                 className={`flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-bold transition-all relative ${
                   activeTab === tab.id
-                    ? "bg-[#00D4AA]/15 text-[#00D4AA] border border-[#00D4AA]/25"
-                    : "text-white/40 hover:text-white/70"
+                    ? "bg-primary/15 text-primary border border-primary/25"
+                    : "text-muted-foreground hover:text-foreground/70"
                 }`}
               >
                 <tab.icon className="w-4 h-4" />
                 {tab.label}
                 {tab.badge && tab.badge > 0 && (
-                  <span className="absolute -top-1 -left-1 w-4 h-4 rounded-full bg-[#EF4444] text-white text-xs flex items-center justify-center font-numbers">
+                  <span className="absolute -top-1 -left-1 w-4 h-4 rounded-full bg-destructive text-foreground text-xs flex items-center justify-center font-numbers">
                     {tab.badge}
                   </span>
                 )}
@@ -199,14 +199,14 @@ export default function Notifications() {
                 exit={{ opacity: 0 }}
               >
                 <div className="flex items-center justify-between mb-5">
-                  <h3 className="text-white font-black">
+                  <h3 className="text-foreground font-black">
                     تذكيراتي ({reminders.length})
                   </h3>
                   <button
                     onClick={() => setShowAddForm(true)}
-                    className="flex items-center gap-2 px-4 py-2 rounded-xl font-bold text-sm text-[#060B18] transition-all hover:scale-105"
+                    className="flex items-center gap-2 px-4 py-2 rounded-xl font-bold text-sm text-primary-foreground transition-all hover:scale-105"
                     style={{
-                      background: "linear-gradient(135deg, #00D4AA, #0EA5E9)",
+                      background: "linear-gradient(135deg, oklch(0.75 0.18 175), oklch(0.68 0.16 230))",
                     }}
                   >
                     <Plus className="w-4 h-4" />
@@ -216,12 +216,12 @@ export default function Notifications() {
 
                 <div className="space-y-3 mb-7">
                   {reminders.length === 0 && (
-                    <div className="text-center py-8 glass-card border border-white/8 rounded-2xl">
-                      <Clock className="w-10 h-10 text-white/10 mx-auto mb-3" />
-                      <p className="text-white/30 text-sm">
+                    <div className="text-center py-8 glass-card border border-border rounded-2xl">
+                      <Clock className="w-10 h-10 text-muted-foreground/40 mx-auto mb-3" />
+                      <p className="text-muted-foreground/70 text-sm">
                         لا توجد تذكيرات بعد
                       </p>
-                      <p className="text-white/20 text-xs mt-1">
+                      <p className="text-muted-foreground/60 text-xs mt-1">
                         أضف تذكيراً لمساعدتك في رحلة التعافي
                       </p>
                     </div>
@@ -235,7 +235,7 @@ export default function Notifications() {
                       <motion.div
                         key={reminder.id}
                         layout
-                        className={`glass-card p-4 border transition-all ${reminder.enabled ? "border-white/8" : "border-white/4 opacity-50"}`}
+                        className={`glass-card p-4 border transition-all ${reminder.enabled ? "border-border" : "border-border opacity-50"}`}
                       >
                         <div className="flex items-center gap-4">
                           <div
@@ -249,23 +249,23 @@ export default function Notifications() {
                           </div>
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-0.5">
-                              <span className="text-white font-bold text-sm">
+                              <span className="text-foreground font-bold text-sm">
                                 {type.label}
                               </span>
-                              <span className="text-white/40 text-xs font-numbers">
+                              <span className="text-muted-foreground text-xs font-numbers">
                                 {reminder.time}
                               </span>
                             </div>
                             <div className="flex gap-1 flex-wrap">
                               {reminder.days.length === 7 ? (
-                                <span className="text-white/35 text-xs">
+                                <span className="text-muted-foreground/70 text-xs">
                                   كل يوم
                                 </span>
                               ) : (
                                 reminder.days.map(d => (
                                   <span
                                     key={d}
-                                    className="text-white/35 text-xs"
+                                    className="text-muted-foreground/70 text-xs"
                                   >
                                     {d.slice(0, 3)}
                                   </span>
@@ -276,7 +276,7 @@ export default function Notifications() {
                           <div className="flex items-center gap-2">
                             <button
                               onClick={() => toggleReminder(reminder.id)}
-                              className={`w-11 h-6 rounded-full transition-all relative ${reminder.enabled ? "bg-[#00D4AA]" : "bg-white/10"}`}
+                              className={`w-11 h-6 rounded-full transition-all relative ${reminder.enabled ? "bg-primary" : "bg-secondary"}`}
                             >
                               <div
                                 className={`absolute top-0.5 w-5 h-5 rounded-full bg-white shadow transition-all ${reminder.enabled ? "left-5.5" : "left-0.5"}`}
@@ -284,7 +284,7 @@ export default function Notifications() {
                             </button>
                             <button
                               onClick={() => deleteReminder(reminder.id)}
-                              className="w-8 h-8 rounded-lg glass-card border border-white/8 flex items-center justify-center text-white/30 hover:text-[#EF4444] transition-colors"
+                              className="w-8 h-8 rounded-lg glass-card border border-border flex items-center justify-center text-muted-foreground/70 hover:text-destructive transition-colors"
                             >
                               <Trash2 className="w-3.5 h-3.5" />
                             </button>
@@ -302,19 +302,19 @@ export default function Notifications() {
                       initial={{ opacity: 0, height: 0 }}
                       animate={{ opacity: 1, height: "auto" }}
                       exit={{ opacity: 0, height: 0 }}
-                      className="glass-card p-5 border border-[#00D4AA]/25 mb-7"
+                      className="glass-card p-5 border border-primary/25 mb-7"
                     >
-                      <h4 className="text-white font-bold mb-4 flex items-center gap-2">
-                        <Plus className="w-4 h-4 text-[#00D4AA]" />
+                      <h4 className="text-foreground font-bold mb-4 flex items-center gap-2">
+                        <Plus className="w-4 h-4 text-primary" />
                         تذكير جديد
                       </h4>
                       <div className="space-y-4">
                         <div>
-                          <label className="text-white/50 text-xs font-bold mb-2 block">
+                          <label className="text-muted-foreground text-xs font-bold mb-2 block">
                             نوع التذكير
                           </label>
                           {reminderTypes.length === 0 ? (
-                            <p className="text-white/30 text-xs">
+                            <p className="text-muted-foreground/70 text-xs">
                               لا توجد أنواع تذكيرات متاحة حالياً
                             </p>
                           ) : (
@@ -328,7 +328,7 @@ export default function Notifications() {
                                       type: t.id,
                                     }))
                                   }
-                                  className={`p-2.5 rounded-xl border text-center transition-all ${newReminder.type === t.id ? "text-white" : "glass-card border-white/8 text-white/40"}`}
+                                  className={`p-2.5 rounded-xl border text-center transition-all ${newReminder.type === t.id ? "text-foreground" : "glass-card border-border text-muted-foreground"}`}
                                   style={
                                     newReminder.type === t.id
                                       ? {
@@ -356,7 +356,7 @@ export default function Notifications() {
                           )}
                         </div>
                         <div>
-                          <label className="text-white/50 text-xs font-bold mb-2 block">
+                          <label className="text-muted-foreground text-xs font-bold mb-2 block">
                             الوقت
                           </label>
                           <input
@@ -368,11 +368,11 @@ export default function Notifications() {
                                 time: e.target.value,
                               }))
                             }
-                            className="bg-white/4 border border-white/10 rounded-xl p-3 text-white focus:outline-none focus:border-white/25 text-sm font-numbers"
+                            className="bg-secondary/50 border border-border rounded-xl p-3 text-foreground focus:outline-none focus:border-border text-sm font-numbers"
                           />
                         </div>
                         <div>
-                          <label className="text-white/50 text-xs font-bold mb-2 block">
+                          <label className="text-muted-foreground text-xs font-bold mb-2 block">
                             الأيام
                           </label>
                           <div className="flex gap-2 flex-wrap">
@@ -380,7 +380,7 @@ export default function Notifications() {
                               <button
                                 key={day}
                                 onClick={() => toggleDay(day)}
-                                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${newReminder.days.includes(day) ? "bg-[#00D4AA]/15 text-[#00D4AA] border border-[#00D4AA]/30" : "glass-card border border-white/8 text-white/40"}`}
+                                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${newReminder.days.includes(day) ? "bg-primary/15 text-primary border border-primary/30" : "glass-card border border-border text-muted-foreground"}`}
                               >
                                 {day.slice(0, 3)}
                               </button>
@@ -390,16 +390,16 @@ export default function Notifications() {
                         <div className="flex gap-3">
                           <button
                             onClick={() => setShowAddForm(false)}
-                            className="flex-1 py-2.5 rounded-xl glass-card border border-white/10 text-white/50 font-bold text-sm"
+                            className="flex-1 py-2.5 rounded-xl glass-card border border-border text-muted-foreground font-bold text-sm"
                           >
                             إلغاء
                           </button>
                           <button
                             onClick={addReminder}
-                            className="flex-1 py-2.5 rounded-xl font-bold text-sm text-[#060B18]"
+                            className="flex-1 py-2.5 rounded-xl font-bold text-sm text-primary-foreground"
                             style={{
                               background:
-                                "linear-gradient(135deg, #00D4AA, #0EA5E9)",
+                                "linear-gradient(135deg, oklch(0.75 0.18 175), oklch(0.68 0.16 230))",
                             }}
                           >
                             حفظ التذكير
@@ -412,9 +412,9 @@ export default function Notifications() {
 
                 {/* Daily Messages */}
                 {motivationalMessages.length > 0 && (
-                  <div className="glass-card p-5 border border-white/7">
-                    <h4 className="text-white font-bold mb-4 flex items-center gap-2">
-                      <Sparkles className="w-4 h-4 text-[#00D4AA]" />
+                  <div className="glass-card p-5 border border-border">
+                    <h4 className="text-foreground font-bold mb-4 flex items-center gap-2">
+                      <Sparkles className="w-4 h-4 text-primary" />
                       رسائل تحفيزية يومية
                     </h4>
                     <div className="space-y-3">
@@ -432,10 +432,10 @@ export default function Notifications() {
                             style={{ color: msg.color }}
                           />
                           <div>
-                            <div className="text-white/40 text-xs mb-1">
+                            <div className="text-muted-foreground text-xs mb-1">
                               {msg.time}
                             </div>
-                            <p className="text-white/70 text-xs leading-relaxed">
+                            <p className="text-foreground/70 text-xs leading-relaxed">
                               {msg.msg}
                             </p>
                           </div>
@@ -456,11 +456,11 @@ export default function Notifications() {
                 exit={{ opacity: 0 }}
               >
                 <div className="flex items-center justify-between mb-5">
-                  <h3 className="text-white font-black">سجل الإشعارات</h3>
+                  <h3 className="text-foreground font-black">سجل الإشعارات</h3>
                   {unreadCount > 0 && (
                     <button
                       onClick={markAllRead}
-                      className="text-[#00D4AA] text-sm font-bold hover:text-[#00D4AA]/70 transition-colors"
+                      className="text-primary text-sm font-bold hover:text-primary/70 transition-colors"
                     >
                       تعليم الكل كمقروء
                     </button>
@@ -469,8 +469,8 @@ export default function Notifications() {
                 <div className="space-y-3">
                   {notifications.length === 0 && (
                     <div className="text-center py-12">
-                      <Bell className="w-10 h-10 text-white/10 mx-auto mb-3" />
-                      <p className="text-white/30 text-sm">
+                      <Bell className="w-10 h-10 text-muted-foreground/40 mx-auto mb-3" />
+                      <p className="text-muted-foreground/70 text-sm">
                         لا توجد إشعارات بعد
                       </p>
                     </div>
@@ -482,7 +482,7 @@ export default function Notifications() {
                       <motion.div
                         key={notif.id}
                         layout
-                        className={`glass-card p-4 border transition-all ${!notif.read ? "border-white/12 bg-white/3" : "border-white/5"}`}
+                        className={`glass-card p-4 border transition-all ${!notif.read ? "border-border bg-secondary/40" : "border-border"}`}
                       >
                         <div className="flex items-start gap-3">
                           <div
@@ -496,17 +496,17 @@ export default function Notifications() {
                           </div>
                           <div className="flex-1">
                             <div className="flex items-center justify-between mb-0.5">
-                              <span className="text-white font-bold text-sm">
+                              <span className="text-foreground font-bold text-sm">
                                 {notif.title}
                               </span>
                               {!notif.read && (
-                                <div className="w-2 h-2 rounded-full bg-[#00D4AA]" />
+                                <div className="w-2 h-2 rounded-full bg-primary" />
                               )}
                             </div>
-                            <p className="text-white/50 text-xs mb-1">
+                            <p className="text-muted-foreground text-xs mb-1">
                               {notif.msg}
                             </p>
-                            <span className="text-white/25 text-xs">
+                            <span className="text-muted-foreground/60 text-xs">
                               {notif.time}
                             </span>
                           </div>
@@ -526,7 +526,7 @@ export default function Notifications() {
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0 }}
               >
-                <h3 className="text-white font-black mb-5">
+                <h3 className="text-foreground font-black mb-5">
                   إعدادات الإشعارات
                 </h3>
                 <div className="space-y-3 mb-7">
@@ -567,7 +567,7 @@ export default function Notifications() {
                   ].map((setting, i) => (
                     <div
                       key={i}
-                      className="glass-card p-4 border border-white/7 flex items-center gap-4"
+                      className="glass-card p-4 border border-border flex items-center gap-4"
                     >
                       <div
                         className="w-10 h-10 rounded-xl flex items-center justify-center"
@@ -579,16 +579,16 @@ export default function Notifications() {
                         />
                       </div>
                       <div className="flex-1">
-                        <div className="text-white font-bold text-sm">
+                        <div className="text-foreground font-bold text-sm">
                           {setting.label}
                         </div>
-                        <div className="text-white/40 text-xs">
+                        <div className="text-muted-foreground text-xs">
                           {setting.desc}
                         </div>
                       </div>
                       <button
                         onClick={setting.toggle}
-                        className={`w-11 h-6 rounded-full transition-all relative flex-shrink-0 ${setting.state ? "bg-[#00D4AA]" : "bg-white/10"}`}
+                        className={`w-11 h-6 rounded-full transition-all relative flex-shrink-0 ${setting.state ? "bg-primary" : "bg-secondary"}`}
                       >
                         <div
                           className={`absolute top-0.5 w-5 h-5 rounded-full bg-white shadow transition-all ${setting.state ? "left-5.5" : "left-0.5"}`}
@@ -599,19 +599,19 @@ export default function Notifications() {
                 </div>
 
                 {/* Emergency Contact */}
-                <div className="glass-card p-5 border border-[#00D4AA]/20">
-                  <h4 className="text-white font-bold mb-2 flex items-center gap-2">
-                    <Phone className="w-4 h-4 text-[#00D4AA]" />
+                <div className="glass-card p-5 border border-primary/20">
+                  <h4 className="text-foreground font-bold mb-2 flex items-center gap-2">
+                    <Phone className="w-4 h-4 text-primary" />
                     خط الدعم الفوري
                   </h4>
-                  <p className="text-white/45 text-xs mb-4">
+                  <p className="text-muted-foreground text-xs mb-4">
                     في حالات الطوارئ أو الإغراء الشديد، تواصل معنا فوراً
                   </p>
                   <a
                     href={`tel:${CONTACT_PHONE}`}
-                    className="flex items-center justify-center gap-2 py-3 rounded-xl font-black text-[#060B18] transition-all hover:scale-105"
+                    className="flex items-center justify-center gap-2 py-3 rounded-xl font-black text-primary-foreground transition-all hover:scale-105"
                     style={{
-                      background: "linear-gradient(135deg, #00D4AA, #0EA5E9)",
+                      background: "linear-gradient(135deg, oklch(0.75 0.18 175), oklch(0.68 0.16 230))",
                     }}
                   >
                     <Phone className="w-4 h-4" />

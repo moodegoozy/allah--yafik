@@ -92,14 +92,14 @@ export default function Tracker() {
 
   return (
     <div className="app-container bg-gradient-navy">
-      <div className="orb w-64 h-64 opacity-8 -top-10 -left-10" style={{ background: "#8B5CF6" }} />
+      <div className="orb w-64 h-64 opacity-8 -top-10 -left-10" style={{ background: "oklch(0.55 0.25 290)" }} />
 
       {/* Header */}
       <div className="mobile-header px-5 py-4">
         <div>
-          <div className="text-[#00D4AA] text-xs font-bold uppercase tracking-wider mb-1">التتبع اليومي</div>
-          <h1 className="text-white font-black text-xl">سجل وقايتي</h1>
-          <p className="text-white/40 text-xs mt-0.5">{today}</p>
+          <div className="text-primary text-xs font-bold uppercase tracking-wider mb-1">التتبع اليومي</div>
+          <h1 className="text-foreground font-black text-xl">سجل وقايتي</h1>
+          <p className="text-muted-foreground text-xs mt-0.5">{today}</p>
         </div>
       </div>
 
@@ -107,16 +107,16 @@ export default function Tracker() {
 
         {/* Daily Score */}
         <div className="px-4 mt-3">
-          <div className="p-4 rounded-2xl border border-[#00D4AA]/20 flex items-center gap-4" style={{ background: "linear-gradient(135deg, rgba(0,212,170,0.10), rgba(14,165,233,0.05))" }}>
-            <div className="w-14 h-14 rounded-2xl bg-[#00D4AA]/15 flex items-center justify-center">
+          <div className="p-4 rounded-2xl border border-primary/20 bg-primary/8 flex items-center gap-4">
+            <div className="w-14 h-14 rounded-2xl bg-primary/15 flex items-center justify-center">
               <div className="text-center">
-                <div className="text-[#00D4AA] font-black text-xl">{completedActivities}</div>
-                <div className="text-white/40 text-[9px]">من ٦</div>
+                <div className="text-primary font-black text-xl">{completedActivities}</div>
+                <div className="text-muted-foreground text-[9px]">من ٦</div>
               </div>
             </div>
             <div>
-              <div className="text-white font-black text-sm">أنشطة الوقاية اليوم</div>
-              <div className="text-white/40 text-xs mt-0.5">
+              <div className="text-foreground font-black text-sm">أنشطة الوقاية اليوم</div>
+              <div className="text-muted-foreground text-xs mt-0.5">
                 {completedActivities === 0 ? "ابدأ يومك الوقائي الآن" :
                  completedActivities < 3 ? "استمر، أنت في الطريق الصحيح" :
                  completedActivities < 6 ? "رائع! تقدم ملحوظ" : "ممتاز! يوم وقائي مكتمل 🏆"}
@@ -127,7 +127,7 @@ export default function Tracker() {
 
         {/* Mood Picker */}
         <div className="px-4 mt-5">
-          <h2 className="text-white font-black text-sm mb-3">كيف حالك اليوم؟</h2>
+          <h2 className="text-foreground font-black text-sm mb-3">كيف حالك اليوم؟</h2>
           <div className="grid grid-cols-4 gap-2">
             {moods.map((mood, idx) => (
               <motion.button
@@ -137,12 +137,12 @@ export default function Tracker() {
                 className={cn(
                   "p-3 rounded-2xl flex flex-col items-center gap-1 border transition-all",
                   selectedMood === idx
-                    ? "border-[#00D4AA]/50 bg-[#00D4AA]/15"
-                    : "border-white/8 glass-card"
+                    ? "border-primary/50 bg-primary/15"
+                    : "border-border glass-card"
                 )}
               >
                 <span className="text-2xl">{mood.emoji}</span>
-                <span className={cn("text-[10px] font-bold", selectedMood === idx ? "text-[#00D4AA]" : "text-white/50")}>
+                <span className={cn("text-[10px] font-bold", selectedMood === idx ? "text-primary" : "text-muted-foreground")}>
                   {mood.label}
                 </span>
               </motion.button>
@@ -153,8 +153,8 @@ export default function Tracker() {
         {/* Awareness Level */}
         <div className="px-4 mt-5">
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-white font-black text-sm">مستوى وعيك الوقائي اليوم</h2>
-            <span className="text-[#00D4AA] font-black text-lg">{awarenessLevel}/١٠</span>
+            <h2 className="text-foreground font-black text-sm">مستوى وعيك الوقائي اليوم</h2>
+            <span className="text-primary font-black text-lg">{awarenessLevel}/١٠</span>
           </div>
           <input
             type="range"
@@ -163,9 +163,9 @@ export default function Tracker() {
             value={awarenessLevel}
             onChange={(e) => setAwarenessLevel(Number(e.target.value))}
             className="w-full h-2 rounded-full appearance-none cursor-pointer"
-            style={{ background: `linear-gradient(to left, #00D4AA ${awarenessLevel * 10}%, rgba(255,255,255,0.1) ${awarenessLevel * 10}%)` }}
+            style={{ background: `linear-gradient(to left, oklch(0.75 0.18 175) ${awarenessLevel * 10}%, var(--border) ${awarenessLevel * 10}%)` }}
           />
-          <div className="flex justify-between text-white/25 text-xs mt-1">
+          <div className="flex justify-between text-muted-foreground/60 text-xs mt-1">
             <span>منخفض</span>
             <span>متوسط</span>
             <span>مرتفع</span>
@@ -175,8 +175,8 @@ export default function Tracker() {
         {/* Risk Factors Today */}
         <div className="px-4 mt-5">
           <div className="flex items-center gap-2 mb-3">
-            <AlertTriangle className="w-4 h-4 text-[#F59E0B]" />
-            <h2 className="text-white font-black text-sm">هل واجهت أياً من هذه المخاطر اليوم؟</h2>
+            <AlertTriangle className="w-4 h-4 text-accent" />
+            <h2 className="text-foreground font-black text-sm">هل واجهت أياً من هذه المخاطر اليوم؟</h2>
           </div>
           <div className="flex flex-wrap gap-2">
             {riskFactors.map((risk, idx) => (
@@ -187,8 +187,8 @@ export default function Tracker() {
                 className={cn(
                   "flex items-center gap-1.5 px-3 py-2 rounded-xl border text-xs font-bold transition-all",
                   selectedRisks.includes(risk.label)
-                    ? "border-[#EF4444]/50 bg-[#EF4444]/15 text-[#EF4444]"
-                    : "border-white/10 glass-card text-white/60"
+                    ? "border-destructive/50 bg-destructive/15 text-destructive"
+                    : "border-border glass-card text-muted-foreground"
                 )}
               >
                 <span>{risk.icon}</span>
@@ -197,8 +197,8 @@ export default function Tracker() {
             ))}
           </div>
           {selectedRisks.length > 0 && (
-            <div className="mt-2 p-3 rounded-xl bg-[#F59E0B]/10 border border-[#F59E0B]/20">
-              <p className="text-[#F59E0B] text-xs">
+            <div className="mt-2 p-3 rounded-xl bg-accent/10 border border-accent/20">
+              <p className="text-accent text-xs">
                 <span className="font-black">تنبيه وقائي:</span> واجهت {selectedRisks.length} عوامل خطر اليوم. راجع خطتك الوقائية وتواصل مع المجتمع.
               </p>
             </div>
@@ -207,7 +207,7 @@ export default function Tracker() {
 
         {/* Prevention Activities */}
         <div className="px-4 mt-5">
-          <h2 className="text-white font-black text-sm mb-3">أنشطة الوقاية المنجزة</h2>
+          <h2 className="text-foreground font-black text-sm mb-3">أنشطة الوقاية المنجزة</h2>
           <div className="space-y-2">
             {activities.map((activity, idx) => (
               <motion.button
@@ -217,17 +217,17 @@ export default function Tracker() {
                 className={cn(
                   "w-full flex items-center gap-3 p-3 rounded-xl border transition-all text-right",
                   activity.done
-                    ? "border-[#00D4AA]/30 bg-[#00D4AA]/8"
-                    : "border-white/8 glass-card"
+                    ? "border-primary/30 bg-primary/8"
+                    : "border-border glass-card"
                 )}
               >
                 <span className="text-xl">{activity.icon}</span>
-                <span className={cn("flex-1 text-sm font-medium", activity.done ? "text-white/40 line-through" : "text-white/80")}>
+                <span className={cn("flex-1 text-sm font-medium", activity.done ? "text-muted-foreground line-through" : "text-foreground/80")}>
                   {activity.label}
                 </span>
                 {activity.done
-                  ? <CheckCircle className="w-5 h-5 text-[#00D4AA] flex-shrink-0" />
-                  : <div className="w-5 h-5 rounded-full border-2 border-white/20 flex-shrink-0" />
+                  ? <CheckCircle className="w-5 h-5 text-primary flex-shrink-0" />
+                  : <div className="w-5 h-5 rounded-full border-2 border-border flex-shrink-0" />
                 }
               </motion.button>
             ))}
@@ -236,12 +236,12 @@ export default function Tracker() {
 
         {/* Journal */}
         <div className="px-4 mt-5">
-          <h2 className="text-white font-black text-sm mb-3">يومية الوقاية</h2>
+          <h2 className="text-foreground font-black text-sm mb-3">يومية الوقاية</h2>
           <textarea
             value={journalText}
             onChange={(e) => setJournalText(e.target.value)}
             placeholder="اكتب أفكارك وملاحظاتك الوقائية اليوم... ماذا تعلمت؟ ما الذي ساعدك على الابتعاد عن المخاطر؟"
-            className="w-full h-28 p-4 rounded-2xl glass-card border border-white/10 text-white/80 text-sm resize-none outline-none focus:border-[#00D4AA]/40 placeholder-white/25 bg-transparent leading-relaxed"
+            className="w-full h-28 p-4 rounded-2xl glass-card border border-border text-foreground/80 text-sm resize-none outline-none focus:border-primary/40 placeholder:text-muted-foreground/50 bg-transparent leading-relaxed"
             dir="rtl"
           />
         </div>
@@ -255,10 +255,10 @@ export default function Tracker() {
             className={cn(
               "w-full py-4 rounded-2xl font-black text-base flex items-center justify-center gap-2 transition-all",
               saved
-                ? "bg-[#00D4AA]/20 text-[#00D4AA] border border-[#00D4AA]/30"
-                : "text-[#060B18]"
+                ? "bg-primary/20 text-primary border border-primary/30"
+                : "text-primary-foreground"
             )}
-            style={!saved ? { background: "linear-gradient(135deg, #00D4AA, #0EA5E9)" } : {}}
+            style={!saved ? { background: "linear-gradient(135deg, oklch(0.75 0.18 175), oklch(0.68 0.16 230))" } : {}}
           >
             {saved ? (
               <>

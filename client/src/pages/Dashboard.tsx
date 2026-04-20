@@ -36,25 +36,25 @@ const quickActionsByAge: Record<
       label: "العب وتعلم",
       icon: Gamepad2,
       href: "/lectures",
-      color: "from-[#00D4AA] to-[#0EA5E9]",
+      color: "from-primary to-sky-500",
     },
     {
       label: "قصص ملهمة",
       icon: Heart,
       href: "/success-stories",
-      color: "from-[#EC4899] to-[#8B5CF6]",
+      color: "from-pink-500 to-violet-500",
     },
     {
       label: "تحدياتي",
       icon: Award,
       href: "/achievements",
-      color: "from-[#F59E0B] to-[#EF4444]",
+      color: "from-amber-500 to-red-500",
     },
     {
       label: "أصدقائي",
       icon: Users,
       href: "/community",
-      color: "from-[#10B981] to-[#3B82F6]",
+      color: "from-emerald-500 to-blue-500",
     },
   ],
   teenage: [
@@ -62,25 +62,25 @@ const quickActionsByAge: Record<
       label: "تقييمي",
       icon: Brain,
       href: "/assessment",
-      color: "from-[#F59E0B] to-[#EF4444]",
+      color: "from-amber-500 to-red-500",
     },
     {
       label: "محاضرة",
       icon: BookOpen,
       href: "/lectures",
-      color: "from-[#8B5CF6] to-[#EC4899]",
+      color: "from-violet-500 to-pink-500",
     },
     {
       label: "خطتي",
       icon: Shield,
       href: "/recovery",
-      color: "from-[#00D4AA] to-[#0EA5E9]",
+      color: "from-primary to-sky-500",
     },
     {
       label: "إنجازاتي",
       icon: Award,
       href: "/achievements",
-      color: "from-[#10B981] to-[#3B82F6]",
+      color: "from-emerald-500 to-blue-500",
     },
   ],
   adult: [
@@ -88,25 +88,25 @@ const quickActionsByAge: Record<
       label: "التقييم",
       icon: Brain,
       href: "/assessment",
-      color: "from-[#8B5CF6] to-[#EC4899]",
+      color: "from-violet-500 to-pink-500",
     },
     {
       label: "المحاضرات",
       icon: GraduationCap,
       href: "/lectures",
-      color: "from-[#0EA5E9] to-[#00D4AA]",
+      color: "from-sky-500 to-primary",
     },
     {
       label: "خطة الوقاية",
       icon: Shield,
       href: "/recovery",
-      color: "from-[#F59E0B] to-[#EF4444]",
+      color: "from-amber-500 to-red-500",
     },
     {
       label: "الإحصائيات",
       icon: TrendingUp,
       href: "/statistics",
-      color: "from-[#10B981] to-[#3B82F6]",
+      color: "from-emerald-500 to-blue-500",
     },
   ],
 };
@@ -148,7 +148,7 @@ export default function Dashboard() {
   const levelLabel = testResult?.label ?? "جيد";
 
   return (
-    <div className="min-h-screen bg-[#0A0F1E] text-white flex">
+    <div className="min-h-screen bg-background text-foreground flex">
       {/* Main Content */}
       <main className="flex-1 p-4 md:p-6 overflow-y-auto min-h-screen pb-24">
         {/* Header */}
@@ -166,8 +166,8 @@ export default function Dashboard() {
                 {greeting}
               </span>
             </div>
-            <h1 className="text-xl font-black text-white">{title}</h1>
-            <p className="text-white/50 text-sm mt-1">
+            <h1 className="text-xl font-black text-foreground">{title}</h1>
+            <p className="text-muted-foreground text-sm mt-1">
               {new Date().toLocaleDateString("ar-SA", {
                 weekday: "long",
                 year: "numeric",
@@ -179,17 +179,17 @@ export default function Dashboard() {
           <div className="flex items-center gap-2">
             {/* Age group badge */}
             <span
-              className={`px-3 py-1 rounded-full text-xs font-bold bg-gradient-to-r ${groupMeta.gradient} text-white`}
+              className={`px-3 py-1 rounded-full text-xs font-bold bg-gradient-to-r ${groupMeta.gradient} text-foreground`}
             >
               {groupMeta.emoji} {groupMeta.label}
             </span>
             <Link href="/notifications">
               <button
-                className="w-10 h-10 rounded-xl bg-white/5 border border-white/10 flex items-center justify-center text-white/60 hover:text-white transition-all relative"
+                className="w-10 h-10 rounded-xl bg-secondary/60 border border-border flex items-center justify-center text-muted-foreground hover:text-foreground transition-all relative"
                 style={{ borderColor: `${groupMeta.color}20` }}
               >
                 <Bell className="w-5 h-5" />
-                <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-[#EF4444]" />
+                <span className="absolute top-2 right-2 w-2 h-2 rounded-full bg-destructive" />
               </button>
             </Link>
           </div>
@@ -205,7 +205,7 @@ export default function Dashboard() {
             }}
           >
             <div className="flex items-center justify-between mb-3">
-              <h3 className="text-white font-bold text-sm">
+              <h3 className="text-foreground font-bold text-sm">
                 نتيجة تقييمك النفسي
               </h3>
               <span
@@ -233,10 +233,10 @@ export default function Dashboard() {
                     className="w-4 h-4 mx-auto mb-1"
                     style={{ color: testResult.color }}
                   />
-                  <div className="text-lg font-black text-white">
+                  <div className="text-lg font-black text-foreground">
                     {dim.value}%
                   </div>
-                  <div className="text-white/40 text-[10px]">{dim.label}</div>
+                  <div className="text-muted-foreground text-[10px]">{dim.label}</div>
                 </div>
               ))}
             </div>
@@ -246,18 +246,18 @@ export default function Dashboard() {
         {/* Stats Cards */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">
           <div
-            className="rounded-2xl p-4 border border-white/8"
+            className="rounded-2xl p-4 border border-border"
             style={{
               background: `linear-gradient(135deg, ${groupMeta.color}25, ${groupMeta.color}08)`,
             }}
           >
             <div className="flex items-center gap-2 mb-2">
               <Shield className="w-4 h-4" style={{ color: groupMeta.color }} />
-              <span className="text-white/50 text-xs">
+              <span className="text-muted-foreground text-xs">
                 {ageGroup === "young" ? "درجة القوة" : "مستوى الوقاية"}
               </span>
             </div>
-            <div className="text-3xl font-black text-white">
+            <div className="text-3xl font-black text-foreground">
               {preventionScore}%
             </div>
             <div className="text-xs mt-1" style={{ color: groupMeta.color }}>
@@ -266,62 +266,62 @@ export default function Dashboard() {
           </div>
 
           <div
-            className="rounded-2xl p-4 border border-white/8"
+            className="rounded-2xl p-4 border border-border"
             style={{
               background:
                 "linear-gradient(135deg, rgba(139,92,246,0.15), rgba(59,130,246,0.08))",
             }}
           >
             <div className="flex items-center gap-2 mb-2">
-              <BookOpen className="w-4 h-4 text-[#8B5CF6]" />
-              <span className="text-white/50 text-xs">
+              <BookOpen className="w-4 h-4 text-violet-500" />
+              <span className="text-muted-foreground text-xs">
                 {ageGroup === "young" ? "الدروس" : "المحاضرات"}
               </span>
             </div>
-            <div className="text-3xl font-black text-white">
+            <div className="text-3xl font-black text-foreground">
               {lecturesCompleted}
             </div>
-            <div className="text-[#8B5CF6] text-xs mt-1">
+            <div className="text-violet-500 text-xs mt-1">
               {ageGroup === "young" ? "درس مكتمل" : "من ٦ محاضرات"}
             </div>
           </div>
 
           <div
-            className="rounded-2xl p-4 border border-white/8"
+            className="rounded-2xl p-4 border border-border"
             style={{
               background:
                 "linear-gradient(135deg, rgba(245,158,11,0.15), rgba(239,68,68,0.08))",
             }}
           >
             <div className="flex items-center gap-2 mb-2">
-              <TrendingUp className="w-4 h-4 text-[#F59E0B]" />
-              <span className="text-white/50 text-xs">
+              <TrendingUp className="w-4 h-4 text-accent" />
+              <span className="text-muted-foreground text-xs">
                 {ageGroup === "young" ? "أيام البطولة" : "أيام الالتزام"}
               </span>
             </div>
-            <div className="text-3xl font-black text-white">
+            <div className="text-3xl font-black text-foreground">
               {soberDays || "٠"}
             </div>
-            <div className="text-[#F59E0B] text-xs mt-1">متواصلة</div>
+            <div className="text-accent text-xs mt-1">متواصلة</div>
           </div>
 
           <div
-            className="rounded-2xl p-4 border border-white/8"
+            className="rounded-2xl p-4 border border-border"
             style={{
               background:
                 "linear-gradient(135deg, rgba(16,185,129,0.15), rgba(5,150,105,0.08))",
             }}
           >
             <div className="flex items-center gap-2 mb-2">
-              <Award className="w-4 h-4 text-[#10B981]" />
-              <span className="text-white/50 text-xs">
+              <Award className="w-4 h-4 text-emerald-500" />
+              <span className="text-muted-foreground text-xs">
                 {ageGroup === "young" ? "النجوم ⭐" : "الشهادات"}
               </span>
             </div>
-            <div className="text-3xl font-black text-white">
+            <div className="text-3xl font-black text-foreground">
               {user?.achievements?.length ?? 0}
             </div>
-            <div className="text-[#10B981] text-xs mt-1">
+            <div className="text-emerald-500 text-xs mt-1">
               {ageGroup === "young" ? "نجمة" : "شهادة إتمام"}
             </div>
           </div>
@@ -330,8 +330,8 @@ export default function Dashboard() {
         {/* Progress Section */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
           {/* Radial Progress */}
-          <div className="md:col-span-2 rounded-2xl p-4 border border-white/8 bg-white/3 flex flex-col items-center justify-center">
-            <h3 className="text-white font-bold text-sm mb-3">
+          <div className="md:col-span-2 rounded-2xl p-4 border border-border bg-secondary/40 flex flex-col items-center justify-center">
+            <h3 className="text-foreground font-bold text-sm mb-3">
               {ageGroup === "young" ? "مستوى البطولة" : "درجة الوقاية"}
             </h3>
             <RadialBarChart
@@ -346,7 +346,7 @@ export default function Dashboard() {
               <RadialBar
                 dataKey="value"
                 cornerRadius={10}
-                background={{ fill: "rgba(255,255,255,0.05)" }}
+                background={{ fill: "var(--secondary)" }}
               />
             </RadialBarChart>
             <div className="text-center -mt-2">
@@ -356,14 +356,14 @@ export default function Dashboard() {
               >
                 {preventionScore}%
               </div>
-              <div className="text-white/40 text-xs">{levelLabel}</div>
+              <div className="text-muted-foreground text-xs">{levelLabel}</div>
             </div>
           </div>
 
           {/* Empty state for chart */}
-          <div className="rounded-2xl p-4 border border-white/8 bg-white/3 flex flex-col items-center justify-center text-center">
-            <Activity className="w-8 h-8 text-white/10 mb-2" />
-            <p className="text-white/30 text-xs">
+          <div className="rounded-2xl p-4 border border-border bg-secondary/40 flex flex-col items-center justify-center text-center">
+            <Activity className="w-8 h-8 text-muted-foreground/40 mb-2" />
+            <p className="text-muted-foreground/70 text-xs">
               ستظهر إحصائياتك الأسبوعية هنا
             </p>
           </div>
@@ -374,7 +374,7 @@ export default function Dashboard() {
           {quickActions.map(action => (
             <Link key={action.href} href={action.href}>
               <button
-                className={`w-full py-3 rounded-2xl bg-gradient-to-br ${action.color} flex flex-col items-center gap-1.5 text-white font-bold text-xs transition-all hover:scale-105 active:scale-95`}
+                className={`w-full py-3 rounded-2xl bg-gradient-to-br ${action.color} flex flex-col items-center gap-1.5 text-foreground font-bold text-xs transition-all hover:scale-105 active:scale-95`}
               >
                 <action.icon className="w-5 h-5" />
                 {action.label}

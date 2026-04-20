@@ -215,16 +215,16 @@ export default function JoinPartner() {
 
   return (
     <div className="app-container bg-gradient-navy overflow-hidden">
-      <div className="orb w-64 h-64 opacity-8 top-10 -right-20" style={{ background: "#00D4AA" }} />
+      <div className="orb w-64 h-64 opacity-8 top-10 -right-20" style={{ background: "oklch(0.75 0.18 175)" }} />
 
       {/* Header */}
       <div className="mobile-header px-5 py-4">
         <div>
-          <div className="text-[#00D4AA] text-xs font-bold uppercase tracking-wider mb-1">
+          <div className="text-primary text-xs font-bold uppercase tracking-wider mb-1">
             انضم كشريك
           </div>
-          <h1 className="text-white font-black text-xl">طلب الشراكة المؤسسية</h1>
-          <p className="text-white/40 text-xs mt-0.5">كن جزءاً من الحل الوطني لمكافحة الإدمان</p>
+          <h1 className="text-foreground font-black text-xl">طلب الشراكة المؤسسية</h1>
+          <p className="text-muted-foreground text-xs mt-0.5">كن جزءاً من الحل الوطني لمكافحة الإدمان</p>
         </div>
       </div>
 
@@ -239,53 +239,53 @@ export default function JoinPartner() {
                 animate={{ opacity: 1, scale: 1 }}
                 className="text-center py-10"
               >
-                <div className="w-16 h-16 rounded-2xl bg-[#10B981]/20 flex items-center justify-center mx-auto mb-6 glow-teal">
-                  <CheckCircle2 className="w-8 h-8 text-[#10B981]" />
+                <div className="w-16 h-16 rounded-2xl bg-emerald-500/20 flex items-center justify-center mx-auto mb-6 glow-teal">
+                  <CheckCircle2 className="w-8 h-8 text-emerald-500" />
                 </div>
-                <h2 className="text-xl font-black text-white mb-3">
+                <h2 className="text-xl font-black text-foreground mb-3">
                   تم إرسال الطلب!
                 </h2>
-                <p className="text-white/55 mb-2">
+                <p className="text-foreground/55 mb-2">
                   شكراً لاهتمامك بالانضمام لبرنامج{" "}
-                  <strong className="text-white">الله يعافيك</strong>
+                  <strong className="text-foreground">الله يعافيك</strong>
                 </p>
-                <p className="text-white/40 text-sm mb-8">
+                <p className="text-muted-foreground text-sm mb-8">
                   سيتواصل معك فريقنا خلال{" "}
-                  <strong className="text-[#00D4AA]">٢٤ ساعة</strong> على رقم{" "}
+                  <strong className="text-primary">٢٤ ساعة</strong> على رقم{" "}
                   {form.phone}
                 </p>
 
-                <div className="glass-card p-5 border border-white/7 text-right mb-6 max-w-sm mx-auto">
-                  <h4 className="text-white font-bold text-sm mb-3">
+                <div className="glass-card p-5 border border-border text-right mb-6 max-w-sm mx-auto">
+                  <h4 className="text-foreground font-bold text-sm mb-3">
                     ملخص طلبك
                   </h4>
-                  <div className="space-y-2 text-xs text-white/50">
+                  <div className="space-y-2 text-xs text-muted-foreground">
                     <div className="flex justify-between">
                       <span>المؤسسة:</span>
-                      <span className="text-white/80">{form.orgName}</span>
+                      <span className="text-foreground/80">{form.orgName}</span>
                     </div>
                     <div className="flex justify-between">
                       <span>النوع:</span>
-                      <span className="text-white/80">
+                      <span className="text-foreground/80">
                         {selectedType?.label}
                       </span>
                     </div>
                     <div className="flex justify-between">
                       <span>المدينة:</span>
-                      <span className="text-white/80">{form.city}</span>
+                      <span className="text-foreground/80">{form.city}</span>
                     </div>
                     <div className="flex justify-between">
                       <span>المسؤول:</span>
-                      <span className="text-white/80">{form.contactName}</span>
+                      <span className="text-foreground/80">{form.contactName}</span>
                     </div>
                   </div>
                 </div>
 
                 <a
                   href={`tel:${CONTACT_PHONE}`}
-                  className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl font-black text-[#060B18] transition-all hover:scale-105"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl font-black text-primary-foreground transition-all hover:scale-105"
                   style={{
-                    background: "linear-gradient(135deg, #00D4AA, #0EA5E9)",
+                    background: "linear-gradient(135deg, oklch(0.75 0.18 175), oklch(0.68 0.16 230))",
                   }}
                 >
                   <Phone className="w-4 h-4" />
@@ -302,10 +302,10 @@ export default function JoinPartner() {
                         <div
                           className={`w-9 h-9 rounded-xl flex items-center justify-center font-black text-sm transition-all ${
                             currentStep > step.id
-                              ? "bg-[#10B981] text-[#060B18]"
+                              ? "bg-emerald-500 text-primary-foreground"
                               : currentStep === step.id
-                                ? "bg-[#00D4AA]/20 border border-[#00D4AA]/50 text-[#00D4AA]"
-                                : "glass-card border border-white/10 text-white/30"
+                                ? "bg-primary/20 border border-primary/50 text-primary"
+                                : "glass-card border border-border text-muted-foreground/70"
                           }`}
                         >
                           {currentStep > step.id ? (
@@ -315,14 +315,14 @@ export default function JoinPartner() {
                           )}
                         </div>
                         <span
-                          className={`text-xs mt-1.5 ${currentStep === step.id ? "text-[#00D4AA]" : "text-white/30"}`}
+                          className={`text-xs mt-1.5 ${currentStep === step.id ? "text-primary" : "text-muted-foreground/70"}`}
                         >
                           {step.label}
                         </span>
                       </div>
                       {i < steps.length - 1 && (
                         <div
-                          className={`flex-1 h-px mx-2 mb-5 transition-all ${currentStep > step.id ? "bg-[#10B981]/50" : "bg-white/8"}`}
+                          className={`flex-1 h-px mx-2 mb-5 transition-all ${currentStep > step.id ? "bg-emerald-500/50" : "bg-secondary/80"}`}
                         />
                       )}
                     </div>
@@ -337,7 +337,7 @@ export default function JoinPartner() {
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: -20 }}
                   >
-                    <h3 className="text-white font-black text-base mb-4">
+                    <h3 className="text-foreground font-black text-base mb-4">
                       ما نوع مؤسستك؟
                     </h3>
                     <div className="grid grid-cols-2 gap-3 mb-6">
@@ -349,8 +349,8 @@ export default function JoinPartner() {
                           }
                           className={`p-4 rounded-2xl border text-right transition-all ${
                             form.partnerType === type.id
-                              ? "text-white"
-                              : "glass-card border-white/8 hover:border-white/20"
+                              ? "text-foreground"
+                              : "glass-card border-border hover:border-border"
                           }`}
                           style={
                             form.partnerType === type.id
@@ -371,13 +371,13 @@ export default function JoinPartner() {
                                 style={{ color: type.color }}
                               />
                             </div>
-                            <span className="text-white font-bold text-sm">
+                            <span className="text-foreground font-bold text-sm">
                               {type.label}
                             </span>
                           </div>
-                          <p className="text-white/40 text-xs">{type.desc}</p>
+                          <p className="text-muted-foreground text-xs">{type.desc}</p>
                           {form.partnerType === type.id && (
-                            <div className="mt-3 pt-3 border-t border-white/8 space-y-1">
+                            <div className="mt-3 pt-3 border-t border-border space-y-1">
                               {type.benefits.map((b, i) => (
                                 <div
                                   key={i}
@@ -404,12 +404,12 @@ export default function JoinPartner() {
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: -20 }}
                   >
-                    <h3 className="text-white font-black text-base mb-4">
+                    <h3 className="text-foreground font-black text-base mb-4">
                       بيانات المؤسسة
                     </h3>
                     <div className="space-y-4">
                       <div>
-                        <label className="text-white/60 text-xs font-bold mb-1.5 block">
+                        <label className="text-muted-foreground text-xs font-bold mb-1.5 block">
                           اسم المؤسسة *
                         </label>
                         <input
@@ -421,12 +421,12 @@ export default function JoinPartner() {
                             }))
                           }
                           placeholder="مثال: مستشفى الملك فهد"
-                          className="w-full bg-white/4 border border-white/10 rounded-xl p-3 text-white placeholder-white/25 focus:outline-none focus:border-white/25 text-sm"
+                          className="w-full bg-secondary/50 border border-border rounded-xl p-3 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-border text-sm"
                         />
                       </div>
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <label className="text-white/60 text-xs font-bold mb-1.5 block">
+                          <label className="text-muted-foreground text-xs font-bold mb-1.5 block">
                             المدينة *
                           </label>
                           <input
@@ -438,11 +438,11 @@ export default function JoinPartner() {
                               }))
                             }
                             placeholder="مثال: الرياض"
-                            className="w-full bg-white/4 border border-white/10 rounded-xl p-3 text-white placeholder-white/25 focus:outline-none focus:border-white/25 text-sm"
+                            className="w-full bg-secondary/50 border border-border rounded-xl p-3 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-border text-sm"
                           />
                         </div>
                         <div>
-                          <label className="text-white/60 text-xs font-bold mb-1.5 block">
+                          <label className="text-muted-foreground text-xs font-bold mb-1.5 block">
                             المنطقة
                           </label>
                           <select
@@ -453,7 +453,7 @@ export default function JoinPartner() {
                                 region: e.target.value,
                               }))
                             }
-                            className="w-full bg-[#0A1628] border border-white/10 rounded-xl p-3 text-white focus:outline-none focus:border-white/25 text-sm"
+                            className="w-full bg-card border border-border rounded-xl p-3 text-foreground focus:outline-none focus:border-border text-sm"
                           >
                             <option value="">اختر المنطقة</option>
                             {regions.map(r => (
@@ -466,7 +466,7 @@ export default function JoinPartner() {
                       </div>
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <label className="text-white/60 text-xs font-bold mb-1.5 block">
+                          <label className="text-muted-foreground text-xs font-bold mb-1.5 block">
                             اسم المسؤول *
                           </label>
                           <input
@@ -478,11 +478,11 @@ export default function JoinPartner() {
                               }))
                             }
                             placeholder="الاسم الكامل"
-                            className="w-full bg-white/4 border border-white/10 rounded-xl p-3 text-white placeholder-white/25 focus:outline-none focus:border-white/25 text-sm"
+                            className="w-full bg-secondary/50 border border-border rounded-xl p-3 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-border text-sm"
                           />
                         </div>
                         <div>
-                          <label className="text-white/60 text-xs font-bold mb-1.5 block">
+                          <label className="text-muted-foreground text-xs font-bold mb-1.5 block">
                             المسمى الوظيفي
                           </label>
                           <input
@@ -494,13 +494,13 @@ export default function JoinPartner() {
                               }))
                             }
                             placeholder="مثال: مدير الشراكات"
-                            className="w-full bg-white/4 border border-white/10 rounded-xl p-3 text-white placeholder-white/25 focus:outline-none focus:border-white/25 text-sm"
+                            className="w-full bg-secondary/50 border border-border rounded-xl p-3 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-border text-sm"
                           />
                         </div>
                       </div>
                       <div className="grid grid-cols-2 gap-4">
                         <div>
-                          <label className="text-white/60 text-xs font-bold mb-1.5 block">
+                          <label className="text-muted-foreground text-xs font-bold mb-1.5 block">
                             رقم الجوال *
                           </label>
                           <input
@@ -512,12 +512,12 @@ export default function JoinPartner() {
                               }))
                             }
                             placeholder="05XXXXXXXX"
-                            className="w-full bg-white/4 border border-white/10 rounded-xl p-3 text-white placeholder-white/25 focus:outline-none focus:border-white/25 text-sm font-numbers"
+                            className="w-full bg-secondary/50 border border-border rounded-xl p-3 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-border text-sm font-numbers"
                             dir="ltr"
                           />
                         </div>
                         <div>
-                          <label className="text-white/60 text-xs font-bold mb-1.5 block">
+                          <label className="text-muted-foreground text-xs font-bold mb-1.5 block">
                             البريد الإلكتروني
                           </label>
                           <input
@@ -529,13 +529,13 @@ export default function JoinPartner() {
                               }))
                             }
                             placeholder="example@org.com"
-                            className="w-full bg-white/4 border border-white/10 rounded-xl p-3 text-white placeholder-white/25 focus:outline-none focus:border-white/25 text-sm"
+                            className="w-full bg-secondary/50 border border-border rounded-xl p-3 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-border text-sm"
                             dir="ltr"
                           />
                         </div>
                       </div>
                       <div>
-                        <label className="text-white/60 text-xs font-bold mb-1.5 block">
+                        <label className="text-muted-foreground text-xs font-bold mb-1.5 block">
                           عدد الموظفين / الطلاب
                         </label>
                         <select
@@ -546,7 +546,7 @@ export default function JoinPartner() {
                               employeeCount: e.target.value,
                             }))
                           }
-                          className="w-full bg-[#0A1628] border border-white/10 rounded-xl p-3 text-white focus:outline-none focus:border-white/25 text-sm"
+                          className="w-full bg-card border border-border rounded-xl p-3 text-foreground focus:outline-none focus:border-border text-sm"
                         >
                           <option value="">اختر النطاق</option>
                           <option value="less50">أقل من ٥٠</option>
@@ -567,12 +567,12 @@ export default function JoinPartner() {
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: -20 }}
                   >
-                    <h3 className="text-white font-black text-base mb-4">
+                    <h3 className="text-foreground font-black text-base mb-4">
                       تفاصيل الشراكة
                     </h3>
                     <div className="space-y-5">
                       <div>
-                        <label className="text-white/60 text-xs font-bold mb-3 block">
+                        <label className="text-muted-foreground text-xs font-bold mb-3 block">
                           الأنشطة المفضلة (اختر ما يناسبك)
                         </label>
                         <div className="flex flex-wrap gap-2">
@@ -584,8 +584,8 @@ export default function JoinPartner() {
                               }
                               className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
                                 form.preferredActivities.includes(act)
-                                  ? "bg-[#00D4AA]/15 border border-[#00D4AA]/35 text-[#00D4AA]"
-                                  : "glass-card border border-white/8 text-white/40 hover:text-white/70"
+                                  ? "bg-primary/15 border border-primary/35 text-primary"
+                                  : "glass-card border border-border text-muted-foreground hover:text-foreground/70"
                               }`}
                             >
                               {act}
@@ -594,7 +594,7 @@ export default function JoinPartner() {
                         </div>
                       </div>
                       <div>
-                        <label className="text-white/60 text-xs font-bold mb-3 block">
+                        <label className="text-muted-foreground text-xs font-bold mb-3 block">
                           الموارد المتاحة لديكم
                         </label>
                         <div className="flex flex-wrap gap-2">
@@ -606,8 +606,8 @@ export default function JoinPartner() {
                               }
                               className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
                                 form.availableResources.includes(res)
-                                  ? "bg-[#8B5CF6]/15 border border-[#8B5CF6]/35 text-[#8B5CF6]"
-                                  : "glass-card border border-white/8 text-white/40 hover:text-white/70"
+                                  ? "bg-violet-500/15 border border-violet-500/35 text-violet-500"
+                                  : "glass-card border border-border text-muted-foreground hover:text-foreground/70"
                               }`}
                             >
                               {res}
@@ -616,7 +616,7 @@ export default function JoinPartner() {
                         </div>
                       </div>
                       <div>
-                        <label className="text-white/60 text-xs font-bold mb-1.5 block">
+                        <label className="text-muted-foreground text-xs font-bold mb-1.5 block">
                           هدف الشراكة
                         </label>
                         <textarea
@@ -628,12 +628,12 @@ export default function JoinPartner() {
                             }))
                           }
                           placeholder="صف باختصار ما تأمل تحقيقه من خلال هذه الشراكة..."
-                          className="w-full bg-white/4 border border-white/10 rounded-xl p-3 text-white placeholder-white/25 focus:outline-none focus:border-white/25 text-sm resize-none"
+                          className="w-full bg-secondary/50 border border-border rounded-xl p-3 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-border text-sm resize-none"
                           rows={3}
                         />
                       </div>
                       <div>
-                        <label className="text-white/60 text-xs font-bold mb-1.5 block">
+                        <label className="text-muted-foreground text-xs font-bold mb-1.5 block">
                           ملاحظات إضافية
                         </label>
                         <textarea
@@ -645,7 +645,7 @@ export default function JoinPartner() {
                             }))
                           }
                           placeholder="أي معلومات إضافية تريد إضافتها..."
-                          className="w-full bg-white/4 border border-white/10 rounded-xl p-3 text-white placeholder-white/25 focus:outline-none focus:border-white/25 text-sm resize-none"
+                          className="w-full bg-secondary/50 border border-border rounded-xl p-3 text-foreground placeholder:text-muted-foreground/50 focus:outline-none focus:border-border text-sm resize-none"
                           rows={2}
                         />
                       </div>
@@ -661,13 +661,13 @@ export default function JoinPartner() {
                     animate={{ opacity: 1, x: 0 }}
                     exit={{ opacity: 0, x: -20 }}
                   >
-                    <h3 className="text-white font-black text-base mb-4">
+                    <h3 className="text-foreground font-black text-base mb-4">
                       مراجعة الطلب
                     </h3>
                     <div className="space-y-4 mb-6">
                       {/* Partner Type */}
                       {selectedType && (
-                        <div className="glass-card p-4 border border-white/7 rounded-2xl">
+                        <div className="glass-card p-4 border border-border rounded-2xl">
                           <div className="flex items-center gap-3">
                             <div
                               className="w-10 h-10 rounded-xl flex items-center justify-center"
@@ -679,10 +679,10 @@ export default function JoinPartner() {
                               />
                             </div>
                             <div>
-                              <div className="text-white font-bold text-sm">
+                              <div className="text-foreground font-bold text-sm">
                                 {selectedType.label}
                               </div>
-                              <div className="text-white/40 text-xs">
+                              <div className="text-muted-foreground text-xs">
                                 {selectedType.desc}
                               </div>
                             </div>
@@ -691,8 +691,8 @@ export default function JoinPartner() {
                       )}
 
                       {/* Org Info */}
-                      <div className="glass-card p-4 border border-white/7 rounded-2xl space-y-2.5">
-                        <h4 className="text-white/40 text-xs font-bold uppercase tracking-wider mb-3">
+                      <div className="glass-card p-4 border border-border rounded-2xl space-y-2.5">
+                        <h4 className="text-muted-foreground text-xs font-bold uppercase tracking-wider mb-3">
                           بيانات المؤسسة
                         </h4>
                         {[
@@ -722,26 +722,26 @@ export default function JoinPartner() {
                             key={i}
                             className="flex items-center gap-2.5 text-sm"
                           >
-                            <row.icon className="w-3.5 h-3.5 text-white/30 flex-shrink-0" />
-                            <span className="text-white/40 w-16 flex-shrink-0">
+                            <row.icon className="w-3.5 h-3.5 text-muted-foreground/70 flex-shrink-0" />
+                            <span className="text-muted-foreground w-16 flex-shrink-0">
                               {row.label}:
                             </span>
-                            <span className="text-white/80">{row.value}</span>
+                            <span className="text-foreground/80">{row.value}</span>
                           </div>
                         ))}
                       </div>
 
                       {/* Activities */}
                       {form.preferredActivities.length > 0 && (
-                        <div className="glass-card p-4 border border-white/7 rounded-2xl">
-                          <h4 className="text-white/40 text-xs font-bold uppercase tracking-wider mb-3">
+                        <div className="glass-card p-4 border border-border rounded-2xl">
+                          <h4 className="text-muted-foreground text-xs font-bold uppercase tracking-wider mb-3">
                             الأنشطة المفضلة
                           </h4>
                           <div className="flex flex-wrap gap-1.5">
                             {form.preferredActivities.map(a => (
                               <span
                                 key={a}
-                                className="px-2.5 py-1 rounded-lg text-xs font-bold bg-[#00D4AA]/10 text-[#00D4AA]"
+                                className="px-2.5 py-1 rounded-lg text-xs font-bold bg-primary/10 text-primary"
                               >
                                 {a}
                               </span>
@@ -751,9 +751,9 @@ export default function JoinPartner() {
                       )}
                     </div>
 
-                    <div className="glass-card p-4 border border-[#F59E0B]/20 rounded-2xl mb-6 flex items-start gap-3">
-                      <AlertCircle className="w-4 h-4 text-[#F59E0B] mt-0.5 flex-shrink-0" />
-                      <p className="text-white/50 text-xs leading-relaxed">
+                    <div className="glass-card p-4 border border-accent/20 rounded-2xl mb-6 flex items-start gap-3">
+                      <AlertCircle className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
+                      <p className="text-muted-foreground text-xs leading-relaxed">
                         بإرسال هذا الطلب، أنت توافق على مشاركة بيانات مؤسستك مع
                         فريق برنامج "الله يعافيك" لأغراض الشراكة فقط. ستتلقى
                         رداً خلال ٢٤ ساعة.
@@ -767,7 +767,7 @@ export default function JoinPartner() {
                   {currentStep > 1 ? (
                     <button
                       onClick={() => setCurrentStep(s => s - 1)}
-                      className="flex items-center gap-2 px-5 py-2.5 rounded-xl glass-card border border-white/10 text-white/50 hover:text-white font-bold text-sm transition-all"
+                      className="flex items-center gap-2 px-5 py-2.5 rounded-xl glass-card border border-border text-muted-foreground hover:text-foreground font-bold text-sm transition-all"
                     >
                       <ChevronRight className="w-4 h-4" />
                       السابق
@@ -779,9 +779,9 @@ export default function JoinPartner() {
                   {currentStep < 4 ? (
                     <button
                       onClick={handleNext}
-                      className="flex items-center gap-2 px-6 py-2.5 rounded-xl font-bold text-sm text-[#060B18] transition-all hover:scale-105"
+                      className="flex items-center gap-2 px-6 py-2.5 rounded-xl font-bold text-sm text-primary-foreground transition-all hover:scale-105"
                       style={{
-                        background: "linear-gradient(135deg, #00D4AA, #0EA5E9)",
+                        background: "linear-gradient(135deg, oklch(0.75 0.18 175), oklch(0.68 0.16 230))",
                       }}
                     >
                       التالي
@@ -790,9 +790,9 @@ export default function JoinPartner() {
                   ) : (
                     <button
                       onClick={handleSubmit}
-                      className="flex items-center gap-2 px-6 py-2.5 rounded-xl font-bold text-sm text-[#060B18] transition-all hover:scale-105"
+                      className="flex items-center gap-2 px-6 py-2.5 rounded-xl font-bold text-sm text-primary-foreground transition-all hover:scale-105"
                       style={{
-                        background: "linear-gradient(135deg, #10B981, #00D4AA)",
+                        background: "linear-gradient(135deg, oklch(0.70 0.17 160), oklch(0.75 0.18 175))",
                       }}
                     >
                       <Send className="w-4 h-4" />

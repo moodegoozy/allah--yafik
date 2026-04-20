@@ -1,6 +1,6 @@
 /**
  * BottomNav - شريط التنقل السفلي للجوال
- * Design: Dark Luxury PWA - "الله يعافيك"
+ * Design: Modern Minimalist - "الله يعافيك"
  * الهدف: الوقاية من الإدمان
  */
 import { Link, useLocation } from "wouter";
@@ -39,19 +39,19 @@ export default function BottomNav() {
                 {isActive && (
                   <motion.div
                     layoutId="nav-active"
-                    className="absolute inset-0 rounded-2xl bg-[#00D4AA]/15"
+                    className="absolute inset-0 rounded-2xl bg-primary/15"
                     transition={{ type: "spring", bounce: 0.2, duration: 0.4 }}
                   />
                 )}
                 <item.icon
                   className={`w-5 h-5 transition-colors relative z-10 ${
-                    isActive ? "text-[#00D4AA]" : "text-white/35"
+                    isActive ? "text-primary" : "text-muted-foreground"
                   }`}
                   strokeWidth={isActive ? 2.5 : 1.8}
                 />
                 <span
                   className={`text-[10px] font-bold transition-colors relative z-10 ${
-                    isActive ? "text-[#00D4AA]" : "text-white/30"
+                    isActive ? "text-primary" : "text-muted-foreground"
                   }`}
                 >
                   {item.label}

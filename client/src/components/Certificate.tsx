@@ -43,8 +43,8 @@ export default function Certificate({
     percentage >= 60 ? "جيد" : "مقبول";
 
   const gradeColor =
-    percentage === 100 ? "#F59E0B" :
-    percentage >= 80 ? "#00D4AA" :
+    percentage === 100 ? "oklch(0.80 0.18 80)" :
+    percentage >= 80 ? "oklch(0.75 0.18 175)" :
     percentage >= 60 ? "#3B82F6" : "#8B5CF6";
 
   const handlePrint = () => {
@@ -74,7 +74,7 @@ export default function Certificate({
       exit={{ opacity: 0 }}
       className="fixed inset-0 z-[100] flex items-center justify-center p-4"
     >
-      <div className="absolute inset-0 bg-black/95 backdrop-blur-sm" onClick={onClose} />
+      <div className="absolute inset-0 bg-background/95 backdrop-blur-sm" onClick={onClose} />
 
       <motion.div
         initial={{ scale: 0.8, opacity: 0 }}
@@ -87,21 +87,21 @@ export default function Certificate({
         <div className="flex items-center justify-between mb-4">
           <button
             onClick={onClose}
-            className="text-white/40 hover:text-white text-sm transition-colors"
+            className="text-muted-foreground hover:text-foreground text-sm transition-colors"
           >
             ✕ إغلاق
           </button>
           <div className="flex gap-2">
             <button
               onClick={handleShare}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl glass-card border border-white/10 text-white/60 hover:text-white text-sm transition-all"
+              className="flex items-center gap-2 px-4 py-2 rounded-xl glass-card border border-border text-muted-foreground hover:text-foreground text-sm transition-all"
             >
               <Share2 className="w-4 h-4" />
               مشاركة
             </button>
             <button
               onClick={handlePrint}
-              className="flex items-center gap-2 px-4 py-2 rounded-xl glass-card border border-white/10 text-white/60 hover:text-white text-sm transition-all"
+              className="flex items-center gap-2 px-4 py-2 rounded-xl glass-card border border-border text-muted-foreground hover:text-foreground text-sm transition-all"
             >
               <Printer className="w-4 h-4" />
               طباعة
@@ -113,13 +113,13 @@ export default function Certificate({
         <div
           ref={certRef}
           className="relative overflow-hidden rounded-3xl p-1"
-          style={{ background: `linear-gradient(135deg, ${color}60, #00D4AA40, ${color}30)` }}
+          style={{ background: `linear-gradient(135deg, ${color}60, oklch(0.75 0.18 175)40, ${color}30)` }}
         >
-          <div className="bg-[#060B18] rounded-[22px] p-8 relative overflow-hidden">
+          <div className="bg-background rounded-[22px] p-8 relative overflow-hidden">
             {/* خلفية زخرفية */}
             <div className="absolute inset-0 opacity-5">
               <div className="absolute top-0 right-0 w-64 h-64 rounded-full" style={{ background: `radial-gradient(circle, ${color}, transparent)` }} />
-              <div className="absolute bottom-0 left-0 w-48 h-48 rounded-full" style={{ background: "radial-gradient(circle, #00D4AA, transparent)" }} />
+              <div className="absolute bottom-0 left-0 w-48 h-48 rounded-full" style={{ background: "radial-gradient(circle, oklch(0.75 0.18 175), transparent)" }} />
             </div>
 
             {/* نمط هندسي */}
@@ -127,7 +127,7 @@ export default function Certificate({
               {[...Array(8)].map((_, i) => (
                 <div
                   key={i}
-                  className="absolute border border-white/10 rounded-full"
+                  className="absolute border border-border rounded-full"
                   style={{
                     width: `${(i + 1) * 80}px`,
                     height: `${(i + 1) * 80}px`,
@@ -146,55 +146,55 @@ export default function Certificate({
                   <div className="h-px flex-1" style={{ background: `linear-gradient(to right, transparent, ${color}50)` }} />
                   <div
                     className="w-14 h-14 rounded-2xl flex items-center justify-center"
-                    style={{ background: `linear-gradient(135deg, ${color}30, #00D4AA20)`, border: `1px solid ${color}40` }}
+                    style={{ background: `linear-gradient(135deg, ${color}30, oklch(0.75 0.18 175)20)`, border: `1px solid ${color}40` }}
                   >
                     <Award className="w-7 h-7" style={{ color }} />
                   </div>
                   <div className="h-px flex-1" style={{ background: `linear-gradient(to left, transparent, ${color}50)` }} />
                 </div>
-                <div className="text-white/30 text-xs tracking-widest uppercase mb-1">برنامج الله يعافيك</div>
-                <h2 className="text-2xl font-black text-white">شهادة إتمام</h2>
-                <div className="text-white/40 text-xs mt-1">Certificate of Completion</div>
+                <div className="text-muted-foreground/70 text-xs tracking-widest uppercase mb-1">برنامج الله يعافيك</div>
+                <h2 className="text-2xl font-black text-foreground">شهادة إتمام</h2>
+                <div className="text-muted-foreground text-xs mt-1">Certificate of Completion</div>
               </div>
 
               {/* المحتوى */}
               <div className="text-center mb-6">
-                <p className="text-white/50 text-sm mb-2">تُمنح هذه الشهادة تقديراً لإتمام محاضرة</p>
+                <p className="text-muted-foreground text-sm mb-2">تُمنح هذه الشهادة تقديراً لإتمام محاضرة</p>
                 <div
                   className="inline-block px-6 py-3 rounded-2xl mb-4"
                   style={{ background: `${color}12`, border: `1px solid ${color}25` }}
                 >
-                  <h3 className="text-white font-black text-lg leading-snug">{lectureTitle}</h3>
+                  <h3 className="text-foreground font-black text-lg leading-snug">{lectureTitle}</h3>
                 </div>
-                <p className="text-white/40 text-sm">
-                  بإشراف <span className="text-white font-bold">{speaker}</span>
+                <p className="text-muted-foreground text-sm">
+                  بإشراف <span className="text-foreground font-bold">{speaker}</span>
                 </p>
-                <p className="text-white/30 text-xs">{speakerTitle}</p>
+                <p className="text-muted-foreground/70 text-xs">{speakerTitle}</p>
               </div>
 
               {/* الإحصائيات */}
               <div className="grid grid-cols-3 gap-4 mb-6">
                 <div className="text-center p-3 rounded-xl" style={{ background: `${gradeColor}10`, border: `1px solid ${gradeColor}20` }}>
                   <div className="text-2xl font-black font-numbers mb-0.5" style={{ color: gradeColor }}>{percentage}%</div>
-                  <div className="text-white/40 text-xs">النتيجة</div>
+                  <div className="text-muted-foreground text-xs">النتيجة</div>
                 </div>
                 <div className="text-center p-3 rounded-xl" style={{ background: `${gradeColor}10`, border: `1px solid ${gradeColor}20` }}>
                   <div className="text-2xl font-black mb-0.5" style={{ color: gradeColor }}>{grade}</div>
-                  <div className="text-white/40 text-xs">التقدير</div>
+                  <div className="text-muted-foreground text-xs">التقدير</div>
                 </div>
-                <div className="text-center p-3 rounded-xl" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.08)" }}>
-                  <div className="text-2xl font-black text-white mb-0.5">{score}/{totalQuestions}</div>
-                  <div className="text-white/40 text-xs">الاختبار</div>
+                <div className="text-center p-3 rounded-xl" style={{ background: "var(--secondary)", border: "1px solid var(--border)" }}>
+                  <div className="text-2xl font-black text-foreground mb-0.5">{score}/{totalQuestions}</div>
+                  <div className="text-muted-foreground text-xs">الاختبار</div>
                 </div>
               </div>
 
               {/* التفاصيل */}
-              <div className="flex items-center justify-between py-4 border-t border-b border-white/5 mb-5">
-                <div className="flex items-center gap-2 text-white/30 text-xs">
+              <div className="flex items-center justify-between py-4 border-t border-b border-border mb-5">
+                <div className="flex items-center gap-2 text-muted-foreground/70 text-xs">
                   <Shield className="w-3.5 h-3.5" />
-                  <span>رقم الشهادة: <span className="font-numbers text-white/50">{certId}</span></span>
+                  <span>رقم الشهادة: <span className="font-numbers text-muted-foreground">{certId}</span></span>
                 </div>
-                <div className="text-white/30 text-xs">{dateStr}</div>
+                <div className="text-muted-foreground/70 text-xs">{dateStr}</div>
               </div>
 
               {/* النجوم والتحقق */}
@@ -204,16 +204,16 @@ export default function Certificate({
                     <Star
                       key={i}
                       className="w-4 h-4"
-                      style={{ color: i < Math.round(percentage / 20) ? "#F59E0B" : "rgba(255,255,255,0.1)" }}
-                      fill={i < Math.round(percentage / 20) ? "#F59E0B" : "none"}
+                      style={{ color: i < Math.round(percentage / 20) ? "oklch(0.80 0.18 80)" : "var(--border)" }}
+                      fill={i < Math.round(percentage / 20) ? "oklch(0.80 0.18 80)" : "none"}
                     />
                   ))}
                 </div>
-                <div className="flex items-center gap-1.5 text-[#10B981] text-xs">
+                <div className="flex items-center gap-1.5 text-emerald-500 text-xs">
                   <CheckCircle2 className="w-4 h-4" />
                   <span>شهادة موثّقة</span>
                 </div>
-                <div className="text-white/20 text-xs">{category} · {duration}</div>
+                <div className="text-muted-foreground/60 text-xs">{category} · {duration}</div>
               </div>
             </div>
           </div>

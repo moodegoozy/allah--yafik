@@ -166,10 +166,10 @@ const partnerContrib = [
 
 const tooltipStyle = {
   contentStyle: {
-    background: "#111827",
-    border: "1px solid rgba(255,255,255,0.1)",
+    background: "var(--card)",
+    border: "1px solid var(--border)",
     borderRadius: "12px",
-    color: "white",
+    color: "var(--foreground)",
     direction: "rtl" as const,
     fontSize: "12px",
   },
@@ -183,28 +183,28 @@ export default function Statistics() {
 
   return (
     <div className="app-container bg-gradient-navy overflow-hidden">
-      <div className="orb w-72 h-72 opacity-8 -top-20 -right-20" style={{ background: "#8B5CF6" }} />
+      <div className="orb w-72 h-72 opacity-8 -top-20 -right-20" style={{ background: "oklch(0.55 0.25 290)" }} />
 
       {/* Header */}
       <div className="mobile-header px-5 py-4">
         <div>
-          <div className="text-[#8B5CF6] text-xs font-bold uppercase tracking-wider mb-1">
+          <div className="text-violet-500 text-xs font-bold uppercase tracking-wider mb-1">
             لوحة الإحصائيات
           </div>
-          <h1 className="text-white font-black text-xl">البيانات والإحصائيات</h1>
-          <p className="text-white/40 text-xs mt-0.5">تتبع تقدمك والإحصائيات الوطنية</p>
+          <h1 className="text-foreground font-black text-xl">البيانات والإحصائيات</h1>
+          <p className="text-muted-foreground text-xs mt-0.5">تتبع تقدمك والإحصائيات الوطنية</p>
         </div>
         <div className="flex gap-2 mt-3">
           <button
             onClick={() => setActiveTab("personal")}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${activeTab === "personal" ? "bg-[#00D4AA] text-[#060B18]" : "glass-card text-white/50 border border-white/7"}`}
+            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${activeTab === "personal" ? "bg-primary text-primary-foreground" : "glass-card text-muted-foreground border border-border"}`}
           >
             <Activity className="w-3.5 h-3.5" />
             تقدمي الشخصي
           </button>
           <button
             onClick={() => setActiveTab("national")}
-            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${activeTab === "national" ? "bg-[#00D4AA] text-[#060B18]" : "glass-card text-white/50 border border-white/7"}`}
+            className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all flex items-center gap-1.5 ${activeTab === "national" ? "bg-primary text-primary-foreground" : "glass-card text-muted-foreground border border-border"}`}
           >
             <Globe className="w-3.5 h-3.5" />
             الوطنية
@@ -223,28 +223,28 @@ export default function Statistics() {
                     label: "أيام نظيفة",
                     value: "١٤٥",
                     icon: Calendar,
-                    color: "from-[#00D4AA] to-[#0EA5E9]",
+                    color: "from-primary to-sky-500",
                     sub: "منذ البداية",
                   },
                   {
                     label: "أعلى سلسلة",
                     value: "٤٧",
                     icon: Flame,
-                    color: "from-[#EF4444] to-[#F59E0B]",
+                    color: "from-red-500 to-amber-500",
                     sub: "يوم متواصل",
                   },
                   {
                     label: "متوسط المزاج",
                     value: "٧.٢",
                     icon: Heart,
-                    color: "from-[#EC4899] to-[#8B5CF6]",
+                    color: "from-pink-500 to-violet-500",
                     sub: "من ١٠",
                   },
                   {
                     label: "تمارين مكتملة",
                     value: "٨٩",
                     icon: Brain,
-                    color: "from-[#8B5CF6] to-[#3B82F6]",
+                    color: "from-violet-500 to-blue-500",
                     sub: "تمرين",
                   },
                 ].map((stat, i) => (
@@ -252,24 +252,24 @@ export default function Statistics() {
                     <div
                       className={`w-10 h-10 rounded-xl bg-gradient-to-br ${stat.color} flex items-center justify-center mb-4`}
                     >
-                      <stat.icon className="w-5 h-5 text-white" />
+                      <stat.icon className="w-5 h-5 text-foreground" />
                     </div>
-                    <div className="text-2xl font-black text-white font-numbers mb-1">
+                    <div className="text-2xl font-black text-foreground font-numbers mb-1">
                       {stat.value}
                     </div>
-                    <div className="text-white/40 text-xs mb-1">
+                    <div className="text-muted-foreground text-xs mb-1">
                       {stat.label}
                     </div>
-                    <div className="text-[#00D4AA] text-xs">{stat.sub}</div>
+                    <div className="text-primary text-xs">{stat.sub}</div>
                   </div>
                 ))}
               </div>
 
               <div className="grid gap-4 mb-4">
-                <div className="lg:col-span-2 glass-card p-4 border border-white/5">
+                <div className="lg:col-span-2 glass-card p-4 border border-border">
                   <div className="flex items-center justify-between mb-5">
-                    <h3 className="text-white font-bold">التقدم الشهري</h3>
-                    <TrendingUp className="w-5 h-5 text-[#00D4AA]" />
+                    <h3 className="text-foreground font-bold">التقدم الشهري</h3>
+                    <TrendingUp className="w-5 h-5 text-primary" />
                   </div>
                   <ResponsiveContainer width="100%" height={220}>
                     <AreaChart data={monthlyData}>
@@ -301,16 +301,16 @@ export default function Statistics() {
                       </defs>
                       <CartesianGrid
                         strokeDasharray="3 3"
-                        stroke="rgba(255,255,255,0.05)"
+                        stroke="var(--secondary)"
                       />
                       <XAxis
                         dataKey="month"
-                        tick={{ fill: "rgba(255,255,255,0.4)", fontSize: 11 }}
+                        tick={{ fill: "var(--muted-foreground)", fontSize: 11 }}
                         axisLine={false}
                         tickLine={false}
                       />
                       <YAxis
-                        tick={{ fill: "rgba(255,255,255,0.4)", fontSize: 11 }}
+                        tick={{ fill: "var(--muted-foreground)", fontSize: 11 }}
                         axisLine={false}
                         tickLine={false}
                         domain={[0, 10]}
@@ -335,8 +335,8 @@ export default function Statistics() {
                     </AreaChart>
                   </ResponsiveContainer>
                 </div>
-                <div className="glass-card p-4 border border-white/5">
-                  <h3 className="text-white font-bold mb-5">أسباب الإغراء</h3>
+                <div className="glass-card p-4 border border-border">
+                  <h3 className="text-foreground font-bold mb-5">أسباب الإغراء</h3>
                   <ResponsiveContainer width="100%" height={160}>
                     <PieChart>
                       <Pie
@@ -366,9 +366,9 @@ export default function Statistics() {
                             className="w-2.5 h-2.5 rounded-full"
                             style={{ background: item.color }}
                           />
-                          <span className="text-white/60">{item.name}</span>
+                          <span className="text-muted-foreground">{item.name}</span>
                         </div>
-                        <span className="text-white/80 font-medium">
+                        <span className="text-foreground/80 font-medium">
                           {item.value}٪
                         </span>
                       </div>
@@ -378,24 +378,24 @@ export default function Statistics() {
               </div>
 
               <div className="grid gap-4 mb-4">
-                <div className="glass-card p-4 border border-white/5">
-                  <h3 className="text-white font-bold mb-5">
+                <div className="glass-card p-4 border border-border">
+                  <h3 className="text-foreground font-bold mb-5">
                     المزاج والطاقة - هذا الأسبوع
                   </h3>
                   <ResponsiveContainer width="100%" height={200}>
                     <LineChart data={weeklyMood}>
                       <CartesianGrid
                         strokeDasharray="3 3"
-                        stroke="rgba(255,255,255,0.05)"
+                        stroke="var(--secondary)"
                       />
                       <XAxis
                         dataKey="day"
-                        tick={{ fill: "rgba(255,255,255,0.4)", fontSize: 11 }}
+                        tick={{ fill: "var(--muted-foreground)", fontSize: 11 }}
                         axisLine={false}
                         tickLine={false}
                       />
                       <YAxis
-                        tick={{ fill: "rgba(255,255,255,0.4)", fontSize: 11 }}
+                        tick={{ fill: "var(--muted-foreground)", fontSize: 11 }}
                         axisLine={false}
                         tickLine={false}
                         domain={[0, 10]}
@@ -420,24 +420,24 @@ export default function Statistics() {
                     </LineChart>
                   </ResponsiveContainer>
                 </div>
-                <div className="glass-card p-4 border border-white/5">
-                  <h3 className="text-white font-bold mb-5">
+                <div className="glass-card p-4 border border-border">
+                  <h3 className="text-foreground font-bold mb-5">
                     التمارين الأسبوعية
                   </h3>
                   <ResponsiveContainer width="100%" height={200}>
                     <BarChart data={exerciseData}>
                       <CartesianGrid
                         strokeDasharray="3 3"
-                        stroke="rgba(255,255,255,0.05)"
+                        stroke="var(--secondary)"
                       />
                       <XAxis
                         dataKey="week"
-                        tick={{ fill: "rgba(255,255,255,0.4)", fontSize: 11 }}
+                        tick={{ fill: "var(--muted-foreground)", fontSize: 11 }}
                         axisLine={false}
                         tickLine={false}
                       />
                       <YAxis
-                        tick={{ fill: "rgba(255,255,255,0.4)", fontSize: 11 }}
+                        tick={{ fill: "var(--muted-foreground)", fontSize: 11 }}
                         axisLine={false}
                         tickLine={false}
                       />
@@ -465,11 +465,11 @@ export default function Statistics() {
                 </div>
               </div>
 
-              <div className="glass-card p-4 border border-white/5">
+              <div className="glass-card p-4 border border-border">
                 <div className="flex items-center gap-3 mb-5">
-                  <Award className="w-5 h-5 text-[#F59E0B]" />
-                  <h3 className="text-white font-bold">الإنجازات المحققة</h3>
-                  <span className="text-white/30 text-sm mr-auto">
+                  <Award className="w-5 h-5 text-accent" />
+                  <h3 className="text-foreground font-bold">الإنجازات المحققة</h3>
+                  <span className="text-muted-foreground/70 text-sm mr-auto">
                     {achievements.length} إنجاز
                   </span>
                 </div>
@@ -477,13 +477,13 @@ export default function Statistics() {
                   {achievements.map((ach, i) => (
                     <div
                       key={i}
-                      className="text-center p-4 rounded-xl bg-white/3 border border-white/5 hover:border-white/15 transition-all"
+                      className="text-center p-4 rounded-xl bg-secondary/40 border border-border hover:border-border transition-all"
                     >
                       <div className="text-3xl mb-2">{ach.emoji}</div>
-                      <div className="text-white text-xs font-bold mb-1">
+                      <div className="text-foreground text-xs font-bold mb-1">
                         {ach.title}
                       </div>
-                      <div className="text-white/40 text-xs mb-2">
+                      <div className="text-muted-foreground text-xs mb-2">
                         {ach.desc}
                       </div>
                       <div
@@ -547,7 +547,7 @@ export default function Statistics() {
                         />
                       </div>
                       <div
-                        className={`flex items-center gap-0.5 text-xs font-bold ${kpi.up ? "text-[#10B981]" : "text-[#EF4444]"}`}
+                        className={`flex items-center gap-0.5 text-xs font-bold ${kpi.up ? "text-emerald-500" : "text-destructive"}`}
                       >
                         {kpi.up ? (
                           <ArrowUp className="w-3 h-3" />
@@ -557,17 +557,17 @@ export default function Statistics() {
                         {kpi.change}
                       </div>
                     </div>
-                    <div className="text-2xl font-black text-white font-numbers mb-1">
+                    <div className="text-2xl font-black text-foreground font-numbers mb-1">
                       {kpi.value}
                     </div>
-                    <div className="text-white/40 text-xs">{kpi.label}</div>
+                    <div className="text-muted-foreground text-xs">{kpi.label}</div>
                   </div>
                 ))}
               </div>
 
               <div className="grid gap-4 mb-4">
-                <div className="lg:col-span-2 glass-card p-4 border border-white/5">
-                  <h3 className="text-white font-bold mb-1">
+                <div className="lg:col-span-2 glass-card p-4 border border-border">
+                  <h3 className="text-foreground font-bold mb-1">
                     الاتجاه السنوي ٢٠١٩ - ٢٠٢٥
                   </h3>
                   <div className="flex gap-3 text-xs mb-4">
@@ -581,7 +581,7 @@ export default function Statistics() {
                           className="w-3 h-3 rounded-full"
                           style={{ background: l.color }}
                         />
-                        <span className="text-white/50">{l.label}</span>
+                        <span className="text-muted-foreground">{l.label}</span>
                       </div>
                     ))}
                   </div>
@@ -616,16 +616,16 @@ export default function Statistics() {
                       </defs>
                       <CartesianGrid
                         strokeDasharray="3 3"
-                        stroke="rgba(255,255,255,0.04)"
+                        stroke="var(--secondary)"
                       />
                       <XAxis
                         dataKey="year"
-                        tick={{ fill: "rgba(255,255,255,0.4)", fontSize: 11 }}
+                        tick={{ fill: "var(--muted-foreground)", fontSize: 11 }}
                         axisLine={false}
                         tickLine={false}
                       />
                       <YAxis
-                        tick={{ fill: "rgba(255,255,255,0.4)", fontSize: 10 }}
+                        tick={{ fill: "var(--muted-foreground)", fontSize: 10 }}
                         axisLine={false}
                         tickLine={false}
                       />
@@ -657,11 +657,11 @@ export default function Statistics() {
                     </AreaChart>
                   </ResponsiveContainer>
                 </div>
-                <div className="glass-card p-4 border border-white/5">
-                  <h3 className="text-white font-bold mb-1">
+                <div className="glass-card p-4 border border-border">
+                  <h3 className="text-foreground font-bold mb-1">
                     توزيع الفئات العمرية
                   </h3>
-                  <p className="text-white/40 text-xs mb-3">
+                  <p className="text-muted-foreground text-xs mb-3">
                     نسبة الإدمان حسب العمر
                   </p>
                   <ResponsiveContainer width="100%" height={160}>
@@ -693,11 +693,11 @@ export default function Statistics() {
                             className="w-2.5 h-2.5 rounded-full"
                             style={{ background: item.color }}
                           />
-                          <span className="text-white/60 text-xs">
+                          <span className="text-muted-foreground text-xs">
                             {item.age} سنة
                           </span>
                         </div>
-                        <span className="text-white font-bold text-xs font-numbers">
+                        <span className="text-foreground font-bold text-xs font-numbers">
                           {item.value}٪
                         </span>
                       </div>
@@ -707,22 +707,22 @@ export default function Statistics() {
               </div>
 
               <div className="grid gap-4 mb-4">
-                <div className="glass-card p-4 border border-white/5">
-                  <h3 className="text-white font-bold mb-4">
+                <div className="glass-card p-4 border border-border">
+                  <h3 className="text-foreground font-bold mb-4">
                     أنواع المواد المخدرة
                   </h3>
                   <div className="space-y-3">
                     {substanceTypes.map((item, i) => (
                       <div key={i}>
                         <div className="flex items-center justify-between mb-1">
-                          <span className="text-white/70 text-sm">
+                          <span className="text-foreground/70 text-sm">
                             {item.name}
                           </span>
-                          <span className="text-white font-bold text-sm font-numbers">
+                          <span className="text-foreground font-bold text-sm font-numbers">
                             {item.value}٪
                           </span>
                         </div>
-                        <div className="h-2 bg-white/5 rounded-full overflow-hidden">
+                        <div className="h-2 bg-secondary/60 rounded-full overflow-hidden">
                           <div
                             className="h-full rounded-full progress-bar-animated"
                             style={{
@@ -735,26 +735,26 @@ export default function Statistics() {
                     ))}
                   </div>
                 </div>
-                <div className="glass-card p-4 border border-white/5">
-                  <h3 className="text-white font-bold mb-1">
+                <div className="glass-card p-4 border border-border">
+                  <h3 className="text-foreground font-bold mb-1">
                     مؤشرات جودة الحياة
                   </h3>
                   <div className="flex gap-3 text-xs mb-2">
                     <div className="flex items-center gap-1.5">
-                      <div className="w-2.5 h-2.5 rounded-full bg-[#00D4AA]" />
-                      <span className="text-white/50">بعد التعافي</span>
+                      <div className="w-2.5 h-2.5 rounded-full bg-primary" />
+                      <span className="text-muted-foreground">بعد التعافي</span>
                     </div>
                     <div className="flex items-center gap-1.5">
-                      <div className="w-2.5 h-2.5 rounded-full bg-[#EF4444]" />
-                      <span className="text-white/50">قبل التعافي</span>
+                      <div className="w-2.5 h-2.5 rounded-full bg-destructive" />
+                      <span className="text-muted-foreground">قبل التعافي</span>
                     </div>
                   </div>
                   <ResponsiveContainer width="100%" height={200}>
                     <RadarChart data={radarData}>
-                      <PolarGrid stroke="rgba(255,255,255,0.08)" />
+                      <PolarGrid stroke="var(--border)" />
                       <PolarAngleAxis
                         dataKey="subject"
-                        tick={{ fill: "rgba(255,255,255,0.45)", fontSize: 9 }}
+                        tick={{ fill: "var(--muted-foreground)", fontSize: 9 }}
                       />
                       <Radar
                         name="بعد"
@@ -776,9 +776,9 @@ export default function Statistics() {
               </div>
 
               {/* Partner Contribution */}
-              <div className="glass-card p-4 border border-white/5">
-                <h3 className="text-white font-bold mb-6 flex items-center gap-2">
-                  <Globe className="w-4 h-4 text-[#00D4AA]" />
+              <div className="glass-card p-4 border border-border">
+                <h3 className="text-foreground font-bold mb-6 flex items-center gap-2">
+                  <Globe className="w-4 h-4 text-primary" />
                   مساهمة قطاعات الشراكة في التعافي
                 </h3>
                 <div className="grid grid-cols-2 gap-3">
@@ -806,10 +806,10 @@ export default function Statistics() {
                       >
                         {sector.value}٪
                       </div>
-                      <div className="text-white/50 text-xs leading-tight">
+                      <div className="text-muted-foreground text-xs leading-tight">
                         {sector.label}
                       </div>
-                      <div className="mt-2 h-1.5 bg-white/5 rounded-full overflow-hidden">
+                      <div className="mt-2 h-1.5 bg-secondary/60 rounded-full overflow-hidden">
                         <div
                           className="h-full rounded-full"
                           style={{
