@@ -2,7 +2,13 @@
 
 ## Overview
 
-**Allah Yafik** (الله يعافيك) — Arabic-language addiction prevention and rehabilitation platform. Bilingual (Arabic primary, English secondary). All user-facing content should default to Arabic with RTL layout awareness.
+**Allah Yafik** (الله يعافيك) is an Arabic-first addiction prevention and rehabilitation SPA.
+
+Default all user-facing content to Arabic with RTL layout awareness.
+
+For full feature inventory and current implementation status, see `CHANGELOG.md`.
+
+For visual direction and tone, see `ideas.md`.
 
 ## Tech Stack
 
@@ -20,6 +26,7 @@
 |---------|---------|
 | `pnpm dev` | Dev server (Vite, hot reload) |
 | `pnpm build` | Production build (client + server → `dist/`) |
+| `pnpm start` | Run the production server from `dist/index.js` |
 | `pnpm check` | TypeScript type check (`tsc --noEmit`) |
 | `pnpm format` | Prettier formatting |
 
@@ -31,7 +38,7 @@ No test framework is configured. Run `pnpm check` to validate changes.
 
 ```
 client/src/           React SPA
-  components/ui/      shadcn/ui atomic components (do not edit directly — use shadcn CLI)
+  components/ui/      shadcn/ui primitives (do not edit directly; use shadcn CLI)
   components/         Composite components (Sidebar, BottomNav, SOSButton, etc.)
   pages/              Route-level page components
   hooks/              Custom React hooks
@@ -75,10 +82,12 @@ Dark mode is the default. Theme colors are CSS variables in `index.css` using **
 ## Conventions
 
 - **Responsive breakpoint:** 768px (`useMobile()` hook for detection)
-- **Mobile layout:** Bottom navigation bar; **Desktop:** Collapsible sidebar (64px → 256px)
+- **Mobile layout:** Use `.app-container` + `.page-content` and BottomNav
+- **Desktop layout:** Collapsible Sidebar (64px → 256px)
 - **New UI components:** Add via shadcn/ui CLI (`npx shadcn@latest add <component>`), don't create from scratch
 - **Data:** Static data lives in `client/src/data/` with exported TypeScript interfaces
 - **Routing:** All routes defined in `App.tsx` using Wouter `<Route>` components
+- **Navigation API:** Wouter `navigate()` expects string paths; do not use numeric navigation (for back, use `window.history.back()`)
 - **Exports:** Pages and components use `export default function Name() {}`
 - **Icons:** `lucide-react` — import individually, size with `w-4 h-4` / `w-5 h-5` / `w-6 h-6`
 - **Toasts:** `import { toast } from "sonner"` — always Arabic strings, positioned top-center
@@ -110,6 +119,8 @@ After completing work:
 4. If you added a new component or hook → update the respective inventory section
 5. If you fixed a known issue → mark it as resolved in "Known Issues" section
 
+Keep this file concise and global. Put area-specific rules in scoped instruction files (for example `client/**/*.instructions.md` and `server/**/*.instructions.md`).
+
 ## Gotchas
 
 - **Wouter is patched** to collect routes into `window.__WOUTER_ROUTES__[]` — don't remove the patch
@@ -119,5 +130,6 @@ After completing work:
 - `tailwindcss>nanoid` pinned to 3.3.7 for compatibility
 - **Firebase configured but unused** — `firebase.json` exists for hosting config; no Firebase SDK in code
 - **Prettier prose-wrap: preserve** — important for Arabic text; don't change
+- **Large media uploads** should use IndexedDB patterns already used in `pages/AdminDashboard.tsx`, not localStorage data URLs
 
-See `CHANGELOG.md` for the full inventory of pages (22), components (11), hooks (3), data layer details, and known issues.
+See `CHANGELOG.md` for the latest inventory, known issues, and infrastructure notes.

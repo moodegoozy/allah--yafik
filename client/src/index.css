@@ -320,6 +320,40 @@
     transform-origin: center;
   }
 
+  /*
+   * Light Mode Compatibility Layer
+   * Many pages were authored with dark-first utility classes (text-white/bg-white/..).
+   * These overrides keep legacy pages readable in light mode without rewriting each page.
+   */
+  :root:not(.dark) .app-container [class*="text-white/"] {
+    color: var(--muted-foreground) !important;
+  }
+
+  :root:not(.dark) .app-container [class*="text-white"] {
+    color: var(--foreground) !important;
+  }
+
+  :root:not(.dark) .app-container [class*="placeholder-white"]::placeholder {
+    color: var(--muted-foreground) !important;
+    opacity: 0.9;
+  }
+
+  :root:not(.dark) .app-container [class*="border-white/"] {
+    border-color: var(--border) !important;
+  }
+
+  :root:not(.dark) .app-container [class*="bg-white/"] {
+    background-color: color-mix(in oklch, var(--card) 92%, var(--foreground) 8%) !important;
+  }
+
+  :root:not(.dark) .app-container [class*="bg-black/"] {
+    background-color: color-mix(in oklch, var(--foreground) 10%, var(--card) 90%) !important;
+  }
+
+  :root:not(.dark) .app-container [class*="bg-[#0A0F1E]"] {
+    background-color: var(--card) !important;
+  }
+
   /* Pulse Animation */
   .pulse-teal {
     animation: pulse-teal 2s ease-in-out infinite;

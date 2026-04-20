@@ -9,7 +9,6 @@ import {
   Settings as SettingsIcon,
   Sun,
   Moon,
-  Monitor,
   Type,
   Bell,
   BellOff,

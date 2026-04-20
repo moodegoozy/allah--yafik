@@ -21,19 +21,28 @@ function getSystemTheme(): Theme {
 interface ThemeProviderProps {
   children: React.ReactNode;
   defaultTheme?: Theme;
+  switchable?: boolean;
 }
 
 export function ThemeProvider({
   children,
   defaultTheme,
+  switchable = true,
 }: ThemeProviderProps) {
   const [theme, setTheme] = useState<Theme>(() => {
+    if (!switchable) return defaultTheme ?? "dark";
+
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored === "light" || stored === "dark") return stored;
     return defaultTheme ?? getSystemTheme();
   });
 
   useEffect(() => {
+    if (!switchable && theme !== (defaultTheme ?? "dark")) {
+      setTheme(defaultTheme ?? "dark");
+      return;
+    }
+
     const root = document.documentElement;
     if (theme === "dark") {
       root.classList.add("dark");
@@ -41,9 +50,10 @@ export function ThemeProvider({
       root.classList.remove("dark");
     }
     localStorage.setItem(STORAGE_KEY, theme);
-  }, [theme]);
+  }, [defaultTheme, switchable, theme]);
 
   const toggleTheme = () => {
+    if (!switchable) return;
     setTheme(prev => (prev === "light" ? "dark" : "light"));
   };
 

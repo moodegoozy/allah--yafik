@@ -68,7 +68,7 @@ function Router() {
 function App() {
   return (
     <ErrorBoundary>
-      <ThemeProvider>
+      <ThemeProvider defaultTheme="dark">
         <TooltipProvider>
           <Toaster richColors position="top-center" />
           <AuthGuard>
