@@ -30,6 +30,7 @@ const ADMIN_PIN_HASH =
   "f2a13f6230405e7a898ea123b738c84040a98e2434f818b0d56375627bb023c0";
 
 type Mode = "login" | "register" | "forgot" | "admin";
+type Gender = "male" | "female";
 
 export default function Login() {
   const [, navigate] = useLocation();
@@ -45,6 +46,7 @@ export default function Login() {
     password: "",
     confirmPassword: "",
     age: "",
+    gender: "" as "" | Gender,
     addictionType: "",
     soberDays: "",
     agreeTerms: false,
@@ -63,6 +65,11 @@ export default function Login() {
     "إدمان طعام",
     "إدمان عمل",
     "أخرى",
+  ];
+
+  const genderOptions: { value: Gender; label: string; emoji: string }[] = [
+    { value: "male", label: "ذكر", emoji: "♂️" },
+    { value: "female", label: "أنثى", emoji: "♀️" },
   ];
 
   const handleLogin = async () => {
@@ -118,6 +125,10 @@ export default function Login() {
       toast.error("يرجى إدخال العمر بشكل صحيح");
       return;
     }
+    if (!registerForm.gender) {
+      toast.error("يرجى تحديد الجنس");
+      return;
+    }
     if (registerForm.phone && !isValidSaudiPhone(registerForm.phone)) {
       toast.error("رقم الجوال غير صحيح. يجب أن يبدأ بـ 05 ويتكون من 10 أرقامن يبدأ بـ 05 ويتكون من 10 أرقام");
       return;
@@ -158,6 +169,7 @@ export default function Login() {
         passwordHash: hashedPassword,
         age,
         ageGroup,
+        gender: registerForm.gender,
         testCompleted: false,
         addictionType: registerForm.addictionType,
         soberDays: parseInt(registerForm.soberDays) || 0,
@@ -592,6 +604,33 @@ export default function Login() {
                             : "🏛️ فئة البالغين (٢٦+)"}
                       </p>
                     )}
+                  </div>
+
+                  <div>
+                    <label className="text-muted-foreground text-xs font-bold mb-1.5 block">
+                      الجنس *
+                    </label>
+                    <div className="grid grid-cols-2 gap-2">
+                      {genderOptions.map(opt => {
+                        const isActive = registerForm.gender === opt.value;
+                        return (
+                          <button
+                            key={opt.value}
+                            onClick={() =>
+                              setRegisterForm(p => ({ ...p, gender: opt.value }))
+                            }
+                            className={`py-2.5 rounded-xl border text-sm font-bold transition-all flex items-center justify-center gap-1.5 ${
+                              isActive
+                                ? "border-primary bg-primary/10 text-primary"
+                                : "border-border bg-secondary/40 text-muted-foreground hover:text-foreground"
+                            }`}
+                          >
+                            <span>{opt.emoji}</span>
+                            {opt.label}
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
                   <div>
                     <label className="text-muted-foreground text-xs font-bold mb-1.5 block">

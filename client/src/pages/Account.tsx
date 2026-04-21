@@ -41,6 +41,11 @@ const ageGroupConfig: Record<
   adult: { label: "بالغ", color: "#8B5CF6", emoji: "🎯" },
 };
 
+const genderConfig: Record<string, { label: string; color: string; emoji: string }> = {
+  male: { label: "ذكر", color: "#3B82F6", emoji: "♂️" },
+  female: { label: "أنثى", color: "#EC4899", emoji: "♀️" },
+};
+
 const RECOVERY_KEY_PREFIX = "allah_yafik_recovery_goals";
 
 function getUserRecoveryKey(): string {
@@ -78,6 +83,7 @@ export default function Account() {
   const [editForm, setEditForm] = useState({
     name: "",
     email: "",
+    gender: "",
     addictionType: "",
   });
   const [changingPassword, setChangingPassword] = useState(false);
@@ -108,6 +114,7 @@ export default function Account() {
       setEditForm({
         name: parsed.name || "",
         email: parsed.email || "",
+        gender: parsed.gender || "",
         addictionType: parsed.addictionType || "",
       });
     } else {
@@ -118,6 +125,7 @@ export default function Account() {
   if (!user) return null;
 
   const ageCfg = ageGroupConfig[user.ageGroup] || ageGroupConfig.adult;
+  const genderMeta = genderConfig[user.gender] || null;
 
   const handleSaveProfile = () => {
     if (!editForm.name.trim()) {
@@ -135,6 +143,7 @@ export default function Account() {
     if (idx !== -1) {
       users[idx].name = editForm.name.trim();
       users[idx].email = editForm.email.trim();
+      users[idx].gender = editForm.gender;
       users[idx].addictionType = editForm.addictionType;
       localStorage.setItem("allah_yafik_users", JSON.stringify(users));
     }
@@ -144,6 +153,7 @@ export default function Account() {
       ...user,
       name: editForm.name.trim(),
       email: editForm.email.trim(),
+      gender: editForm.gender,
       addictionType: editForm.addictionType,
     };
     localStorage.setItem("allah_yafik_current_user", JSON.stringify(updated));
@@ -379,6 +389,7 @@ export default function Account() {
                       setEditForm({
                         name: user.name,
                         email: user.email || "",
+                        gender: user.gender || "",
                         addictionType: user.addictionType || "",
                       });
                     }}
@@ -475,6 +486,50 @@ export default function Account() {
                     <span style={{ color: ageCfg.color }}>{ageCfg.label}</span>
                   </div>
                 </div>
+              </div>
+
+              {/* Gender */}
+              <div className="flex items-center gap-3 p-3 rounded-xl bg-secondary/40 border border-border">
+                <Heart className="w-4 h-4 text-muted-foreground/70 flex-shrink-0" />
+                {editing ? (
+                  <div className="flex-1">
+                    <div className="text-muted-foreground text-xs mb-1.5">الجنس</div>
+                    <div className="flex gap-2">
+                      {Object.entries(genderConfig).map(([key, meta]) => {
+                        const isActive = editForm.gender === key;
+                        return (
+                          <button
+                            key={key}
+                            onClick={() => setEditForm(f => ({ ...f, gender: key }))}
+                            className="px-2.5 py-1 rounded-lg text-xs font-bold transition-all border"
+                            style={
+                              isActive
+                                ? {
+                                    background: `${meta.color}20`,
+                                    borderColor: `${meta.color}40`,
+                                    color: meta.color,
+                                  }
+                                : {
+                                    background: "transparent",
+                                    borderColor: "var(--border)",
+                                    color: "var(--muted-foreground)",
+                                  }
+                            }
+                          >
+                            {meta.emoji} {meta.label}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="flex-1 min-w-0">
+                    <div className="text-muted-foreground text-xs mb-0.5">الجنس</div>
+                    <div className="text-foreground text-sm font-bold truncate">
+                      {genderMeta ? `${genderMeta.emoji} ${genderMeta.label}` : "غير محدد"}
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Addiction Type */}

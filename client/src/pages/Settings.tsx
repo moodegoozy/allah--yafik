@@ -26,6 +26,8 @@ import {
   ChevronUp,
   Check,
   AlertTriangle,
+  FileText,
+  HelpCircle,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
@@ -38,6 +40,7 @@ const ANONYMOUS_KEY = "allah_yafik_anonymous_mode";
 const HIDE_STATS_KEY = "allah_yafik_hide_stats";
 
 type FontSize = "small" | "medium" | "large";
+type SettingsDoc = "privacy" | "terms" | "help" | null;
 
 const fontSizeConfig: Record<FontSize, { label: string; class: string; size: string }> = {
   small: { label: "صغير", class: "text-xs", size: "14px" },
@@ -77,6 +80,8 @@ export default function Settings() {
   // Confirm dialogs
   const [showClearData, setShowClearData] = useState(false);
   const [showClearCache, setShowClearCache] = useState(false);
+  const [showDeleteAccount, setShowDeleteAccount] = useState(false);
+  const [activeDoc, setActiveDoc] = useState<SettingsDoc>(null);
 
   // Apply font size
   useEffect(() => {
@@ -150,6 +155,47 @@ export default function Settings() {
     setShowClearCache(false);
   };
 
+  const handleDeleteAccount = () => {
+    try {
+      const raw = localStorage.getItem("allah_yafik_current_user");
+      if (!raw) {
+        toast.error("لا يوجد حساب نشط حالياً");
+        return;
+      }
+
+      const currentUser = JSON.parse(raw);
+      const users = JSON.parse(localStorage.getItem("allah_yafik_users") || "[]");
+
+      if (Array.isArray(users)) {
+        const filteredUsers = users.filter((u: any) => {
+          if (currentUser?.id && u?.id) return u.id !== currentUser.id;
+          if (currentUser?.email && u?.email) return u.email !== currentUser.email;
+          return true;
+        });
+        localStorage.setItem("allah_yafik_users", JSON.stringify(filteredUsers));
+      }
+
+      const userEmail = currentUser?.email;
+      if (userEmail) {
+        const keysToDelete: string[] = [];
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i);
+          if (key?.startsWith("allah_yafik_") && key.includes(userEmail)) {
+            keysToDelete.push(key);
+          }
+        }
+        keysToDelete.forEach(k => localStorage.removeItem(k));
+      }
+
+      localStorage.removeItem("allah_yafik_current_user");
+      toast.success("تم حذف الحساب بنجاح");
+      setShowDeleteAccount(false);
+      navigate("/login");
+    } catch {
+      toast.error("حدث خطأ أثناء حذف الحساب");
+    }
+  };
+
   const toggleSection = (id: string) => {
     setExpandedSection(prev => (prev === id ? null : id));
   };
@@ -180,6 +226,13 @@ export default function Settings() {
     { id: "data", icon: Download, title: "البيانات", subtitle: "تصدير ومسح البيانات", color: "#F59E0B" },
     { id: "general", icon: Globe, title: "عام", subtitle: "معلومات التطبيق والتواصل", color: "#EC4899" },
   ];
+
+  const docMeta: Record<Exclude<SettingsDoc, null>, { title: string; color: string; icon: typeof Shield }> = {
+    privacy: { title: "سياسة الخصوصية", color: "#10B981", icon: Shield },
+    terms: { title: "الشروط والأحكام", color: "#8B5CF6", icon: FileText },
+    help: { title: "مركز المساعدة", color: "#0EA5E9", icon: HelpCircle },
+  };
+  const ActiveDocIcon = activeDoc ? docMeta[activeDoc].icon : null;
 
   return (
     <div className="app-container">
@@ -394,6 +447,19 @@ export default function Settings() {
                               <div className="text-muted-foreground text-xs">مسح جميع البيانات ما عدا الحساب والثيم</div>
                             </div>
                           </button>
+
+                          <button
+                            onClick={() => setShowDeleteAccount(true)}
+                            className="w-full flex items-center gap-3 p-3.5 rounded-xl bg-red-500/8 border border-red-500/30 hover:bg-red-500/12 transition-all"
+                          >
+                            <div className="w-8 h-8 rounded-lg bg-red-500/15 flex items-center justify-center">
+                              <Trash2 className="w-4 h-4 text-red-500" />
+                            </div>
+                            <div className="flex-1 text-right">
+                              <div className="text-red-500 text-sm font-bold">حذف الحساب نهائياً</div>
+                              <div className="text-muted-foreground text-xs">سيتم حذف حسابك وبياناتك الشخصية نهائياً</div>
+                            </div>
+                          </button>
                         </>
                       )}
 
@@ -439,6 +505,48 @@ export default function Settings() {
                               </div>
                             </div>
                           </div>
+
+                          <button
+                            onClick={() => setActiveDoc("privacy")}
+                            className="w-full flex items-center gap-3 p-3.5 rounded-xl bg-secondary/40 border border-border hover:bg-secondary/60 transition-all"
+                          >
+                            <div className="w-8 h-8 rounded-lg bg-emerald-500/15 flex items-center justify-center">
+                              <Shield className="w-4 h-4 text-emerald-500" />
+                            </div>
+                            <div className="flex-1 text-right">
+                              <div className="text-foreground text-sm font-bold">سياسة الخصوصية</div>
+                              <div className="text-muted-foreground text-xs">كيف نجمع بياناتك ونستخدمها ونحميها</div>
+                            </div>
+                            <ChevronLeft className="w-4 h-4 text-muted-foreground/60" />
+                          </button>
+
+                          <button
+                            onClick={() => setActiveDoc("terms")}
+                            className="w-full flex items-center gap-3 p-3.5 rounded-xl bg-secondary/40 border border-border hover:bg-secondary/60 transition-all"
+                          >
+                            <div className="w-8 h-8 rounded-lg bg-violet-500/15 flex items-center justify-center">
+                              <FileText className="w-4 h-4 text-violet-500" />
+                            </div>
+                            <div className="flex-1 text-right">
+                              <div className="text-foreground text-sm font-bold">الشروط والأحكام</div>
+                              <div className="text-muted-foreground text-xs">شروط استخدام المنصة وحقوق والتزامات المستخدم</div>
+                            </div>
+                            <ChevronLeft className="w-4 h-4 text-muted-foreground/60" />
+                          </button>
+
+                          <button
+                            onClick={() => setActiveDoc("help")}
+                            className="w-full flex items-center gap-3 p-3.5 rounded-xl bg-secondary/40 border border-border hover:bg-secondary/60 transition-all"
+                          >
+                            <div className="w-8 h-8 rounded-lg bg-sky-500/15 flex items-center justify-center">
+                              <HelpCircle className="w-4 h-4 text-sky-500" />
+                            </div>
+                            <div className="flex-1 text-right">
+                              <div className="text-foreground text-sm font-bold">مركز المساعدة</div>
+                              <div className="text-muted-foreground text-xs">أسئلة شائعة وخطوات الدعم السريع</div>
+                            </div>
+                            <ChevronLeft className="w-4 h-4 text-muted-foreground/60" />
+                          </button>
                         </>
                       )}
                     </div>
@@ -531,6 +639,119 @@ export default function Settings() {
           </motion.div>
         )}
       </AnimatePresence>
+
+      {/* ═══ Confirm: Delete Account ═══ */}
+      <AnimatePresence>
+        {showDeleteAccount && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm px-6"
+            onClick={() => setShowDeleteAccount(false)}
+          >
+            <motion.div
+              initial={{ scale: 0.9, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.9, opacity: 0 }}
+              onClick={e => e.stopPropagation()}
+              className="w-full max-w-sm rounded-2xl glass-card border border-red-500/30 p-5 text-center"
+            >
+              <div className="w-12 h-12 rounded-xl bg-red-500/15 flex items-center justify-center mx-auto mb-3">
+                <AlertTriangle className="w-6 h-6 text-red-500" />
+              </div>
+              <h3 className="text-foreground font-bold mb-1">حذف الحساب نهائياً؟</h3>
+              <p className="text-muted-foreground text-sm mb-4">
+                سيتم حذف الحساب من هذا الجهاز نهائياً، ولن تتمكن من استعادته لاحقاً.
+              </p>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => setShowDeleteAccount(false)}
+                  className="flex-1 py-2.5 rounded-xl border border-border text-muted-foreground text-sm font-bold hover:text-foreground transition-all"
+                >
+                  إلغاء
+                </button>
+                <button
+                  onClick={handleDeleteAccount}
+                  className="flex-1 py-2.5 rounded-xl bg-destructive text-destructive-foreground text-sm font-bold transition-all"
+                >
+                  حذف نهائي
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ═══ Doc Viewer: Privacy / Terms / Help ═══ */}
+      <AnimatePresence>
+        {activeDoc && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 flex items-end justify-center bg-background/80 backdrop-blur-sm"
+            onClick={() => setActiveDoc(null)}
+          >
+            <motion.div
+              initial={{ y: 32, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: 32, opacity: 0 }}
+              transition={{ type: "spring", bounce: 0.2, duration: 0.4 }}
+              onClick={e => e.stopPropagation()}
+              className="w-full max-w-lg rounded-t-3xl glass-card border border-border p-5 max-h-[80vh] overflow-y-auto"
+            >
+              <div className="flex items-center justify-between mb-4">
+                <div className="flex items-center gap-2">
+                  <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: `${docMeta[activeDoc].color}18` }}>
+                    {ActiveDocIcon && <ActiveDocIcon className="w-4 h-4" style={{ color: docMeta[activeDoc].color }} />}
+                  </div>
+                  <h3 className="text-foreground font-black text-base">{docMeta[activeDoc].title}</h3>
+                </div>
+                <button
+                  onClick={() => setActiveDoc(null)}
+                  className="w-8 h-8 rounded-lg bg-secondary/60 text-muted-foreground hover:text-foreground"
+                >
+                  ✕
+                </button>
+              </div>
+
+              {activeDoc === "privacy" && (
+                <div className="space-y-3 text-right">
+                  <p className="text-muted-foreground text-sm leading-relaxed">
+                    نحترم خصوصيتك. يتم حفظ بياناتك محلياً على جهازك لتحسين تجربتك داخل منصة الله يعافيك.
+                  </p>
+                  <DocItem title="ما البيانات التي نخزنها؟" text="بيانات الحساب (الاسم، البريد، العمر)، نتائج التقييم، تقدّمك في الخطط والإنجازات، وإعداداتك الشخصية." />
+                  <DocItem title="كيف نستخدم البيانات؟" text="لاستخدامها داخل التطبيق فقط: تخصيص المحتوى، حفظ التقدم، وتقديم توصيات مناسبة لعمرك." />
+                  <DocItem title="مشاركة البيانات" text="لا نشارك بياناتك الشخصية مع أي طرف ثالث ضمن النسخة الحالية من التطبيق." />
+                  <DocItem title="حذف البيانات" text="يمكنك حذف بيانات التتبع أو حذف الحساب نهائياً من صفحة الإعدادات في أي وقت." />
+                </div>
+              )}
+
+              {activeDoc === "terms" && (
+                <div className="space-y-3 text-right">
+                  <p className="text-muted-foreground text-sm leading-relaxed">
+                    باستخدامك للمنصة، فأنت توافق على الالتزام بهذه الشروط بما يضمن بيئة آمنة ومحترمة للجميع.
+                  </p>
+                  <DocItem title="الاستخدام المسؤول" text="يجب استخدام المنصة لأغراض التوعية والدعم فقط، وعدم إساءة الاستخدام أو نشر محتوى ضار." />
+                  <DocItem title="الدقة الطبية" text="المحتوى توعوي ولا يغني عن الاستشارة الطبية المتخصصة عند الحاجة." />
+                  <DocItem title="الحساب" text="أنت مسؤول عن صحة البيانات التي تدخلها وحماية الوصول إلى جهازك وحسابك المحلي." />
+                  <DocItem title="التحديثات" text="يجوز تحديث الميزات أو المحتوى أو الشروط لتحسين الخدمة دون إشعار مسبق." />
+                </div>
+              )}
+
+              {activeDoc === "help" && (
+                <div className="space-y-3 text-right">
+                  <DocItem title="كيف أبدأ؟" text="أنشئ حساباً، أكمل اختبار التقييم، ثم اتبع الخطة الوقائية المناسبة لفئتك العمرية." />
+                  <DocItem title="نسيت كلمة المرور" text="من صفحة تسجيل الدخول اختر (نسيت كلمة المرور) واتبع خطوات إعادة التعيين." />
+                  <DocItem title="كيف أغيّر الإعدادات؟" text="من صفحة الإعدادات يمكنك التحكم في المظهر، الإشعارات، الخصوصية، والبيانات." />
+                  <DocItem title="أحتاج مساعدة مباشرة" text={`يمكنك التواصل فوراً عبر رقم الدعم: ${CONTACT_PHONE}`} />
+                </div>
+              )}
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
@@ -564,5 +785,14 @@ function ToggleRow({
         <div className={`absolute top-0.5 w-5 h-5 rounded-full bg-white shadow transition-all ${enabled ? "left-5.5" : "left-0.5"}`} />
       </div>
     </button>
+  );
+}
+
+function DocItem({ title, text }: { title: string; text: string }) {
+  return (
+    <div className="p-3 rounded-xl bg-secondary/40 border border-border">
+      <div className="text-foreground text-sm font-bold mb-1">{title}</div>
+      <div className="text-muted-foreground text-xs leading-relaxed">{text}</div>
+    </div>
   );
 }
