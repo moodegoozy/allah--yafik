@@ -4,7 +4,6 @@
  */
 import { Link, useLocation } from "wouter";
 import {
-  LayoutDashboard,
   Shield,
   Brain,
   Dumbbell,
@@ -22,7 +21,6 @@ import {
   Bell,
   UserPlus,
   MessageCircle,
-  LogIn,
   LogOut,
   FileText,
   Lightbulb,
@@ -40,7 +38,6 @@ const navGroups = [
   {
     label: "الوقاية والوعي",
     items: [
-      { icon: LayoutDashboard, label: "لوحة التحكم", path: "/dashboard" },
       { icon: Shield, label: "خطتي الوقائية", path: "/recovery" },
       { icon: Brain, label: "تقييم مستوى الخطر", path: "/assessment" },
       { icon: Dumbbell, label: "تمارين الوقاية", path: "/exercises" },
@@ -74,13 +71,9 @@ const navGroups = [
     items: [
       { icon: User, label: "حسابي", path: "/account" },
       { icon: SettingsIcon, label: "الإعدادات", path: "/settings" },
-      { icon: LogIn, label: "تسجيل الدخول", path: "/login" },
     ],
   },
 ];
-
-/** Admin-only nav items — shown only when user.role === "admin" */
-const adminNavItem = { icon: Shield, label: "لوحة الإدارة", path: "/admin" };
 
 export default function Sidebar() {
   const [location] = useLocation();
@@ -88,11 +81,6 @@ export default function Sidebar() {
   const [collapsed, setCollapsed] = useState(
     () => typeof window !== "undefined" && window.innerWidth < 1024
   );
-
-  // Read current user to conditionally show admin link
-  const currentUserRaw = localStorage.getItem("allah_yafik_current_user");
-  const currentUser = currentUserRaw ? JSON.parse(currentUserRaw) : null;
-  const isAdmin = currentUser?.role === "admin";
 
   const handleLogout = () => {
     localStorage.removeItem("allah_yafik_current_user");
@@ -188,35 +176,6 @@ export default function Sidebar() {
             </div>
           ))}
         </nav>
-
-        {/* Admin link — only for admins */}
-        {isAdmin && (
-          <div className="px-3 mb-2">
-            <Link href={adminNavItem.path}>
-              <div
-                className={cn(
-                  "flex items-center gap-3 px-3 py-2.5 rounded-xl transition-all duration-200 group",
-                  location === adminNavItem.path
-                    ? "bg-accent/10 border border-accent/20 text-foreground"
-                    : "text-accent/60 hover:text-accent hover:bg-accent/5 border border-accent/15"
-                )}
-              >
-                <adminNavItem.icon
-                  className={cn(
-                    "flex-shrink-0 transition-all",
-                    location === adminNavItem.path
-                      ? "text-accent"
-                      : "group-hover:text-accent"
-                  )}
-                  size={18}
-                />
-                {!collapsed && (
-                  <span className="text-sm font-bold">{adminNavItem.label}</span>
-                )}
-              </div>
-            </Link>
-          </div>
-        )}
 
         {/* Contact Phone */}
         {!collapsed && (

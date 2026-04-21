@@ -19,9 +19,6 @@ import {
   Share2,
   Phone,
   Mic,
-  Baby,
-  School,
-  Briefcase,
   Video,
   FileText,
   Headphones,
@@ -29,7 +26,6 @@ import {
   Sparkles,
   Award,
   TrendingUp,
-  Filter,
   Search,
   Bell,
   ArrowLeft,
@@ -42,35 +38,36 @@ import Sidebar from "@/components/Sidebar";
 
 const CONTACT_PHONE = "0546192019";
 
-const ageGroups = [
-  {
-    id: "children",
-    icon: Baby,
-    label: "الأطفال",
-    range: "٦ - ١٢ سنة",
-    color: "#10B981",
-    desc: "توعية مبكرة بأسلوب قصصي وتفاعلي",
-    count: "٢٤ محاضرة",
-  },
-  {
-    id: "teens",
-    icon: School,
-    label: "المراهقون",
-    range: "١٣ - ١٨ سنة",
-    color: "#3B82F6",
-    desc: "تعزيز المناعة النفسية ومهارات الرفض",
-    count: "٣٨ محاضرة",
-  },
-  {
-    id: "adults",
-    icon: Briefcase,
-    label: "البالغون",
-    range: "٣١ - ٥٠ سنة",
-    color: "#F59E0B",
-    desc: "إدارة الضغوط والوقاية من الانتكاسة",
-    count: "٣٢ محاضرة",
-  },
-];
+type LectureAgeGroup = "children" | "teens" | "adults" | "all";
+
+const AGE_GROUP_LABELS: Record<LectureAgeGroup, string> = {
+  children: "الأطفال",
+  teens: "المراهقون",
+  adults: "البالغون",
+  all: "الجميع",
+};
+
+const USER_AGE_TO_LECTURE_AGE: Record<string, LectureAgeGroup> = {
+  young: "children",
+  teenage: "teens",
+  adult: "adults",
+  children: "children",
+  teens: "teens",
+  adults: "adults",
+  all: "all",
+};
+
+function getSelectedAgeFromCurrentUser(): LectureAgeGroup {
+  try {
+    const raw = localStorage.getItem("allah_yafik_current_user");
+    if (!raw) return "all";
+    const user = JSON.parse(raw) as { ageGroup?: string };
+    if (!user?.ageGroup) return "all";
+    return USER_AGE_TO_LECTURE_AGE[user.ageGroup] || "all";
+  } catch {
+    return "all";
+  }
+}
 
 const lectures = [
   {
@@ -235,7 +232,9 @@ const ratingFeedbackOptions = [
 ];
 
 export default function Lectures() {
-  const [selectedAge, setSelectedAge] = useState("all");
+  const [selectedAge] = useState<LectureAgeGroup>(
+    () => getSelectedAgeFromCurrentUser()
+  );
   const [searchQuery, setSearchQuery] = useState("");
   const [playingId, setPlayingId] = useState<string | number | null>(null);
   const [, navigate] = useLocation();
@@ -314,7 +313,10 @@ export default function Lectures() {
   })();
 
   const filtered = allLectures.filter(l => {
-    const matchAge = selectedAge === "all" || l.ageGroup === selectedAge;
+    const matchAge =
+      selectedAge === "all" ||
+      l.ageGroup === selectedAge ||
+      l.ageGroup === "all";
     const matchSearch =
       l.title.includes(searchQuery) ||
       l.speaker.includes(searchQuery) ||
@@ -324,7 +326,10 @@ export default function Lectures() {
 
   // فلترة محاضرات AI الحقيقية
   const aiLectures = lecturesData.filter(l => {
-    const matchAge = selectedAge === "all" || l.ageGroup === selectedAge;
+    const matchAge =
+      selectedAge === "all" ||
+      l.ageGroup === selectedAge ||
+      l.ageGroup === "all";
     const matchSearch =
       !searchQuery ||
       l.title.includes(searchQuery) ||
@@ -332,6 +337,12 @@ export default function Lectures() {
       l.tags.some(t => t.includes(searchQuery));
     return matchAge && matchSearch;
   });
+
+  const featuredLectures = allLectures.filter(
+    l =>
+      l.featured &&
+      (selectedAge === "all" || l.ageGroup === selectedAge || l.ageGroup === "all")
+  );
 
   return (
     <div className="app-container bg-gradient-navy">
@@ -350,7 +361,7 @@ export default function Lectures() {
           </div>
           <h1 className="text-white font-black text-xl">مكتبة المحاضرات</h1>
           <p className="text-white/40 text-xs mt-0.5">
-            محاضرات متخصصة لجميع الفئات العمرية
+            محاضرات مخصصة حسب الفئة العمرية المسجلة
           </p>
         </div>
       </div>
@@ -389,59 +400,6 @@ export default function Lectures() {
                 <span className="text-white/40 text-xs">{s.label}</span>
               </div>
             ))}
-          </div>
-
-          {/* Age Group Filter */}
-          <div>
-            <h3 className="text-white font-bold mb-3 flex items-center gap-2 text-sm">
-              <Filter className="w-4 h-4 text-[#00D4AA]" />
-              اختر الفئة العمرية
-            </h3>
-            <div className="flex gap-2 overflow-x-auto pb-2 -mx-4 px-4 scrollbar-hide">
-              <button
-                onClick={() => setSelectedAge("all")}
-                className={`flex-shrink-0 px-4 py-2.5 rounded-xl text-center transition-all border ${selectedAge === "all" ? "border-[#00D4AA]/50 bg-[#00D4AA]/10" : "border-white/7 bg-white/5"}`}
-              >
-                <div
-                  className={`text-xs font-bold ${selectedAge === "all" ? "text-[#00D4AA]" : "text-white/70"}`}
-                >
-                  الكل
-                </div>
-              </button>
-              {ageGroups.map(group => (
-                <button
-                  key={group.id}
-                  onClick={() => setSelectedAge(group.id)}
-                  className="flex-shrink-0 flex items-center gap-2 px-4 py-2.5 rounded-xl text-center transition-all border"
-                  style={
-                    selectedAge === group.id
-                      ? {
-                          borderColor: `${group.color}50`,
-                          background: `${group.color}10`,
-                        }
-                      : {
-                          borderColor: "rgba(255,255,255,0.07)",
-                          background: "rgba(255,255,255,0.05)",
-                        }
-                  }
-                >
-                  <group.icon
-                    className="w-4 h-4"
-                    style={{ color: group.color }}
-                  />
-                  <span
-                    className="text-xs font-bold"
-                    style={
-                      selectedAge === group.id
-                        ? { color: group.color }
-                        : { color: "rgba(255,255,255,0.7)" }
-                    }
-                  >
-                    {group.label}
-                  </span>
-                </button>
-              ))}
-            </div>
           </div>
 
           {/* Search */}
@@ -534,16 +492,14 @@ export default function Lectures() {
           </div>
 
           {/* Featured Lectures */}
-          {selectedAge === "all" && searchQuery === "" && (
+          {searchQuery === "" && featuredLectures.length > 0 && (
             <div>
               <h3 className="text-white font-bold text-sm mb-3 flex items-center gap-2">
                 <Award className="w-4 h-4 text-[#F59E0B]" />
                 المحاضرات المميزة
               </h3>
               <div className="space-y-3">
-                {lectures
-                  .filter(l => l.featured)
-                  .map(lecture => {
+                {featuredLectures.map(lecture => {
                     const TypeIcon = typeIcons[lecture.type] || Video;
                     return (
                       <div
@@ -607,7 +563,7 @@ export default function Lectures() {
                 <BookOpen className="w-4 h-4 text-[#00D4AA]" />
                 {selectedAge === "all"
                   ? "جميع المحاضرات"
-                  : `محاضرات ${ageGroups.find(g => g.id === selectedAge)?.label}`}
+                  : `محاضرات ${AGE_GROUP_LABELS[selectedAge]}`}
                 <span className="px-2 py-0.5 rounded-full bg-[#00D4AA]/15 text-[#00D4AA] text-[10px] font-bold">
                   {filtered.length}
                 </span>

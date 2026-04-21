@@ -166,6 +166,60 @@ export default defineConfig({
   build: {
     outDir: path.resolve(import.meta.dirname, "dist/public"),
     emptyOutDir: true,
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes("/client/src/data/lecturesData.ts")) {
+            return "data-lectures";
+          }
+
+          if (id.includes("/client/src/pages/")) {
+            const pageName = path.basename(id, path.extname(id));
+            return `page-${pageName}`;
+          }
+
+          if (!id.includes("node_modules")) return;
+
+          if (id.includes("lucide-react")) {
+            return "vendor-icons";
+          }
+
+          if (id.includes("react-hook-form") || id.includes("@hookform") || id.includes("zod")) {
+            return "vendor-forms";
+          }
+
+          if (id.includes("recharts")) {
+            return "vendor-charts";
+          }
+
+          if (id.includes("framer-motion")) {
+            return "vendor-motion";
+          }
+
+          if (
+            id.includes("@radix-ui") ||
+            id.includes("cmdk") ||
+            id.includes("embla-carousel-react") ||
+            id.includes("vaul") ||
+            id.includes("react-day-picker") ||
+            id.includes("next-themes")
+          ) {
+            return "vendor-ui";
+          }
+
+          if (
+            id.includes("/node_modules/react/") ||
+            id.includes("/node_modules/react-dom/") ||
+            id.includes("/node_modules/scheduler/") ||
+            id.includes("/node_modules/wouter/")
+          ) {
+            return "vendor-react";
+          }
+
+          return "vendor-misc";
+        },
+      },
+    },
   },
   server: {
     port: 3000,

@@ -6,9 +6,9 @@
 
 Default all user-facing content to Arabic with RTL layout awareness.
 
-For full feature inventory and current implementation status, see `CHANGELOG.md`.
-
-For visual direction and tone, see `ideas.md`.
+Use links instead of duplicating long inventories:
+- Product inventory and implementation status: `CHANGELOG.md`
+- Visual direction and tone: `ideas.md`
 
 ## Tech Stack
 
@@ -20,13 +20,14 @@ For visual direction and tone, see `ideas.md`.
 - **Backend:** Express.js (serves SPA, all routes return `index.html`)
 - **Package Manager:** pnpm
 
-## Build and Test
+## Build and Validate
 
 | Command | Purpose |
 |---------|---------|
 | `pnpm dev` | Dev server (Vite, hot reload) |
 | `pnpm build` | Production build (client + server → `dist/`) |
 | `pnpm start` | Run the production server from `dist/index.js` |
+| `pnpm preview` | Preview production client build |
 | `pnpm check` | TypeScript type check (`tsc --noEmit`) |
 | `pnpm format` | Prettier formatting |
 
@@ -51,6 +52,8 @@ shared/               Constants shared between client and server
 
 **Path aliases:** `@/*` → `client/src/*`, `@shared/*` → `shared/*`
 
+Feature/page/component inventories live in `CHANGELOG.md` and should not be duplicated here.
+
 ## Code Style
 
 - Functional components with hooks only — no class components
@@ -59,25 +62,6 @@ shared/               Constants shared between client and server
 - Component files: PascalCase (`Dashboard.tsx`)
 - Hooks: `use` prefix, camelCase (`useMobile.tsx`)
 - Constants: `UPPER_SNAKE_CASE`
-
-## Design System — "Dark Luxury Wellness"
-
-- **Background:** `#0A0F1E` (deep navy)
-- **Primary accent:** `#00D4AA` (turquoise — hope/healing)
-- **Secondary accent:** `#F59E0B` (gold — warmth)
-- **Text:** `#E2E8F0` (light gray)
-- **Cards:** `#111827` (dark gray)
-- **Effects:** Glassmorphism, glow effects, smooth transitions
-- **Fonts:** IBM Plex Sans (EN) + Cairo (AR)
-
-Dark mode is the default. Theme colors are CSS variables in `index.css` using **oklch()** — reference existing vars, don't use raw hex.
-
-**Pre-built CSS utilities** (defined in `index.css`):
-- `.glass-card` / `.glass-card-strong` — glassmorphism with backdrop blur
-- `.teal-glow` / `.gold-glow` — brand accent glow effects
-- `.text-gradient-teal` / `.text-gradient-gold` — gradient text fills
-- `.app-container` — max-width 430px mobile-first container
-- `.page-content` — bottom padding for nav bar + safe-area-inset
 
 ## Conventions
 
@@ -91,10 +75,14 @@ Dark mode is the default. Theme colors are CSS variables in `index.css` using **
 - **Exports:** Pages and components use `export default function Name() {}`
 - **Icons:** `lucide-react` — import individually, size with `w-4 h-4` / `w-5 h-5` / `w-6 h-6`
 - **Toasts:** `import { toast } from "sonner"` — always Arabic strings, positioned top-center
-- **Animations:** Framer Motion spring defaults — `{ type: "spring", bounce: 0.2, duration: 0.4 }`, tap feedback `whileTap={{ scale: 0.85 }}`
+- **Animations:** Framer Motion spring defaults — `{ type: "spring", bounce: 0.2, duration: 0.4 }`; tap feedback `whileTap={{ scale: 0.85 }}`
 - **localStorage keys:** Always prefix with `allah_yafik_` (e.g., `allah_yafik_current_user`, `allah_yafik_users`, `allah_yafik_recovery_goals`)
+- **User-scoped localStorage:** Use email-suffixed keys where already established patterns require per-user data (for example recovery goals)
 - **Auth:** localStorage-based, three roles (`user`, `guest`, `admin`). `AuthGuard` wraps all routes with public/protected split
 - **Forms:** Most use local `useState` + manual validation; React Hook Form + Zod available but lightly used
+- **Styling:** Reuse existing `index.css` tokens/utilities (`glass-card`, gradient/glow helpers, app-container/page-content) before introducing new patterns
+- **Theme:** Dark is default. Do not re-enable theme switching unless explicitly requested
+- **Large media uploads:** Use IndexedDB patterns from `pages/AdminDashboard.tsx`, not localStorage data URLs
 
 ## Environment Variables
 
@@ -118,18 +106,28 @@ After completing work:
 3. If you added a new page → update "Current Feature Inventory" section
 4. If you added a new component or hook → update the respective inventory section
 5. If you fixed a known issue → mark it as resolved in "Known Issues" section
+6. Run `pnpm check` unless the task is docs-only
 
 Keep this file concise and global. Put area-specific rules in scoped instruction files (for example `client/**/*.instructions.md` and `server/**/*.instructions.md`).
 
 ## Gotchas
 
 - **Wouter is patched** to collect routes into `window.__WOUTER_ROUTES__[]` — don't remove the patch
+- **Wouter only** — do not add react-router patterns
 - **Manus debug collector** in `vite.config.ts` streams browser logs to server files — development tooling, not app logic
-- **Theme switching** is currently disabled (`switchable={false}` in ThemeProvider)
 - **No backend API routes** — server only serves the SPA; all data is client-side static
+- **If adding API routes** in `server/index.ts`, place them before static middleware and SPA catch-all
 - `tailwindcss>nanoid` pinned to 3.3.7 for compatibility
 - **Firebase configured but unused** — `firebase.json` exists for hosting config; no Firebase SDK in code
 - **Prettier prose-wrap: preserve** — important for Arabic text; don't change
-- **Large media uploads** should use IndexedDB patterns already used in `pages/AdminDashboard.tsx`, not localStorage data URLs
 
-See `CHANGELOG.md` for the latest inventory, known issues, and infrastructure notes.
+## Key References
+
+- `CHANGELOG.md` — full inventory, known issues, and change history
+- `ideas.md` — visual direction and design rationale
+- `client/src/App.tsx` — route map and app shell
+- `client/src/components/AuthGuard.tsx` — route access rules and role gating
+- `client/src/pages/Login.tsx` — auth and localStorage user model
+- `client/src/pages/Recovery.tsx` — per-user persistence pattern
+- `client/src/index.css` — design tokens and reusable utility classes
+- `server/index.ts` — SPA server behavior and API insertion point
