@@ -3,7 +3,7 @@
  * Design: Dark Luxury Wellness - "الله يعافيك"
  * Features: تسجيل دخول، إنشاء حساب، حفظ بيانات في localStorage
  */
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useLocation } from "wouter";
 import {
   Sparkles,
@@ -56,6 +56,23 @@ export default function Login() {
   const [newPassword, setNewPassword] = useState("");
   const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [adminPin, setAdminPin] = useState("");
+  const [showAdminMode, setShowAdminMode] = useState(false);
+  const tapCountRef = useRef(0);
+  const tapTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleLogoTap = () => {
+    tapCountRef.current += 1;
+    if (tapTimerRef.current) clearTimeout(tapTimerRef.current);
+    tapTimerRef.current = setTimeout(() => {
+      tapCountRef.current = 0;
+    }, 3000);
+    if (tapCountRef.current >= 5) {
+      tapCountRef.current = 0;
+      if (tapTimerRef.current) clearTimeout(tapTimerRef.current);
+      setShowAdminMode(true);
+      setMode("admin");
+    }
+  };
 
   const addictionTypes = [
     "مخدرات",
@@ -130,7 +147,9 @@ export default function Login() {
       return;
     }
     if (registerForm.phone && !isValidSaudiPhone(registerForm.phone)) {
-      toast.error("رقم الجوال غير صحيح. يجب أن يبدأ بـ 05 ويتكون من 10 أرقامن يبدأ بـ 05 ويتكون من 10 أرقام");
+      toast.error(
+        "رقم الجوال غير صحيح. يجب أن يبدأ بـ 05 ويتكون من 10 أرقامن يبدأ بـ 05 ويتكون من 10 أرقام"
+      );
       return;
     }
     if (registerForm.password.length < 8) {
@@ -201,15 +220,26 @@ export default function Login() {
       const hashed = await hashPassword(adminPin);
       if (hashed === ADMIN_PIN_HASH) {
         // Check if already logged in — promote existing user
-        const raw = localStorage.getItem("allah_yafik_current_user");
+        const raw =
+          sessionStorage.getItem("allah_yafik_current_user") ||
+          localStorage.getItem("allah_yafik_current_user");
         const existing = raw ? JSON.parse(raw) : null;
         const adminUser = existing
           ? { ...existing, role: "admin" }
           : { name: "المشرف", phone: "", role: "admin", testCompleted: true };
-        localStorage.setItem(
+        // Admin session in sessionStorage only — auto-clears on tab/browser close
+        sessionStorage.setItem(
           "allah_yafik_current_user",
           JSON.stringify(adminUser)
         );
+        // Remove any stale admin record that may exist in localStorage
+        const lsRaw = localStorage.getItem("allah_yafik_current_user");
+        if (lsRaw) {
+          try {
+            if (JSON.parse(lsRaw).role === "admin")
+              localStorage.removeItem("allah_yafik_current_user");
+          } catch {}
+        }
         toast.success("مرحباً بك في لوحة الإدارة");
         navigate("/admin");
       } else {
@@ -276,10 +306,16 @@ export default function Login() {
       <div className="w-full max-w-md relative z-10">
         {/* Logo */}
         <div className="text-center mb-8">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-sky-500 flex items-center justify-center mx-auto mb-4 glow-teal">
+          <div
+            className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-sky-500 flex items-center justify-center mx-auto mb-4 glow-teal cursor-default select-none"
+            onClick={handleLogoTap}
+            aria-hidden="true"
+          >
             <Sparkles className="w-8 h-8 text-primary-foreground" />
           </div>
-          <h1 className="text-3xl font-black text-foreground mb-1">الله يعافيك</h1>
+          <h1 className="text-3xl font-black text-foreground mb-1">
+            الله يعافيك
+          </h1>
           <p className="text-primary text-sm">برنامج الوقاية من الإدمان</p>
         </div>
 
@@ -364,7 +400,8 @@ export default function Login() {
                     disabled={loading}
                     className="w-full py-3.5 rounded-xl font-black text-primary-foreground transition-all hover:scale-105 disabled:opacity-60 disabled:scale-100 flex items-center justify-center gap-2"
                     style={{
-                      background: "linear-gradient(135deg, oklch(0.75 0.18 175), oklch(0.68 0.16 230))",
+                      background:
+                        "linear-gradient(135deg, oklch(0.75 0.18 175), oklch(0.68 0.16 230))",
                     }}
                   >
                     {loading ? (
@@ -376,7 +413,9 @@ export default function Login() {
                 </div>
 
                 <div className="mt-5 pt-5 border-t border-border text-center">
-                  <span className="text-muted-foreground text-sm">ليس لديك حساب؟ </span>
+                  <span className="text-muted-foreground text-sm">
+                    ليس لديك حساب؟{" "}
+                  </span>
                   <button
                     onClick={() => setMode("register")}
                     className="text-primary font-bold text-sm hover:text-primary/70"
@@ -405,19 +444,11 @@ export default function Login() {
                 تصفح كزائر
               </button>
 
-              {/* Admin Access */}
-              <button
-                onClick={() => setMode("admin")}
-                className="w-full mt-2 py-2.5 text-muted-foreground/60 hover:text-muted-foreground text-xs transition-colors flex items-center justify-center gap-1.5"
-              >
-                <Shield className="w-3.5 h-3.5" />
-                دخول كمشرف
-              </button>
             </motion.div>
           )}
 
-          {/* Admin Login */}
-          {mode === "admin" && (
+          {/* Admin Login — revealed only via secret logo tap (5× in 3s) */}
+          {mode === "admin" && showAdminMode && (
             <motion.div
               key="admin"
               initial={{ opacity: 0, y: 20 }}
@@ -427,7 +458,10 @@ export default function Login() {
               <div className="glass-card p-7 border border-border">
                 <div className="flex items-center gap-3 mb-5">
                   <button
-                    onClick={() => { setMode("login"); setAdminPin(""); }}
+                    onClick={() => {
+                      setMode("login");
+                      setAdminPin("");
+                    }}
                     className="text-muted-foreground hover:text-foreground transition-colors"
                   >
                     <ArrowLeft className="w-5 h-5" />
@@ -466,7 +500,8 @@ export default function Login() {
                     disabled={loading}
                     className="w-full py-3.5 rounded-xl font-black text-primary-foreground transition-all hover:scale-105 disabled:opacity-60 disabled:scale-100 flex items-center justify-center gap-2"
                     style={{
-                      background: "linear-gradient(135deg, oklch(0.80 0.16 85), oklch(0.63 0.24 29))",
+                      background:
+                        "linear-gradient(135deg, oklch(0.80 0.16 85), oklch(0.63 0.24 29))",
                     }}
                   >
                     {loading ? (
@@ -617,7 +652,10 @@ export default function Login() {
                           <button
                             key={opt.value}
                             onClick={() =>
-                              setRegisterForm(p => ({ ...p, gender: opt.value }))
+                              setRegisterForm(p => ({
+                                ...p,
+                                gender: opt.value,
+                              }))
                             }
                             className={`py-2.5 rounded-xl border text-sm font-bold transition-all flex items-center justify-center gap-1.5 ${
                               isActive
@@ -749,7 +787,8 @@ export default function Login() {
                     disabled={loading}
                     className="w-full py-3.5 rounded-xl font-black text-primary-foreground transition-all hover:scale-105 disabled:opacity-60 disabled:scale-100 flex items-center justify-center gap-2"
                     style={{
-                      background: "linear-gradient(135deg, oklch(0.75 0.18 175), oklch(0.68 0.16 230))",
+                      background:
+                        "linear-gradient(135deg, oklch(0.75 0.18 175), oklch(0.68 0.16 230))",
                     }}
                   >
                     {loading ? (

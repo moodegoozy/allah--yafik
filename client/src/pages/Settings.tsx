@@ -42,7 +42,10 @@ const HIDE_STATS_KEY = "allah_yafik_hide_stats";
 type FontSize = "small" | "medium" | "large";
 type SettingsDoc = "privacy" | "terms" | "help" | null;
 
-const fontSizeConfig: Record<FontSize, { label: string; class: string; size: string }> = {
+const fontSizeConfig: Record<
+  FontSize,
+  { label: string; class: string; size: string }
+> = {
   small: { label: "صغير", class: "text-xs", size: "14px" },
   medium: { label: "متوسط", class: "text-sm", size: "16px" },
   large: { label: "كبير", class: "text-base", size: "18px" },
@@ -50,7 +53,8 @@ const fontSizeConfig: Record<FontSize, { label: string; class: string; size: str
 
 function getStoredFontSize(): FontSize {
   const stored = localStorage.getItem(FONT_SIZE_KEY);
-  if (stored === "small" || stored === "medium" || stored === "large") return stored;
+  if (stored === "small" || stored === "medium" || stored === "large")
+    return stored;
   return "medium";
 }
 
@@ -75,7 +79,9 @@ export default function Settings() {
   });
 
   // Expanded sections
-  const [expandedSection, setExpandedSection] = useState<string | null>("appearance");
+  const [expandedSection, setExpandedSection] = useState<string | null>(
+    "appearance"
+  );
 
   // Confirm dialogs
   const [showClearData, setShowClearData] = useState(false);
@@ -115,7 +121,9 @@ export default function Settings() {
           }
         }
       }
-      const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: "application/json" });
+      const blob = new Blob([JSON.stringify(exportData, null, 2)], {
+        type: "application/json",
+      });
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
@@ -132,7 +140,10 @@ export default function Settings() {
     const keysToRemove: string[] = [];
     for (let i = 0; i < localStorage.length; i++) {
       const key = localStorage.key(i);
-      if (key?.startsWith("allah_yafik_tracker_") || key?.startsWith("allah_yafik_daily_")) {
+      if (
+        key?.startsWith("allah_yafik_tracker_") ||
+        key?.startsWith("allah_yafik_daily_")
+      ) {
         keysToRemove.push(key);
       }
     }
@@ -142,7 +153,12 @@ export default function Settings() {
   };
 
   const handleClearCache = () => {
-    const protectedKeys = ["allah_yafik_current_user", "allah_yafik_users", "allah_yafik_theme", "allah_yafik_font_size"];
+    const protectedKeys = [
+      "allah_yafik_current_user",
+      "allah_yafik_users",
+      "allah_yafik_theme",
+      "allah_yafik_font_size",
+    ];
     const keysToRemove: string[] = [];
     for (let i = 0; i < localStorage.length; i++) {
       const key = localStorage.key(i);
@@ -151,7 +167,9 @@ export default function Settings() {
       }
     }
     keysToRemove.forEach(k => localStorage.removeItem(k));
-    toast.success(`تم مسح الكاش (${keysToRemove.length} عنصر) — بيانات الحساب محفوظة`);
+    toast.success(
+      `تم مسح الكاش (${keysToRemove.length} عنصر) — بيانات الحساب محفوظة`
+    );
     setShowClearCache(false);
   };
 
@@ -164,15 +182,21 @@ export default function Settings() {
       }
 
       const currentUser = JSON.parse(raw);
-      const users = JSON.parse(localStorage.getItem("allah_yafik_users") || "[]");
+      const users = JSON.parse(
+        localStorage.getItem("allah_yafik_users") || "[]"
+      );
 
       if (Array.isArray(users)) {
         const filteredUsers = users.filter((u: any) => {
           if (currentUser?.id && u?.id) return u.id !== currentUser.id;
-          if (currentUser?.email && u?.email) return u.email !== currentUser.email;
+          if (currentUser?.email && u?.email)
+            return u.email !== currentUser.email;
           return true;
         });
-        localStorage.setItem("allah_yafik_users", JSON.stringify(filteredUsers));
+        localStorage.setItem(
+          "allah_yafik_users",
+          JSON.stringify(filteredUsers)
+        );
       }
 
       const userEmail = currentUser?.email;
@@ -200,7 +224,11 @@ export default function Settings() {
     setExpandedSection(prev => (prev === id ? null : id));
   };
 
-  const themeOptions: { value: "light" | "dark"; label: string; icon: typeof Sun }[] = [
+  const themeOptions: {
+    value: "light" | "dark";
+    label: string;
+    icon: typeof Sun;
+  }[] = [
     { value: "light", label: "فاتح", icon: Sun },
     { value: "dark", label: "داكن", icon: Moon },
   ];
@@ -220,14 +248,47 @@ export default function Settings() {
   }
 
   const sections: SettingsSection[] = [
-    { id: "appearance", icon: Sun, title: "المظهر", subtitle: "الثيم وحجم الخط", color: "#8B5CF6" },
-    { id: "notifications", icon: Bell, title: "الإشعارات", subtitle: "التذكيرات والتنبيهات", color: "#0EA5E9" },
-    { id: "privacy", icon: Shield, title: "الخصوصية", subtitle: "التحكم في ظهور بياناتك", color: "#10B981" },
-    { id: "data", icon: Download, title: "البيانات", subtitle: "تصدير ومسح البيانات", color: "#F59E0B" },
-    { id: "general", icon: Globe, title: "عام", subtitle: "معلومات التطبيق والتواصل", color: "#EC4899" },
+    {
+      id: "appearance",
+      icon: Sun,
+      title: "المظهر",
+      subtitle: "الثيم وحجم الخط",
+      color: "#8B5CF6",
+    },
+    {
+      id: "notifications",
+      icon: Bell,
+      title: "الإشعارات",
+      subtitle: "التذكيرات والتنبيهات",
+      color: "#0EA5E9",
+    },
+    {
+      id: "privacy",
+      icon: Shield,
+      title: "الخصوصية",
+      subtitle: "التحكم في ظهور بياناتك",
+      color: "#10B981",
+    },
+    {
+      id: "data",
+      icon: Download,
+      title: "البيانات",
+      subtitle: "تصدير ومسح البيانات",
+      color: "#F59E0B",
+    },
+    {
+      id: "general",
+      icon: Globe,
+      title: "عام",
+      subtitle: "معلومات التطبيق والتواصل",
+      color: "#EC4899",
+    },
   ];
 
-  const docMeta: Record<Exclude<SettingsDoc, null>, { title: string; color: string; icon: typeof Shield }> = {
+  const docMeta: Record<
+    Exclude<SettingsDoc, null>,
+    { title: string; color: string; icon: typeof Shield }
+  > = {
     privacy: { title: "سياسة الخصوصية", color: "#10B981", icon: Shield },
     terms: { title: "الشروط والأحكام", color: "#8B5CF6", icon: FileText },
     help: { title: "مركز المساعدة", color: "#0EA5E9", icon: HelpCircle },
@@ -270,11 +331,18 @@ export default function Settings() {
                   className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
                   style={{ background: `${section.color}15` }}
                 >
-                  <section.icon className="w-5 h-5" style={{ color: section.color }} />
+                  <section.icon
+                    className="w-5 h-5"
+                    style={{ color: section.color }}
+                  />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="text-foreground font-bold text-sm">{section.title}</div>
-                  <div className="text-muted-foreground text-xs">{section.subtitle}</div>
+                  <div className="text-foreground font-bold text-sm">
+                    {section.title}
+                  </div>
+                  <div className="text-muted-foreground text-xs">
+                    {section.subtitle}
+                  </div>
                 </div>
                 <motion.div
                   animate={{ rotate: isExpanded ? 180 : 0 }}
@@ -300,14 +368,18 @@ export default function Settings() {
                         <>
                           {/* Theme Selector */}
                           <div>
-                            <label className="text-muted-foreground text-xs mb-2 block">الثيم</label>
+                            <label className="text-muted-foreground text-xs mb-2 block">
+                              الثيم
+                            </label>
                             <div className="grid grid-cols-2 gap-2">
                               {themeOptions.map(opt => {
                                 const isActive = theme === opt.value;
                                 return (
                                   <button
                                     key={opt.value}
-                                    onClick={() => { if (theme !== opt.value) toggleTheme(); }}
+                                    onClick={() => {
+                                      if (theme !== opt.value) toggleTheme();
+                                    }}
                                     className={`flex items-center justify-center gap-2 py-3 rounded-xl border text-sm font-bold transition-all ${
                                       isActive
                                         ? "border-primary bg-primary/10 text-primary"
@@ -316,7 +388,9 @@ export default function Settings() {
                                   >
                                     <opt.icon className="w-4 h-4" />
                                     {opt.label}
-                                    {isActive && <Check className="w-3.5 h-3.5" />}
+                                    {isActive && (
+                                      <Check className="w-3.5 h-3.5" />
+                                    )}
                                   </button>
                                 );
                               })}
@@ -325,7 +399,9 @@ export default function Settings() {
 
                           {/* Font Size */}
                           <div>
-                            <label className="text-muted-foreground text-xs mb-2 block">حجم الخط</label>
+                            <label className="text-muted-foreground text-xs mb-2 block">
+                              حجم الخط
+                            </label>
                             <div className="grid grid-cols-3 gap-2">
                               {fontOptions.map(opt => {
                                 const isActive = fontSize === opt.value;
@@ -345,7 +421,12 @@ export default function Settings() {
                               })}
                             </div>
                             <div className="mt-2 p-3 rounded-xl bg-secondary/40 border border-border">
-                              <p className="text-foreground" style={{ fontSize: fontSizeConfig[fontSize].size }}>
+                              <p
+                                className="text-foreground"
+                                style={{
+                                  fontSize: fontSizeConfig[fontSize].size,
+                                }}
+                              >
                                 هذا مثال على حجم الخط المختار
                               </p>
                             </div>
@@ -363,7 +444,11 @@ export default function Settings() {
                             enabled={notificationsEnabled}
                             onToggle={() => {
                               setNotificationsEnabled(!notificationsEnabled);
-                              toast.success(notificationsEnabled ? "تم إيقاف الإشعارات" : "تم تفعيل الإشعارات");
+                              toast.success(
+                                notificationsEnabled
+                                  ? "تم إيقاف الإشعارات"
+                                  : "تم تفعيل الإشعارات"
+                              );
                             }}
                             color="#0EA5E9"
                           />
@@ -372,7 +457,9 @@ export default function Settings() {
                             className="w-full flex items-center gap-3 p-3 rounded-xl bg-secondary/40 border border-border hover:bg-secondary/60 transition-all"
                           >
                             <Bell className="w-4 h-4 text-sky-500" />
-                            <span className="text-foreground text-sm font-bold flex-1">إدارة التذكيرات</span>
+                            <span className="text-foreground text-sm font-bold flex-1">
+                              إدارة التذكيرات
+                            </span>
                             <ChevronLeft className="w-4 h-4 text-muted-foreground/60" />
                           </button>
                         </>
@@ -388,7 +475,11 @@ export default function Settings() {
                             enabled={anonymousMode}
                             onToggle={() => {
                               setAnonymousMode(!anonymousMode);
-                              toast.success(anonymousMode ? "تم إيقاف الوضع المجهول" : "تم تفعيل الوضع المجهول");
+                              toast.success(
+                                anonymousMode
+                                  ? "تم إيقاف الوضع المجهول"
+                                  : "تم تفعيل الوضع المجهول"
+                              );
                             }}
                             color="#10B981"
                           />
@@ -399,7 +490,11 @@ export default function Settings() {
                             enabled={hideStats}
                             onToggle={() => {
                               setHideStats(!hideStats);
-                              toast.success(hideStats ? "تم إظهار الإحصائيات" : "تم إخفاء الإحصائيات");
+                              toast.success(
+                                hideStats
+                                  ? "تم إظهار الإحصائيات"
+                                  : "تم إخفاء الإحصائيات"
+                              );
                             }}
                             color="#10B981"
                           />
@@ -417,8 +512,12 @@ export default function Settings() {
                               <Download className="w-4 h-4 text-amber-500" />
                             </div>
                             <div className="flex-1 text-right">
-                              <div className="text-foreground text-sm font-bold">تصدير بياناتي</div>
-                              <div className="text-muted-foreground text-xs">تحميل نسخة JSON من جميع بياناتك</div>
+                              <div className="text-foreground text-sm font-bold">
+                                تصدير بياناتي
+                              </div>
+                              <div className="text-muted-foreground text-xs">
+                                تحميل نسخة JSON من جميع بياناتك
+                              </div>
                             </div>
                           </button>
 
@@ -430,8 +529,12 @@ export default function Settings() {
                               <Trash2 className="w-4 h-4 text-red-500" />
                             </div>
                             <div className="flex-1 text-right">
-                              <div className="text-foreground text-sm font-bold">مسح بيانات التتبع</div>
-                              <div className="text-muted-foreground text-xs">حذف سجل التتبع اليومي فقط</div>
+                              <div className="text-foreground text-sm font-bold">
+                                مسح بيانات التتبع
+                              </div>
+                              <div className="text-muted-foreground text-xs">
+                                حذف سجل التتبع اليومي فقط
+                              </div>
                             </div>
                           </button>
 
@@ -443,8 +546,12 @@ export default function Settings() {
                               <RefreshCw className="w-4 h-4 text-orange-500" />
                             </div>
                             <div className="flex-1 text-right">
-                              <div className="text-foreground text-sm font-bold">مسح الكاش</div>
-                              <div className="text-muted-foreground text-xs">مسح جميع البيانات ما عدا الحساب والثيم</div>
+                              <div className="text-foreground text-sm font-bold">
+                                مسح الكاش
+                              </div>
+                              <div className="text-muted-foreground text-xs">
+                                مسح جميع البيانات ما عدا الحساب والثيم
+                              </div>
                             </div>
                           </button>
 
@@ -456,8 +563,12 @@ export default function Settings() {
                               <Trash2 className="w-4 h-4 text-red-500" />
                             </div>
                             <div className="flex-1 text-right">
-                              <div className="text-red-500 text-sm font-bold">حذف الحساب نهائياً</div>
-                              <div className="text-muted-foreground text-xs">سيتم حذف حسابك وبياناتك الشخصية نهائياً</div>
+                              <div className="text-red-500 text-sm font-bold">
+                                حذف الحساب نهائياً
+                              </div>
+                              <div className="text-muted-foreground text-xs">
+                                سيتم حذف حسابك وبياناتك الشخصية نهائياً
+                              </div>
                             </div>
                           </button>
                         </>
@@ -474,8 +585,12 @@ export default function Settings() {
                               <RefreshCw className="w-4 h-4 text-violet-500" />
                             </div>
                             <div className="flex-1 text-right">
-                              <div className="text-foreground text-sm font-bold">إعادة اختبار تقييم الخطر</div>
-                              <div className="text-muted-foreground text-xs">أعد التقييم لتحديث مستوى خطورتك</div>
+                              <div className="text-foreground text-sm font-bold">
+                                إعادة اختبار تقييم الخطر
+                              </div>
+                              <div className="text-muted-foreground text-xs">
+                                أعد التقييم لتحديث مستوى خطورتك
+                              </div>
                             </div>
                             <ChevronLeft className="w-4 h-4 text-muted-foreground/60" />
                           </button>
@@ -488,8 +603,15 @@ export default function Settings() {
                               <Phone className="w-4 h-4 text-pink-500" />
                             </div>
                             <div className="flex-1 text-right">
-                              <div className="text-foreground text-sm font-bold">تواصل معنا</div>
-                              <div className="text-muted-foreground text-xs font-numbers" dir="ltr">{CONTACT_PHONE}</div>
+                              <div className="text-foreground text-sm font-bold">
+                                تواصل معنا
+                              </div>
+                              <div
+                                className="text-muted-foreground text-xs font-numbers"
+                                dir="ltr"
+                              >
+                                {CONTACT_PHONE}
+                              </div>
                             </div>
                             <ChevronLeft className="w-4 h-4 text-muted-foreground/60" />
                           </a>
@@ -500,8 +622,12 @@ export default function Settings() {
                                 <Info className="w-4 h-4 text-pink-500" />
                               </div>
                               <div className="flex-1">
-                                <div className="text-foreground text-sm font-bold">الله يعافيك</div>
-                                <div className="text-muted-foreground text-xs">منصة الوقاية من الإدمان — الإصدار ١.٠</div>
+                                <div className="text-foreground text-sm font-bold">
+                                  الله يعافيك
+                                </div>
+                                <div className="text-muted-foreground text-xs">
+                                  منصة الوقاية من الإدمان — الإصدار ١.٠
+                                </div>
                               </div>
                             </div>
                           </div>
@@ -514,8 +640,12 @@ export default function Settings() {
                               <Shield className="w-4 h-4 text-emerald-500" />
                             </div>
                             <div className="flex-1 text-right">
-                              <div className="text-foreground text-sm font-bold">سياسة الخصوصية</div>
-                              <div className="text-muted-foreground text-xs">كيف نجمع بياناتك ونستخدمها ونحميها</div>
+                              <div className="text-foreground text-sm font-bold">
+                                سياسة الخصوصية
+                              </div>
+                              <div className="text-muted-foreground text-xs">
+                                كيف نجمع بياناتك ونستخدمها ونحميها
+                              </div>
                             </div>
                             <ChevronLeft className="w-4 h-4 text-muted-foreground/60" />
                           </button>
@@ -528,8 +658,12 @@ export default function Settings() {
                               <FileText className="w-4 h-4 text-violet-500" />
                             </div>
                             <div className="flex-1 text-right">
-                              <div className="text-foreground text-sm font-bold">الشروط والأحكام</div>
-                              <div className="text-muted-foreground text-xs">شروط استخدام المنصة وحقوق والتزامات المستخدم</div>
+                              <div className="text-foreground text-sm font-bold">
+                                الشروط والأحكام
+                              </div>
+                              <div className="text-muted-foreground text-xs">
+                                شروط استخدام المنصة وحقوق والتزامات المستخدم
+                              </div>
                             </div>
                             <ChevronLeft className="w-4 h-4 text-muted-foreground/60" />
                           </button>
@@ -542,8 +676,12 @@ export default function Settings() {
                               <HelpCircle className="w-4 h-4 text-sky-500" />
                             </div>
                             <div className="flex-1 text-right">
-                              <div className="text-foreground text-sm font-bold">مركز المساعدة</div>
-                              <div className="text-muted-foreground text-xs">أسئلة شائعة وخطوات الدعم السريع</div>
+                              <div className="text-foreground text-sm font-bold">
+                                مركز المساعدة
+                              </div>
+                              <div className="text-muted-foreground text-xs">
+                                أسئلة شائعة وخطوات الدعم السريع
+                              </div>
                             </div>
                             <ChevronLeft className="w-4 h-4 text-muted-foreground/60" />
                           </button>
@@ -578,8 +716,12 @@ export default function Settings() {
               <div className="w-12 h-12 rounded-xl bg-destructive/15 flex items-center justify-center mx-auto mb-3">
                 <AlertTriangle className="w-6 h-6 text-destructive" />
               </div>
-              <h3 className="text-foreground font-bold mb-1">مسح بيانات التتبع؟</h3>
-              <p className="text-muted-foreground text-sm mb-4">سيتم حذف سجل التتبع اليومي. لا يمكن التراجع.</p>
+              <h3 className="text-foreground font-bold mb-1">
+                مسح بيانات التتبع؟
+              </h3>
+              <p className="text-muted-foreground text-sm mb-4">
+                سيتم حذف سجل التتبع اليومي. لا يمكن التراجع.
+              </p>
               <div className="flex gap-2">
                 <button
                   onClick={() => setShowClearData(false)}
@@ -620,7 +762,9 @@ export default function Settings() {
                 <AlertTriangle className="w-6 h-6 text-amber-500" />
               </div>
               <h3 className="text-foreground font-bold mb-1">مسح الكاش؟</h3>
-              <p className="text-muted-foreground text-sm mb-4">سيتم حذف جميع البيانات ما عدا الحساب وإعدادات الثيم.</p>
+              <p className="text-muted-foreground text-sm mb-4">
+                سيتم حذف جميع البيانات ما عدا الحساب وإعدادات الثيم.
+              </p>
               <div className="flex gap-2">
                 <button
                   onClick={() => setShowClearCache(false)}
@@ -660,9 +804,12 @@ export default function Settings() {
               <div className="w-12 h-12 rounded-xl bg-red-500/15 flex items-center justify-center mx-auto mb-3">
                 <AlertTriangle className="w-6 h-6 text-red-500" />
               </div>
-              <h3 className="text-foreground font-bold mb-1">حذف الحساب نهائياً؟</h3>
+              <h3 className="text-foreground font-bold mb-1">
+                حذف الحساب نهائياً؟
+              </h3>
               <p className="text-muted-foreground text-sm mb-4">
-                سيتم حذف الحساب من هذا الجهاز نهائياً، ولن تتمكن من استعادته لاحقاً.
+                سيتم حذف الحساب من هذا الجهاز نهائياً، ولن تتمكن من استعادته
+                لاحقاً.
               </p>
               <div className="flex gap-2">
                 <button
@@ -703,10 +850,20 @@ export default function Settings() {
             >
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
-                  <div className="w-9 h-9 rounded-xl flex items-center justify-center" style={{ background: `${docMeta[activeDoc].color}18` }}>
-                    {ActiveDocIcon && <ActiveDocIcon className="w-4 h-4" style={{ color: docMeta[activeDoc].color }} />}
+                  <div
+                    className="w-9 h-9 rounded-xl flex items-center justify-center"
+                    style={{ background: `${docMeta[activeDoc].color}18` }}
+                  >
+                    {ActiveDocIcon && (
+                      <ActiveDocIcon
+                        className="w-4 h-4"
+                        style={{ color: docMeta[activeDoc].color }}
+                      />
+                    )}
                   </div>
-                  <h3 className="text-foreground font-black text-base">{docMeta[activeDoc].title}</h3>
+                  <h3 className="text-foreground font-black text-base">
+                    {docMeta[activeDoc].title}
+                  </h3>
                 </div>
                 <button
                   onClick={() => setActiveDoc(null)}
@@ -719,33 +876,71 @@ export default function Settings() {
               {activeDoc === "privacy" && (
                 <div className="space-y-3 text-right">
                   <p className="text-muted-foreground text-sm leading-relaxed">
-                    نحترم خصوصيتك. يتم حفظ بياناتك محلياً على جهازك لتحسين تجربتك داخل منصة الله يعافيك.
+                    نحترم خصوصيتك. يتم حفظ بياناتك محلياً على جهازك لتحسين
+                    تجربتك داخل منصة الله يعافيك.
                   </p>
-                  <DocItem title="ما البيانات التي نخزنها؟" text="بيانات الحساب (الاسم، البريد، العمر)، نتائج التقييم، تقدّمك في الخطط والإنجازات، وإعداداتك الشخصية." />
-                  <DocItem title="كيف نستخدم البيانات؟" text="لاستخدامها داخل التطبيق فقط: تخصيص المحتوى، حفظ التقدم، وتقديم توصيات مناسبة لعمرك." />
-                  <DocItem title="مشاركة البيانات" text="لا نشارك بياناتك الشخصية مع أي طرف ثالث ضمن النسخة الحالية من التطبيق." />
-                  <DocItem title="حذف البيانات" text="يمكنك حذف بيانات التتبع أو حذف الحساب نهائياً من صفحة الإعدادات في أي وقت." />
+                  <DocItem
+                    title="ما البيانات التي نخزنها؟"
+                    text="بيانات الحساب (الاسم، البريد، العمر)، نتائج التقييم، تقدّمك في الخطط والإنجازات، وإعداداتك الشخصية."
+                  />
+                  <DocItem
+                    title="كيف نستخدم البيانات؟"
+                    text="لاستخدامها داخل التطبيق فقط: تخصيص المحتوى، حفظ التقدم، وتقديم توصيات مناسبة لعمرك."
+                  />
+                  <DocItem
+                    title="مشاركة البيانات"
+                    text="لا نشارك بياناتك الشخصية مع أي طرف ثالث ضمن النسخة الحالية من التطبيق."
+                  />
+                  <DocItem
+                    title="حذف البيانات"
+                    text="يمكنك حذف بيانات التتبع أو حذف الحساب نهائياً من صفحة الإعدادات في أي وقت."
+                  />
                 </div>
               )}
 
               {activeDoc === "terms" && (
                 <div className="space-y-3 text-right">
                   <p className="text-muted-foreground text-sm leading-relaxed">
-                    باستخدامك للمنصة، فأنت توافق على الالتزام بهذه الشروط بما يضمن بيئة آمنة ومحترمة للجميع.
+                    باستخدامك للمنصة، فأنت توافق على الالتزام بهذه الشروط بما
+                    يضمن بيئة آمنة ومحترمة للجميع.
                   </p>
-                  <DocItem title="الاستخدام المسؤول" text="يجب استخدام المنصة لأغراض التوعية والدعم فقط، وعدم إساءة الاستخدام أو نشر محتوى ضار." />
-                  <DocItem title="الدقة الطبية" text="المحتوى توعوي ولا يغني عن الاستشارة الطبية المتخصصة عند الحاجة." />
-                  <DocItem title="الحساب" text="أنت مسؤول عن صحة البيانات التي تدخلها وحماية الوصول إلى جهازك وحسابك المحلي." />
-                  <DocItem title="التحديثات" text="يجوز تحديث الميزات أو المحتوى أو الشروط لتحسين الخدمة دون إشعار مسبق." />
+                  <DocItem
+                    title="الاستخدام المسؤول"
+                    text="يجب استخدام المنصة لأغراض التوعية والدعم فقط، وعدم إساءة الاستخدام أو نشر محتوى ضار."
+                  />
+                  <DocItem
+                    title="الدقة الطبية"
+                    text="المحتوى توعوي ولا يغني عن الاستشارة الطبية المتخصصة عند الحاجة."
+                  />
+                  <DocItem
+                    title="الحساب"
+                    text="أنت مسؤول عن صحة البيانات التي تدخلها وحماية الوصول إلى جهازك وحسابك المحلي."
+                  />
+                  <DocItem
+                    title="التحديثات"
+                    text="يجوز تحديث الميزات أو المحتوى أو الشروط لتحسين الخدمة دون إشعار مسبق."
+                  />
                 </div>
               )}
 
               {activeDoc === "help" && (
                 <div className="space-y-3 text-right">
-                  <DocItem title="كيف أبدأ؟" text="أنشئ حساباً، أكمل اختبار التقييم، ثم اتبع الخطة الوقائية المناسبة لفئتك العمرية." />
-                  <DocItem title="نسيت كلمة المرور" text="من صفحة تسجيل الدخول اختر (نسيت كلمة المرور) واتبع خطوات إعادة التعيين." />
-                  <DocItem title="كيف أغيّر الإعدادات؟" text="من صفحة الإعدادات يمكنك التحكم في المظهر، الإشعارات، الخصوصية، والبيانات." />
-                  <DocItem title="أحتاج مساعدة مباشرة" text={`يمكنك التواصل فوراً عبر رقم الدعم: ${CONTACT_PHONE}`} />
+                  <DocItem
+                    title="كيف أبدأ؟"
+                    text="أنشئ حساباً، أكمل اختبار التقييم، ثم اتبع الخطة الوقائية المناسبة لفئتك العمرية."
+                  />
+                  <DocItem
+                    title="نسيت كلمة المرور"
+                    text="من صفحة تسجيل الدخول اختر (نسيت كلمة المرور) واتبع خطوات إعادة التعيين."
+                  />
+                  <DocItem
+                    title="كيف أغيّر الإعدادات؟"
+                    text="من صفحة الإعدادات يمكنك التحكم في المظهر، الإشعارات، الخصوصية، والبيانات."
+                  />
+                  <DocItem
+                    title="أحتاج مساعدة مباشرة"
+                    text={`يمكنك التواصل فوراً عبر رقم الدعم: ${CONTACT_PHONE}`}
+                  />
                 </div>
               )}
             </motion.div>
@@ -773,16 +968,26 @@ function ToggleRow({
   color: string;
 }) {
   return (
-    <button onClick={onToggle} className="w-full flex items-center gap-3 p-3.5 rounded-xl bg-secondary/40 border border-border transition-all">
-      <div className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0" style={{ background: `${color}15` }}>
+    <button
+      onClick={onToggle}
+      className="w-full flex items-center gap-3 p-3.5 rounded-xl bg-secondary/40 border border-border transition-all"
+    >
+      <div
+        className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
+        style={{ background: `${color}15` }}
+      >
         <Icon className="w-4 h-4" style={{ color }} />
       </div>
       <div className="flex-1 text-right min-w-0">
         <div className="text-foreground text-sm font-bold">{label}</div>
         <div className="text-muted-foreground text-xs">{description}</div>
       </div>
-      <div className={`w-11 h-6 rounded-full transition-all relative flex-shrink-0 ${enabled ? "bg-primary" : "bg-secondary"}`}>
-        <div className={`absolute top-0.5 w-5 h-5 rounded-full bg-white shadow transition-all ${enabled ? "left-5.5" : "left-0.5"}`} />
+      <div
+        className={`w-11 h-6 rounded-full transition-all relative flex-shrink-0 ${enabled ? "bg-primary" : "bg-secondary"}`}
+      >
+        <div
+          className={`absolute top-0.5 w-5 h-5 rounded-full bg-white shadow transition-all ${enabled ? "left-5.5" : "left-0.5"}`}
+        />
       </div>
     </button>
   );
@@ -792,7 +997,9 @@ function DocItem({ title, text }: { title: string; text: string }) {
   return (
     <div className="p-3 rounded-xl bg-secondary/40 border border-border">
       <div className="text-foreground text-sm font-bold mb-1">{title}</div>
-      <div className="text-muted-foreground text-xs leading-relaxed">{text}</div>
+      <div className="text-muted-foreground text-xs leading-relaxed">
+        {text}
+      </div>
     </div>
   );
 }

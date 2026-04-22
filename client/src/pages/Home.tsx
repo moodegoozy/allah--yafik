@@ -29,10 +29,7 @@ import {
   type LucideIcon,
 } from "lucide-react";
 import { lecturesData } from "@/data/lecturesData";
-import {
-  ageGroupLabels,
-  type AgeGroup,
-} from "@/data/mentalHealthTestData";
+import { ageGroupLabels, type AgeGroup } from "@/data/mentalHealthTestData";
 
 const CONTACT_PHONE = "0546192019";
 
@@ -96,7 +93,10 @@ interface CurrentUser {
   };
 }
 
-const genderConfig: Record<Gender, { label: string; emoji: string; color: string }> = {
+const genderConfig: Record<
+  Gender,
+  { label: string; emoji: string; color: string }
+> = {
   male: { label: "ذكر", emoji: "♂️", color: "#3B82F6" },
   female: { label: "أنثى", emoji: "♀️", color: "#EC4899" },
 };
@@ -140,7 +140,8 @@ const homeConfigs: Record<HomeAudience, HomeConfig> = {
       "ابدأ بخطوات بسيطة لفهم المخاطر وبناء خطة وقائية تناسبك وتناسب أسرتك.",
     accent: "#00D4AA",
     icon: Shield,
-    gradient: "linear-gradient(135deg, rgba(0,212,170,0.15), rgba(14,165,233,0.08))",
+    gradient:
+      "linear-gradient(135deg, rgba(0,212,170,0.15), rgba(14,165,233,0.08))",
     borderColor: "rgba(0,212,170,0.2)",
     radialColor: "#00D4AA",
     noteLabel: "هل تعلم؟",
@@ -256,7 +257,8 @@ const homeConfigs: Record<HomeAudience, HomeConfig> = {
       "تعلم كيف تميّز الخطر، وكيف تتكلم مع أهلك، وكيف تقول لا بثقة وبساطة.",
     accent: "#14B8A6",
     icon: Gamepad2,
-    gradient: "linear-gradient(135deg, rgba(20,184,166,0.18), rgba(56,189,248,0.08))",
+    gradient:
+      "linear-gradient(135deg, rgba(20,184,166,0.18), rgba(56,189,248,0.08))",
     borderColor: "rgba(20,184,166,0.25)",
     radialColor: "#14B8A6",
     noteLabel: "تذكير مهم",
@@ -372,7 +374,8 @@ const homeConfigs: Record<HomeAudience, HomeConfig> = {
       "هذا وقت تثبت فيه نفسك وتتعلم كيف تواجه الضغط وتختار ما يحمي مستقبلك.",
     accent: "#F59E0B",
     icon: Sparkles,
-    gradient: "linear-gradient(135deg, rgba(245,158,11,0.18), rgba(239,68,68,0.08))",
+    gradient:
+      "linear-gradient(135deg, rgba(245,158,11,0.18), rgba(239,68,68,0.08))",
     borderColor: "rgba(245,158,11,0.25)",
     radialColor: "#F59E0B",
     noteLabel: "قاعدة مهمة",
@@ -488,7 +491,8 @@ const homeConfigs: Record<HomeAudience, HomeConfig> = {
       "مسار هادئ وعملي يساعدك على حماية نفسك وأسرتك وبناء بيئة صحية مستقرة.",
     accent: "#8B5CF6",
     icon: GraduationCap,
-    gradient: "linear-gradient(135deg, rgba(139,92,246,0.18), rgba(236,72,153,0.08))",
+    gradient:
+      "linear-gradient(135deg, rgba(139,92,246,0.18), rgba(236,72,153,0.08))",
     borderColor: "rgba(139,92,246,0.24)",
     radialColor: "#8B5CF6",
     noteLabel: "مؤشر مهم",
@@ -595,7 +599,8 @@ const homeConfigs: Record<HomeAudience, HomeConfig> = {
       },
     ],
     contactTitle: "استشارة لك ولأسرتك",
-    contactSubtitle: "دعم سريع لمساعدتك في القرار المبكر وبناء بيئة أكثر أماناً.",
+    contactSubtitle:
+      "دعم سريع لمساعدتك في القرار المبكر وبناء بيئة أكثر أماناً.",
   },
 };
 
@@ -681,12 +686,16 @@ export default function Home() {
   const lectureAudienceGroup = getLectureAudienceGroup(audience);
   const recommendedLectures = (
     lectureAudienceGroup
-      ? lecturesData.filter(lecture => lecture.ageGroup === lectureAudienceGroup)
+      ? lecturesData.filter(
+          lecture => lecture.ageGroup === lectureAudienceGroup
+        )
       : lecturesData.filter(lecture => lecture.featured)
   ).slice(0, 2);
 
   const visibleLectures =
-    recommendedLectures.length > 0 ? recommendedLectures : lecturesData.slice(0, 2);
+    recommendedLectures.length > 0
+      ? recommendedLectures
+      : lecturesData.slice(0, 2);
   const isChild = audience === "child";
   const isTeen = audience === "teen";
   const isAdult = audience === "adult";
@@ -699,15 +708,19 @@ export default function Home() {
     ? config.spotlightCards.slice(0, 3)
     : isAdult
       ? config.spotlightCards.slice(0, 2)
-    : config.spotlightCards;
-  const visibleLectureCards = isChild ? visibleLectures.slice(0, 1) : visibleLectures;
+      : config.spotlightCards;
+  const visibleLectureCards = isChild
+    ? visibleLectures.slice(0, 1)
+    : visibleLectures;
   const visibleSupportCircles = isChild
     ? supportCircles.slice(0, 3)
     : isAdult
       ? supportCircles.slice(0, 4)
-    : supportCircles;
+      : supportCircles;
 
-  const displayName = currentUser?.name ? `${greeting} يا ${currentUser.name}` : greeting;
+  const displayName = currentUser?.name
+    ? `${greeting} يا ${currentUser.name}`
+    : greeting;
   const HeroIcon = config.icon;
 
   return (
@@ -726,7 +739,9 @@ export default function Home() {
           <div className="min-w-0">
             <p className="text-muted-foreground text-xs">{displayName}</p>
             <div className="flex items-center gap-2 mt-0.5 flex-wrap">
-              <h1 className="text-foreground font-black text-lg">الله يعافيك</h1>
+              <h1 className="text-foreground font-black text-lg">
+                الله يعافيك
+              </h1>
               {ageMeta && (
                 <span
                   className={`px-2.5 py-1 rounded-full text-[10px] font-black bg-gradient-to-r ${ageMeta.gradient}`}
@@ -818,7 +833,9 @@ export default function Home() {
               <div className="flex items-center gap-2 p-3 rounded-2xl bg-secondary/40 border border-border mb-3">
                 <Award className="w-4 h-4" style={{ color: config.accent }} />
                 <div className="flex-1 min-w-0">
-                  <div className="text-muted-foreground text-xs">مستوى الوعي الوقائي</div>
+                  <div className="text-muted-foreground text-xs">
+                    مستوى الوعي الوقائي
+                  </div>
                   <div className="text-foreground font-bold text-sm">
                     {riskScore >= 70
                       ? "ممتاز — استمر"
@@ -862,7 +879,9 @@ export default function Home() {
               background: `linear-gradient(135deg, ${genderMeta.color}16, rgba(15,23,42,0.05))`,
             }}
           >
-            <div className="text-foreground font-black text-sm mb-2">تركيز مناسب لك</div>
+            <div className="text-foreground font-black text-sm mb-2">
+              تركيز مناسب لك
+            </div>
             <div className="space-y-1.5">
               {(userGender === "female"
                 ? [
@@ -879,7 +898,9 @@ export default function Home() {
                     className="w-2 h-2 rounded-full shrink-0"
                     style={{ background: genderMeta.color }}
                   />
-                  <span className="text-foreground/80 text-xs leading-relaxed">{item}</span>
+                  <span className="text-foreground/80 text-xs leading-relaxed">
+                    {item}
+                  </span>
                 </div>
               ))}
             </div>
@@ -900,7 +921,9 @@ export default function Home() {
           >
             <div className="flex items-center gap-2 mb-2.5">
               <Shield className="w-4 h-4 text-[#8B5CF6]" />
-              <h3 className="text-foreground font-black text-sm">خطة هادئة لهذا الأسبوع</h3>
+              <h3 className="text-foreground font-black text-sm">
+                خطة هادئة لهذا الأسبوع
+              </h3>
             </div>
             <p className="text-foreground/70 text-xs mb-3">
               خطوات قصيرة ومنظمة تساعدك على حماية نفسك وأسرتك بدون ضغط.
@@ -913,7 +936,9 @@ export default function Home() {
               ].map(item => (
                 <Link key={item.label} href={item.path}>
                   <div className="flex items-center justify-between rounded-xl bg-background/45 p-3 border border-border active:scale-[0.99] transition-transform">
-                    <span className="text-foreground/85 text-xs font-semibold">{item.label}</span>
+                    <span className="text-foreground/85 text-xs font-semibold">
+                      {item.label}
+                    </span>
                     <ChevronLeft className="w-3.5 h-3.5 text-[#8B5CF6]" />
                   </div>
                 </Link>
@@ -937,7 +962,9 @@ export default function Home() {
                 <p className="text-foreground text-sm leading-relaxed italic">
                   "{quote.text}"
                 </p>
-                <p className="text-primary text-xs mt-1.5 font-bold">— {quote.author}</p>
+                <p className="text-primary text-xs mt-1.5 font-bold">
+                  — {quote.author}
+                </p>
               </div>
             </div>
           </motion.div>
@@ -957,7 +984,9 @@ export default function Home() {
           >
             <div className="flex items-center gap-2 mb-2.5">
               <Sparkles className="w-4 h-4 text-[#F59E0B]" />
-              <h3 className="text-foreground font-black text-sm">تحدي هذا الأسبوع</h3>
+              <h3 className="text-foreground font-black text-sm">
+                تحدي هذا الأسبوع
+              </h3>
             </div>
             <p className="text-foreground/70 text-xs mb-3">
               جرّب تنفيذ 3 خطوات بسيطة تقوّي قرارك وثقتك بنفسك.
@@ -968,9 +997,14 @@ export default function Home() {
                 "اكتب جملة رفض واضحة تستخدمها عند الضغط",
                 "شارك إنجازاً صغيراً في نهاية اليوم",
               ].map(item => (
-                <div key={item} className="flex items-center gap-2 rounded-xl bg-background/40 p-2.5 border border-border">
+                <div
+                  key={item}
+                  className="flex items-center gap-2 rounded-xl bg-background/40 p-2.5 border border-border"
+                >
                   <div className="w-2 h-2 rounded-full bg-[#F59E0B] shrink-0" />
-                  <span className="text-foreground/80 text-xs leading-relaxed">{item}</span>
+                  <span className="text-foreground/80 text-xs leading-relaxed">
+                    {item}
+                  </span>
                 </div>
               ))}
             </div>
@@ -991,7 +1025,9 @@ export default function Home() {
           >
             <div className="flex items-center gap-2 mb-2.5">
               <Shield className="w-4 h-4 text-[#8B5CF6]" />
-              <h3 className="text-foreground font-black text-sm">خطة هادئة لهذا الأسبوع</h3>
+              <h3 className="text-foreground font-black text-sm">
+                خطة هادئة لهذا الأسبوع
+              </h3>
             </div>
             <p className="text-foreground/70 text-xs mb-3">
               خطوات قصيرة ومنظمة تساعدك على حماية نفسك وأسرتك بدون ضغط.
@@ -1004,7 +1040,9 @@ export default function Home() {
               ].map(item => (
                 <Link key={item.label} href={item.path}>
                   <div className="flex items-center justify-between rounded-xl bg-background/45 p-3 border border-border active:scale-[0.99] transition-transform">
-                    <span className="text-foreground/85 text-xs font-semibold">{item.label}</span>
+                    <span className="text-foreground/85 text-xs font-semibold">
+                      {item.label}
+                    </span>
                     <ChevronLeft className="w-3.5 h-3.5 text-[#8B5CF6]" />
                   </div>
                 </Link>
@@ -1015,7 +1053,9 @@ export default function Home() {
 
         <div className="px-4 mt-5">
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-foreground font-black text-sm">الوصول السريع</h2>
+            <h2 className="text-foreground font-black text-sm">
+              الوصول السريع
+            </h2>
             {audience !== "guest" && (
               <Link href="/dashboard">
                 <span className="text-primary text-xs font-bold">لوحتي</span>
@@ -1024,7 +1064,9 @@ export default function Home() {
           </div>
           <div
             className={
-              isChild || isAdult ? "grid grid-cols-2 gap-3.5" : "grid grid-cols-3 gap-3"
+              isChild || isAdult
+                ? "grid grid-cols-2 gap-3.5"
+                : "grid grid-cols-3 gap-3"
             }
           >
             {visibleQuickActions.map((action, idx) => (
@@ -1043,10 +1085,17 @@ export default function Home() {
                       className={`${isAdult ? "w-11 h-11" : "w-10 h-10"} rounded-xl flex items-center justify-center`}
                       style={{ background: `${action.color}20` }}
                     >
-                      <action.icon className="w-5 h-5" style={{ color: action.color }} />
+                      <action.icon
+                        className="w-5 h-5"
+                        style={{ color: action.color }}
+                      />
                     </div>
-                    <div className={isAdult ? "text-right w-full" : "text-center"}>
-                      <div className="text-foreground font-black text-xs">{action.label}</div>
+                    <div
+                      className={isAdult ? "text-right w-full" : "text-center"}
+                    >
+                      <div className="text-foreground font-black text-xs">
+                        {action.label}
+                      </div>
                       <div className="text-muted-foreground/70 text-[10px] leading-tight mt-0.5">
                         {action.sublabel}
                       </div>
@@ -1073,7 +1122,9 @@ export default function Home() {
             >
               <div className="flex items-center gap-2 mb-2.5">
                 <Sparkles className="w-4 h-4 text-[#F59E0B]" />
-                <h3 className="text-foreground font-black text-sm">تحدي هذا الأسبوع</h3>
+                <h3 className="text-foreground font-black text-sm">
+                  تحدي هذا الأسبوع
+                </h3>
               </div>
               <p className="text-foreground/70 text-xs mb-3">
                 جرّب تنفيذ 3 خطوات بسيطة تقوّي قرارك وثقتك بنفسك.
@@ -1084,9 +1135,14 @@ export default function Home() {
                   "اكتب جملة رفض واضحة تستخدمها عند الضغط",
                   "شارك إنجازاً صغيراً في نهاية اليوم",
                 ].map(item => (
-                  <div key={item} className="flex items-center gap-2 rounded-xl bg-background/40 p-2.5 border border-border">
+                  <div
+                    key={item}
+                    className="flex items-center gap-2 rounded-xl bg-background/40 p-2.5 border border-border"
+                  >
                     <div className="w-2 h-2 rounded-full bg-[#F59E0B] shrink-0" />
-                    <span className="text-foreground/80 text-xs leading-relaxed">{item}</span>
+                    <span className="text-foreground/80 text-xs leading-relaxed">
+                      {item}
+                    </span>
                   </div>
                 ))}
               </div>
@@ -1106,7 +1162,9 @@ export default function Home() {
                   <p className="text-foreground text-sm leading-relaxed italic">
                     "{quote.text}"
                   </p>
-                  <p className="text-primary text-xs mt-1.5 font-bold">— {quote.author}</p>
+                  <p className="text-primary text-xs mt-1.5 font-bold">
+                    — {quote.author}
+                  </p>
                 </div>
               </div>
             </motion.div>
@@ -1115,12 +1173,18 @@ export default function Home() {
 
         <div className="px-4 mt-5">
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-foreground font-black text-sm">{config.spotlightTitle}</h2>
+            <h2 className="text-foreground font-black text-sm">
+              {config.spotlightTitle}
+            </h2>
             <Link href="/resources">
               <span className="text-primary text-xs font-bold">تفاصيل</span>
             </Link>
           </div>
-          <div className={isChild ? "grid grid-cols-1 gap-3.5" : "grid grid-cols-2 gap-3"}>
+          <div
+            className={
+              isChild ? "grid grid-cols-1 gap-3.5" : "grid grid-cols-2 gap-3"
+            }
+          >
             {visibleSpotlightCards.map((card, idx) => (
               <motion.div
                 key={card.title}
@@ -1130,10 +1194,14 @@ export default function Home() {
                 className={`rounded-2xl glass-card border border-border ${isAdult ? "p-5" : "p-4"}`}
               >
                 <div className="text-2xl mb-2">{card.icon}</div>
-                <div className={`text-foreground font-black mb-1 ${isAdult ? "text-sm" : "text-xs"}`}>
+                <div
+                  className={`text-foreground font-black mb-1 ${isAdult ? "text-sm" : "text-xs"}`}
+                >
                   {card.title}
                 </div>
-                <div className={`text-muted-foreground leading-relaxed ${isAdult ? "text-xs" : "text-[10px]"}`}>
+                <div
+                  className={`text-muted-foreground leading-relaxed ${isAdult ? "text-xs" : "text-[10px]"}`}
+                >
                   {card.desc}
                 </div>
               </motion.div>
@@ -1164,7 +1232,10 @@ export default function Home() {
                   className="w-6 h-6 rounded-lg flex items-center justify-center"
                   style={{ background: `${config.accent}20` }}
                 >
-                  <BookOpen className="w-3.5 h-3.5" style={{ color: config.accent }} />
+                  <BookOpen
+                    className="w-3.5 h-3.5"
+                    style={{ color: config.accent }}
+                  />
                 </div>
                 <span
                   className="font-black text-xs uppercase tracking-wider"
@@ -1241,7 +1312,9 @@ export default function Home() {
 
         <div className="px-4 mt-5">
           <div className="flex items-center justify-between mb-3">
-            <h2 className="text-foreground font-black text-sm">{config.supportTitle}</h2>
+            <h2 className="text-foreground font-black text-sm">
+              {config.supportTitle}
+            </h2>
             <Link href="/partners">
               <span className="text-primary text-xs font-bold">عرض الكل</span>
             </Link>
@@ -1260,7 +1333,10 @@ export default function Home() {
                   {partner.label}
                 </span>
                 {!isChild && !isAdult && (
-                  <span className="text-xs font-bold" style={{ color: partner.color }}>
+                  <span
+                    className="text-xs font-bold"
+                    style={{ color: partner.color }}
+                  >
                     {partner.desc}
                   </span>
                 )}
@@ -1282,14 +1358,21 @@ export default function Home() {
           >
             <div className="flex items-center gap-2 mb-3">
               <Lightbulb className="w-4 h-4" style={{ color: config.accent }} />
-              <span className="font-black text-xs" style={{ color: config.accent }}>
+              <span
+                className="font-black text-xs"
+                style={{ color: config.accent }}
+              >
                 {config.noteLabel}
               </span>
             </div>
-            <p className="text-foreground/75 text-sm leading-relaxed">{config.noteText}</p>
+            <p className="text-foreground/75 text-sm leading-relaxed">
+              {config.noteText}
+            </p>
             <Link href={config.noteLinkPath}>
               <div className="flex items-center gap-1 mt-2">
-                <span className="text-primary text-xs font-bold">{config.noteLinkLabel}</span>
+                <span className="text-primary text-xs font-bold">
+                  {config.noteLinkLabel}
+                </span>
                 <ChevronLeft className="w-3 h-3 text-primary" />
               </div>
             </Link>
@@ -1316,9 +1399,15 @@ export default function Home() {
               <Phone className="w-5 h-5" style={{ color: config.accent }} />
             </div>
             <div className="flex-1">
-              <div className="text-foreground font-black text-sm">{config.contactTitle}</div>
-              <div className="text-primary font-black text-base font-numbers">{CONTACT_PHONE}</div>
-              <div className="text-foreground/40 text-xs">{config.contactSubtitle}</div>
+              <div className="text-foreground font-black text-sm">
+                {config.contactTitle}
+              </div>
+              <div className="text-primary font-black text-base font-numbers">
+                {CONTACT_PHONE}
+              </div>
+              <div className="text-foreground/40 text-xs">
+                {config.contactSubtitle}
+              </div>
             </div>
             <ChevronLeft className="w-5 h-5 text-primary" />
           </a>

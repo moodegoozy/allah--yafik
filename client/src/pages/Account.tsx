@@ -41,7 +41,10 @@ const ageGroupConfig: Record<
   adult: { label: "بالغ", color: "#8B5CF6", emoji: "🎯" },
 };
 
-const genderConfig: Record<string, { label: string; color: string; emoji: string }> = {
+const genderConfig: Record<
+  string,
+  { label: string; color: string; emoji: string }
+> = {
   male: { label: "ذكر", color: "#3B82F6", emoji: "♂️" },
   female: { label: "أنثى", color: "#EC4899", emoji: "♀️" },
 };
@@ -426,7 +429,9 @@ export default function Account() {
                   />
                 ) : (
                   <div className="flex-1 min-w-0">
-                    <div className="text-muted-foreground text-xs mb-0.5">الاسم</div>
+                    <div className="text-muted-foreground text-xs mb-0.5">
+                      الاسم
+                    </div>
                     <div className="text-foreground text-sm font-bold truncate">
                       {user.name}
                     </div>
@@ -438,7 +443,9 @@ export default function Account() {
               <div className="flex items-center gap-3 p-3 rounded-xl bg-secondary/40 border border-border">
                 <Phone className="w-4 h-4 text-muted-foreground/70 flex-shrink-0" />
                 <div className="flex-1 min-w-0">
-                  <div className="text-muted-foreground text-xs mb-0.5">رقم الجوال</div>
+                  <div className="text-muted-foreground text-xs mb-0.5">
+                    رقم الجوال
+                  </div>
                   <div
                     className="text-foreground text-sm font-bold font-numbers"
                     dir="ltr"
@@ -480,7 +487,9 @@ export default function Account() {
               <div className="flex items-center gap-3 p-3 rounded-xl bg-secondary/40 border border-border">
                 <Calendar className="w-4 h-4 text-muted-foreground/70 flex-shrink-0" />
                 <div className="flex-1 min-w-0">
-                  <div className="text-muted-foreground text-xs mb-0.5">العمر</div>
+                  <div className="text-muted-foreground text-xs mb-0.5">
+                    العمر
+                  </div>
                   <div className="text-foreground text-sm font-bold">
                     {user.age} سنة —{" "}
                     <span style={{ color: ageCfg.color }}>{ageCfg.label}</span>
@@ -493,14 +502,18 @@ export default function Account() {
                 <Heart className="w-4 h-4 text-muted-foreground/70 flex-shrink-0" />
                 {editing ? (
                   <div className="flex-1">
-                    <div className="text-muted-foreground text-xs mb-1.5">الجنس</div>
+                    <div className="text-muted-foreground text-xs mb-1.5">
+                      الجنس
+                    </div>
                     <div className="flex gap-2">
                       {Object.entries(genderConfig).map(([key, meta]) => {
                         const isActive = editForm.gender === key;
                         return (
                           <button
                             key={key}
-                            onClick={() => setEditForm(f => ({ ...f, gender: key }))}
+                            onClick={() =>
+                              setEditForm(f => ({ ...f, gender: key }))
+                            }
                             className="px-2.5 py-1 rounded-lg text-xs font-bold transition-all border"
                             style={
                               isActive
@@ -524,9 +537,13 @@ export default function Account() {
                   </div>
                 ) : (
                   <div className="flex-1 min-w-0">
-                    <div className="text-muted-foreground text-xs mb-0.5">الجنس</div>
+                    <div className="text-muted-foreground text-xs mb-0.5">
+                      الجنس
+                    </div>
                     <div className="text-foreground text-sm font-bold truncate">
-                      {genderMeta ? `${genderMeta.emoji} ${genderMeta.label}` : "غير محدد"}
+                      {genderMeta
+                        ? `${genderMeta.emoji} ${genderMeta.label}`
+                        : "غير محدد"}
                     </div>
                   </div>
                 )}

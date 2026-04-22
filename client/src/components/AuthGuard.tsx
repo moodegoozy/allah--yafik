@@ -22,8 +22,18 @@ const PROTECTED_ROUTES = [
 export default function AuthGuard({ children }: { children: React.ReactNode }) {
   const [location, navigate] = useLocation();
 
-  // Read user synchronously on every render so the guard is always up-to-date
-  const raw = localStorage.getItem("allah_yafik_current_user");
+  // Read user synchronously on every render so the guard is always up-to-date.
+  // Admin sessions live in sessionStorage (clears on tab close); regular users in localStorage.
+  // Also clean up any stale admin record in localStorage left by older app versions.
+  const lsRaw = localStorage.getItem("allah_yafik_current_user");
+  if (lsRaw) {
+    try {
+      if (JSON.parse(lsRaw).role === "admin") localStorage.removeItem("allah_yafik_current_user");
+    } catch {}
+  }
+  const raw =
+    sessionStorage.getItem("allah_yafik_current_user") ||
+    localStorage.getItem("allah_yafik_current_user");
   const user = raw ? JSON.parse(raw) : null;
   const isPublic = PUBLIC_ROUTES.includes(location);
   const isProtected = PROTECTED_ROUTES.some(r => location.startsWith(r));
