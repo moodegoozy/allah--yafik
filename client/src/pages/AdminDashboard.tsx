@@ -48,11 +48,19 @@ import {
   Target,
   Dumbbell,
   Trophy,
+  Sun,
+  Moon,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { Link } from "wouter";
-import { lecturesData, type Lecture } from "@/data/lecturesData";
+import { useTheme } from "@/contexts/ThemeContext";
+import {
+  lecturesData,
+  type Lecture,
+  type LectureSection,
+  type LectureQuiz,
+} from "@/data/lecturesData";
 import { rehabPhases } from "@/data/rehabData";
 
 // ─── Types ───────────────────────────────────────────────────────────────────
@@ -108,7 +116,7 @@ interface ExerciseItem {
   difficulty: "سهل" | "متوسط" | "صعب";
 }
 
-/** Minimal lecture shape for admin-created lectures */
+/** Full lecture shape for admin-created lectures */
 interface CustomLecture {
   id: string;
   title: string;
@@ -133,7 +141,140 @@ interface CustomLecture {
   uploadedFileName: string;
   /** MIME type of uploaded file */
   uploadedFileMime: string;
+  articleHtml: string;
+  objectives: string[];
+  sections: Pick<LectureSection, "title" | "content" | "highlight">[];
+  quiz: LectureQuiz[];
+  resources: string[];
 }
+
+const EMPTY_SECTION: Pick<LectureSection, "title" | "content" | "highlight"> = {
+  title: "",
+  content: "",
+  highlight: "",
+};
+
+const EMPTY_QUIZ: LectureQuiz = {
+  question: "",
+  options: ["", "", "", ""],
+  correct: 0,
+  explanation: "",
+};
+
+function toSafeString(value: unknown): string {
+  return typeof value === "string" ? value.trim() : "";
+}
+
+function normalizeTextList(value: unknown): string[] {
+  if (!Array.isArray(value)) return [];
+  return value.map(item => toSafeString(item)).filter(Boolean);
+}
+
+function sanitizeArticleHtml(value: string): string {
+  return value
+    .replace(/<script[\s\S]*?>[\s\S]*?<\/script>/gi, "")
+    .replace(/\son\w+=("[^"]*"|'[^']*')/gi, "")
+    .replace(/javascript:/gi, "")
+    .trim();
+}
+
+function normalizeSections(value: unknown): CustomLecture["sections"] {
+  if (!Array.isArray(value)) return [];
+  return value.reduce<CustomLecture["sections"]>((acc, item) => {
+      const obj = item as { title?: unknown; content?: unknown; highlight?: unknown };
+      const title = toSafeString(obj.title);
+      const content = toSafeString(obj.content);
+      const highlight = toSafeString(obj.highlight);
+      if (!title && !content && !highlight) return acc;
+      acc.push({ title, content, highlight: highlight || undefined });
+      return acc;
+    }, []);
+}
+
+function normalizeQuiz(value: unknown): CustomLecture["quiz"] {
+  if (!Array.isArray(value)) return [];
+  return value
+    .map(item => {
+      const obj = item as {
+        question?: unknown;
+        options?: unknown;
+        correct?: unknown;
+        explanation?: unknown;
+      };
+      const question = toSafeString(obj.question);
+      const options = Array.isArray(obj.options)
+        ? obj.options.map(option => toSafeString(option)).filter(Boolean)
+        : [];
+      const explanation = toSafeString(obj.explanation);
+      if (!question && options.length === 0 && !explanation) return null;
+
+      const rawCorrect = Number(obj.correct);
+      const maxIndex = Math.max(options.length - 1, 0);
+      const boundedCorrect = Number.isFinite(rawCorrect)
+        ? Math.min(Math.max(Math.round(rawCorrect), 0), maxIndex)
+        : 0;
+
+      return {
+        question,
+        options,
+        correct: boundedCorrect,
+        explanation,
+      };
+    })
+    .filter((quiz): quiz is LectureQuiz => quiz !== null);
+}
+
+function normalizeLectureDraft(
+  draft: Omit<CustomLecture, "id" | "custom">
+): Omit<CustomLecture, "id" | "custom"> {
+  return {
+    ...draft,
+    articleHtml: sanitizeArticleHtml(draft.articleHtml),
+    objectives: normalizeTextList(draft.objectives),
+    resources: normalizeTextList(draft.resources),
+    sections: normalizeSections(draft.sections),
+    quiz: normalizeQuiz(draft.quiz),
+  };
+}
+
+function getLectureContentStats(lecture: Lecture | CustomLecture) {
+  const sections = Array.isArray((lecture as { sections?: unknown }).sections)
+    ? ((lecture as { sections: unknown[] }).sections.length)
+    : 0;
+  const quiz = Array.isArray((lecture as { quiz?: unknown }).quiz)
+    ? ((lecture as { quiz: unknown[] }).quiz.length)
+    : 0;
+  const objectives = Array.isArray((lecture as { objectives?: unknown }).objectives)
+    ? ((lecture as { objectives: unknown[] }).objectives.length)
+    : 0;
+  const resources = Array.isArray((lecture as { resources?: unknown }).resources)
+    ? ((lecture as { resources: unknown[] }).resources.length)
+    : 0;
+
+  return { sections, quiz, objectives, resources };
+}
+
+function getAgeLabelFromGroup(ageGroup: string): string {
+  if (ageGroup === "young") return "أطفال";
+  if (ageGroup === "teens") return "مراهقين";
+  if (ageGroup === "adults") return "بالغين";
+  return "الكل";
+}
+
+function extractJsonObject(raw: string): string {
+  const fenced = raw.match(/```json\s*([\s\S]*?)```/i);
+  if (fenced?.[1]) return fenced[1].trim();
+
+  const start = raw.indexOf("{");
+  const end = raw.lastIndexOf("}");
+  if (start >= 0 && end > start) {
+    return raw.slice(start, end + 1).trim();
+  }
+  return raw.trim();
+}
+
+const XAI_DEFAULT_MODEL = "grok-3-mini-beta";
+const XAI_DEFAULT_URL = "https://api.x.ai/v1/chat/completions";
 
 const DEFAULT_SETTINGS: PlatformSettings = {
   emergencyPhone1: "0546192019",
@@ -242,7 +383,55 @@ const EXERCISES_KEY = "allah_yafik_exercises";
 function loadCustomLectures(): CustomLecture[] {
   try {
     const raw = localStorage.getItem(CUSTOM_LECTURES_KEY);
-    return raw ? JSON.parse(raw) : [];
+    if (!raw) return [];
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [];
+
+    return parsed
+      .map(item => {
+        if (!item || typeof item !== "object") return null;
+        const obj = item as Partial<CustomLecture>;
+        const id = toSafeString(obj.id);
+        if (!id) return null;
+
+        const ageGroup = toSafeString(obj.ageGroup) || "all";
+        const ageLabel = toSafeString(obj.ageLabel)
+          || (ageGroup === "young" ? "أطفال" : ageGroup === "teens" ? "مراهقين" : ageGroup === "adults" ? "بالغين" : "الكل");
+
+        const normalizedDraft = normalizeLectureDraft({
+          title: toSafeString(obj.title),
+          subtitle: toSafeString(obj.subtitle),
+          speaker: toSafeString(obj.speaker),
+          speakerTitle: toSafeString(obj.speakerTitle),
+          category: toSafeString(obj.category) || "وقائي",
+          ageGroup,
+          ageLabel,
+          duration: toSafeString(obj.duration),
+          type: obj.type === "video" || obj.type === "audio" || obj.type === "workshop" || obj.type === "article"
+            ? obj.type
+            : "article",
+          color: toSafeString(obj.color) || "#00D4AA",
+          featured: Boolean(obj.featured),
+          mediaSource: obj.mediaSource === "upload" || obj.mediaSource === "ai" ? obj.mediaSource : "youtube",
+          youtubeUrl: toSafeString(obj.youtubeUrl),
+          uploadedFileKey: toSafeString(obj.uploadedFileKey),
+          uploadedFileName: toSafeString(obj.uploadedFileName),
+          uploadedFileMime: toSafeString(obj.uploadedFileMime),
+          articleHtml: sanitizeArticleHtml(toSafeString(obj.articleHtml)),
+          objectives: normalizeTextList(obj.objectives),
+          sections: normalizeSections(obj.sections),
+          quiz: normalizeQuiz(obj.quiz),
+          resources: normalizeTextList(obj.resources),
+        });
+
+        const normalized: CustomLecture = {
+          ...normalizedDraft,
+          id,
+          custom: true,
+        };
+        return normalized;
+      })
+      .filter((lecture): lecture is CustomLecture => lecture !== null);
   } catch { return []; }
 }
 function saveCustomLectures(items: CustomLecture[]) {
@@ -456,6 +645,7 @@ const testLevelColors: Record<string, string> = {
 
 export default function AdminDashboard() {
   const [activeSection, setActiveSection] = useState("overview");
+  const { theme, toggleTheme } = useTheme();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [refreshKey, setRefreshKey] = useState(0);
@@ -477,8 +667,21 @@ export default function AdminDashboard() {
     ageGroup: "all", ageLabel: "الكل", duration: "", type: "article",
     color: "#00D4AA", featured: false,
     mediaSource: "youtube", youtubeUrl: "", uploadedFileKey: "", uploadedFileName: "", uploadedFileMime: "",
+    articleHtml: "",
+    objectives: [""],
+    sections: [{ ...EMPTY_SECTION }],
+    quiz: [{ ...EMPTY_QUIZ }],
+    resources: [""],
   };
   const [lectureForm, setLectureForm] = useState(emptyLecture);
+  const articleEditorRef = useRef<HTMLDivElement | null>(null);
+  const articleSelectionRef = useRef<Range | null>(null);
+  const [articleTextColor, setArticleTextColor] = useState("#00D4AA");
+  const [articleHighlightColor, setArticleHighlightColor] = useState("#F59E0B");
+  const [aiPrompt, setAiPrompt] = useState("");
+  const [aiTargetMode, setAiTargetMode] = useState<"lecture" | "video">("lecture");
+  const [aiVideoLink, setAiVideoLink] = useState("");
+  const [aiGenerating, setAiGenerating] = useState(false);
   // Temporary blob URL for file preview (not persisted)
   const [uploadBlobUrl, setUploadBlobUrl] = useState<string | null>(null);
   const [uploadBlobMime, setUploadBlobMime] = useState<string>("");
@@ -700,12 +903,275 @@ export default function AdminDashboard() {
     toast.success("تم حفظ الإعدادات");
   };
 
+  useEffect(() => {
+    if (!showAddForm || lectureForm.type !== "article" || !articleEditorRef.current) return;
+    const safeHtml = sanitizeArticleHtml(lectureForm.articleHtml || "");
+    if (articleEditorRef.current.innerHTML !== safeHtml) {
+      articleEditorRef.current.innerHTML = safeHtml;
+    }
+  }, [lectureForm.articleHtml, lectureForm.type, showAddForm]);
+
   // ─── Content CRUD ──────────────────────────────────────────────────────────
+
+  const saveArticleSelection = () => {
+    if (!articleEditorRef.current) return;
+    const selection = window.getSelection();
+    if (!selection || selection.rangeCount === 0) return;
+    const range = selection.getRangeAt(0);
+    if (!articleEditorRef.current.contains(range.commonAncestorContainer)) return;
+    articleSelectionRef.current = range.cloneRange();
+  };
+
+  const placeArticleCaretAtEnd = () => {
+    if (!articleEditorRef.current) return;
+    const selection = window.getSelection();
+    if (!selection) return;
+    const range = document.createRange();
+    range.selectNodeContents(articleEditorRef.current);
+    range.collapse(false);
+    selection.removeAllRanges();
+    selection.addRange(range);
+    articleSelectionRef.current = range.cloneRange();
+  };
+
+  const restoreArticleSelection = () => {
+    if (!articleEditorRef.current) return;
+    const selection = window.getSelection();
+    if (!selection) return;
+
+    if (articleSelectionRef.current) {
+      selection.removeAllRanges();
+      selection.addRange(articleSelectionRef.current);
+      return;
+    }
+
+    placeArticleCaretAtEnd();
+  };
+
+  const syncArticleFromEditor = () => {
+    if (!articleEditorRef.current) return;
+    const safeHtml = sanitizeArticleHtml(articleEditorRef.current.innerHTML);
+    setLectureForm(f => ({ ...f, articleHtml: safeHtml }));
+    saveArticleSelection();
+  };
+
+  const handleArticleToolbarMouseDown = (e: { preventDefault: () => void }) => {
+    e.preventDefault();
+    restoreArticleSelection();
+  };
+
+  const applyArticleCommand = (
+    command:
+      | "bold"
+      | "italic"
+      | "underline"
+      | "insertUnorderedList"
+      | "insertOrderedList"
+      | "formatBlock"
+      | "removeFormat"
+      | "foreColor"
+      | "hiliteColor"
+      | "backColor",
+    value?: string
+  ) => {
+    if (!articleEditorRef.current) return;
+    articleEditorRef.current.focus();
+    restoreArticleSelection();
+
+    let done = document.execCommand(command, false, value);
+
+    if (!done && command === "hiliteColor" && value) {
+      done = document.execCommand("backColor", false, value);
+    }
+
+    if (!done && (command === "insertUnorderedList" || command === "insertOrderedList")) {
+      document.execCommand("formatBlock", false, "p");
+      document.execCommand(command, false, undefined);
+    }
+
+    saveArticleSelection();
+    syncArticleFromEditor();
+  };
+
+  const applyArticleTextColor = (color: string) => {
+    setArticleTextColor(color);
+    applyArticleCommand("foreColor", color);
+  };
+
+  const applyArticleHighlightColor = (color: string) => {
+    setArticleHighlightColor(color);
+    applyArticleCommand("hiliteColor", color);
+  };
+
+  const linkAiVideoToLecture = () => {
+    const candidateUrl = aiVideoLink.trim();
+    if (!candidateUrl) {
+      toast.error("أدخل رابط يوتيوب أولاً");
+      return;
+    }
+    const m = candidateUrl.match(/(?:youtu\.be\/|[?&]v=)([\w-]{11})/);
+    if (!m) {
+      toast.error("الرابط يجب أن يكون من يوتيوب");
+      return;
+    }
+    setLectureForm(f => ({
+      ...f,
+      type: "video",
+      mediaSource: "youtube",
+      youtubeUrl: candidateUrl,
+    }));
+    toast.success("تم ربط الفيديو بالمحتوى");
+  };
+
+  const generateLectureFromGrok = async () => {
+    const trimmedPrompt = aiPrompt.trim();
+    if (!trimmedPrompt) {
+      toast.error("اكتب وصف المحتوى المطلوب أولاً");
+      return;
+    }
+
+    const apiKey = toSafeString(import.meta.env.VITE_XAI_API_KEY || import.meta.env.VITE_GROK_API_KEY);
+    if (!apiKey) {
+      toast.error("مطلوب ضبط VITE_XAI_API_KEY أو VITE_GROK_API_KEY في البيئة");
+      return;
+    }
+
+    const endpoint = toSafeString(import.meta.env.VITE_XAI_API_URL) || XAI_DEFAULT_URL;
+    const model = toSafeString(import.meta.env.VITE_GROK_MODEL) || XAI_DEFAULT_MODEL;
+    const requestedType = aiTargetMode === "video" ? "video" : lectureForm.type;
+
+    const systemPrompt = [
+      "أنت مولد محتوى عربي لمنصة وقاية من الإدمان.",
+      "أعد النتيجة بصيغة JSON فقط بدون أي شرح إضافي.",
+      "الحقول المطلوبة: title, subtitle, speaker, speakerTitle, category, ageGroup, duration, type, color, featured, objectives, sections, quiz, resources, articleHtml, youtubeUrl.",
+      "ageGroup يجب أن تكون واحدة من: all, young, teens, adults.",
+      "type يجب أن تكون واحدة من: video, audio, workshop, article.",
+      "quiz يجب أن تكون مصفوفة أسئلة وفي كل سؤال options فيها 4 خيارات و correct رقم الفهرس الصحيح.",
+      "articleHtml يكون HTML نظيف يدعم فقرات وعناوين وقوائم.",
+      "اجعل المحتوى عربي مناسب لمنصة الله يعافيك.",
+    ].join("\n");
+
+    const userPrompt = [
+      `نوع المحتوى المطلوب: ${requestedType}`,
+      `الوصف: ${trimmedPrompt}`,
+      "إن كان النوع فيديو وأمكنك توفير رابط يوتيوب ضعه في youtubeUrl وإلا اتركه فارغاً.",
+    ].join("\n");
+
+    setAiGenerating(true);
+    try {
+      const response = await fetch(endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${apiKey}`,
+        },
+        body: JSON.stringify({
+          model,
+          temperature: 0.5,
+          messages: [
+            { role: "system", content: systemPrompt },
+            { role: "user", content: userPrompt },
+          ],
+        }),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || "Grok request failed");
+      }
+
+      const data = await response.json() as {
+        choices?: { message?: { content?: string } }[];
+      };
+
+      const rawContent = toSafeString(data.choices?.[0]?.message?.content);
+      if (!rawContent) {
+        throw new Error("لم يصل محتوى من Grok");
+      }
+
+      const parsed = JSON.parse(extractJsonObject(rawContent)) as {
+        title?: unknown;
+        subtitle?: unknown;
+        speaker?: unknown;
+        speakerTitle?: unknown;
+        category?: unknown;
+        ageGroup?: unknown;
+        duration?: unknown;
+        type?: unknown;
+        color?: unknown;
+        featured?: unknown;
+        objectives?: unknown;
+        sections?: unknown;
+        quiz?: unknown;
+        resources?: unknown;
+        articleHtml?: unknown;
+        youtubeUrl?: unknown;
+      };
+
+      const parsedType = toSafeString(parsed.type);
+      const nextType: CustomLecture["type"] =
+        parsedType === "video" || parsedType === "audio" || parsedType === "workshop" || parsedType === "article"
+          ? parsedType
+          : aiTargetMode === "video"
+            ? "video"
+            : lectureForm.type;
+
+      const nextAgeGroup = toSafeString(parsed.ageGroup) || lectureForm.ageGroup || "all";
+      const nextColorCandidate = toSafeString(parsed.color);
+      const nextColor = /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/.test(nextColorCandidate)
+        ? nextColorCandidate
+        : lectureForm.color;
+
+      const generatedObjectives = normalizeTextList(parsed.objectives);
+      const generatedSections = normalizeSections(parsed.sections);
+      const generatedQuiz = normalizeQuiz(parsed.quiz);
+      const generatedResources = normalizeTextList(parsed.resources);
+      const generatedArticleHtml = sanitizeArticleHtml(toSafeString(parsed.articleHtml));
+      const generatedYoutubeUrl = toSafeString(parsed.youtubeUrl) || aiVideoLink.trim();
+
+      setLectureForm(f => ({
+        ...f,
+        title: toSafeString(parsed.title) || f.title,
+        subtitle: toSafeString(parsed.subtitle) || f.subtitle,
+        speaker: toSafeString(parsed.speaker) || f.speaker,
+        speakerTitle: toSafeString(parsed.speakerTitle) || f.speakerTitle,
+        category: toSafeString(parsed.category) || f.category,
+        ageGroup: nextAgeGroup,
+        ageLabel: getAgeLabelFromGroup(nextAgeGroup),
+        duration: toSafeString(parsed.duration) || f.duration,
+        type: nextType,
+        color: nextColor,
+        featured: typeof parsed.featured === "boolean" ? parsed.featured : f.featured,
+        mediaSource: generatedYoutubeUrl ? "youtube" : "ai",
+        youtubeUrl: generatedYoutubeUrl,
+        articleHtml: generatedArticleHtml || f.articleHtml,
+        objectives: generatedObjectives.length > 0 ? generatedObjectives : f.objectives,
+        sections: generatedSections.length > 0 ? generatedSections : f.sections,
+        quiz: generatedQuiz.length > 0 ? generatedQuiz : f.quiz,
+        resources: generatedResources.length > 0 ? generatedResources : f.resources,
+      }));
+
+      if (generatedYoutubeUrl) {
+        setAiVideoLink(generatedYoutubeUrl);
+      }
+
+      toast.success("تم توليد المحتوى من Grok وتعبئة النموذج");
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "فشل توليد المحتوى من Grok";
+      toast.error(message);
+    } finally {
+      setAiGenerating(false);
+    }
+  };
 
   const resetForms = () => {
     setShowAddForm(false);
     setEditingContent(null);
     setLectureForm({ ...emptyLecture });
+    setAiPrompt("");
+    setAiTargetMode("lecture");
+    setAiVideoLink("");
+    setAiGenerating(false);
     setStoryForm({ ...emptyStory });
     setExerciseForm({ ...emptyExercise });
     if (uploadBlobUrl) URL.revokeObjectURL(uploadBlobUrl);
@@ -732,11 +1198,12 @@ export default function AdminDashboard() {
         toast.error("فشل حفظ الملف"); return;
       }
     }
+    const normalizedDraft = normalizeLectureDraft(lectureForm);
     const item: CustomLecture = {
-      ...lectureForm,
+      ...normalizedDraft,
       id,
       custom: true,
-      uploadedFileKey: lectureForm.mediaSource === "upload" ? `lecture_${id}` : "",
+      uploadedFileKey: normalizedDraft.mediaSource === "upload" ? `lecture_${id}` : "",
     };
     const updated = [...customLectures, item];
     setCustomLectures(updated);
@@ -756,9 +1223,10 @@ export default function AdminDashboard() {
         toast.error("فشل حفظ الملف"); return;
       }
     }
+    const normalizedDraft = normalizeLectureDraft(lectureForm);
     const updated = customLectures.map(l => l.id === id ? {
-      ...l, ...lectureForm,
-      uploadedFileKey: lectureForm.mediaSource === "upload" ? `lecture_${id}` : l.uploadedFileKey,
+      ...l, ...normalizedDraft,
+      uploadedFileKey: normalizedDraft.mediaSource === "upload" ? `lecture_${id}` : l.uploadedFileKey,
     } : l);
     setCustomLectures(updated);
     saveCustomLectures(updated);
@@ -852,6 +1320,8 @@ export default function AdminDashboard() {
   const startEditLecture = async (l: CustomLecture) => {
     setEditingContent(l.id);
     setShowAddForm(true);
+    setAiTargetMode(l.type === "video" ? "video" : "lecture");
+    setAiVideoLink(l.youtubeUrl || "");
     setLectureForm({
       title: l.title, subtitle: l.subtitle, speaker: l.speaker,
       speakerTitle: l.speakerTitle, category: l.category, ageGroup: l.ageGroup,
@@ -862,6 +1332,20 @@ export default function AdminDashboard() {
       uploadedFileKey: l.uploadedFileKey || "",
       uploadedFileName: l.uploadedFileName || "",
       uploadedFileMime: l.uploadedFileMime || "",
+      articleHtml: l.articleHtml || "",
+      objectives: l.objectives.length > 0 ? [...l.objectives] : [""],
+      sections: l.sections.length > 0 ? l.sections.map(section => ({
+        title: section.title,
+        content: section.content,
+        highlight: section.highlight || "",
+      })) : [{ ...EMPTY_SECTION }],
+      quiz: l.quiz.length > 0 ? l.quiz.map(question => ({
+        question: question.question,
+        options: question.options.length > 0 ? [...question.options] : ["", "", "", ""],
+        correct: question.correct,
+        explanation: question.explanation,
+      })) : [{ ...EMPTY_QUIZ }],
+      resources: l.resources.length > 0 ? [...l.resources] : [""],
     });
     // Load blob from IndexedDB for preview
     if (l.mediaSource === "upload" && l.uploadedFileKey) {
@@ -917,7 +1401,7 @@ export default function AdminDashboard() {
   );
 
   return (
-    <div className="min-h-screen bg-[#060B18] text-white md:flex">
+    <div className="admin-dashboard min-h-screen bg-[#060B18] text-white md:flex">
       {/* Mobile Header */}
       <div className="md:hidden sticky top-0 z-40 bg-[#0A0F1E] border-b border-white/5">
         <div className="flex items-center justify-between px-4 py-3">
@@ -1527,7 +2011,7 @@ export default function AdminDashboard() {
                             {([
                               { value: "youtube" as const, label: "رابط يوتيوب", icon: "▶", desc: "فيديو من يوتيوب" },
                               { value: "upload" as const, label: "رفع ملف", icon: "📁", desc: "ملف من جهازك" },
-                              { value: "ai" as const, label: "مكتبة AI", icon: "🤖", desc: "قريباً" },
+                              { value: "ai" as const, label: "مكتبة AI", icon: "🤖", desc: "توليد عبر Grok" },
                             ]).map(opt => (
                               <button
                                 key={opt.value}
@@ -1536,11 +2020,8 @@ export default function AdminDashboard() {
                                 className={`p-3 rounded-xl border text-center transition-all ${
                                   lectureForm.mediaSource === opt.value
                                     ? "border-[#00D4AA]/40 bg-[#00D4AA]/10 text-white"
-                                    : opt.value === "ai"
-                                      ? "border-white/8 bg-white/2 text-white/25 cursor-not-allowed"
-                                      : "border-white/8 bg-white/2 text-white/50 hover:border-white/20 hover:text-white"
+                                    : "border-white/8 bg-white/2 text-white/50 hover:border-white/20 hover:text-white"
                                 }`}
-                                disabled={opt.value === "ai"}
                               >
                                 <div className="text-xl mb-1">{opt.icon}</div>
                                 <div className="text-xs font-bold">{opt.label}</div>
@@ -1647,14 +2128,453 @@ export default function AdminDashboard() {
                             </div>
                           )}
 
-                          {/* AI placeholder */}
+                          {/* AI Library */}
                           {lectureForm.mediaSource === "ai" && (
-                            <div className="text-center py-6">
-                              <div className="text-3xl mb-2">🤖</div>
-                              <p className="text-white/30 text-sm">مكتبة المحتوى الذكي</p>
-                              <p className="text-white/20 text-xs mt-1">سيتم تفعيل هذه الخاصية قريباً — إنشاء محتوى توعوي بالذكاء الاصطناعي</p>
+                            <div className="space-y-3">
+                              <div className="p-3 rounded-xl glass-card border border-[#00D4AA]/20">
+                                <p className="text-white/70 text-sm font-bold mb-1">مكتبة AI مرتبطة بـ Grok</p>
+                                <p className="text-white/35 text-xs">اكتب الطلب، اضغط توليد، وستتعبأ كل حقول المحاضرة تلقائياً بنفس بنية الموقع.</p>
+                              </div>
+
+                              <div className="grid grid-cols-2 gap-2">
+                                <button
+                                  type="button"
+                                  onClick={() => setAiTargetMode("lecture")}
+                                  className={`px-3 py-2 rounded-xl border text-xs font-bold transition-all ${
+                                    aiTargetMode === "lecture"
+                                      ? "border-[#00D4AA]/40 bg-[#00D4AA]/10 text-[#00D4AA]"
+                                      : "border-white/8 text-white/40 hover:text-white"
+                                  }`}
+                                >
+                                  إنشاء محاضرة
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => setAiTargetMode("video")}
+                                  className={`px-3 py-2 rounded-xl border text-xs font-bold transition-all ${
+                                    aiTargetMode === "video"
+                                      ? "border-[#F59E0B]/40 bg-[#F59E0B]/10 text-[#F59E0B]"
+                                      : "border-white/8 text-white/40 hover:text-white"
+                                  }`}
+                                >
+                                  إنشاء فيديو
+                                </button>
+                              </div>
+
+                              <textarea
+                                rows={4}
+                                value={aiPrompt}
+                                onChange={e => setAiPrompt(e.target.value)}
+                                placeholder="مثال: أنشئ محاضرة تفاعلية للمراهقين عن مقاومة ضغط الأصدقاء مع 4 أهداف و5 أسئلة اختبار"
+                                className="w-full px-3 py-2.5 rounded-xl glass-card border border-white/10 bg-transparent text-white text-sm placeholder-white/25 resize-none"
+                              />
+
+                              <div className="flex flex-wrap gap-2">
+                                <button
+                                  type="button"
+                                  onClick={generateLectureFromGrok}
+                                  disabled={aiGenerating}
+                                  className="flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#00D4AA]/15 text-[#00D4AA] border border-[#00D4AA]/25 text-sm font-bold hover:bg-[#00D4AA]/25 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                                >
+                                  <Sparkles className="w-4 h-4" />
+                                  {aiGenerating ? "جاري التوليد..." : "توليد من Grok"}
+                                </button>
+
+                                <button
+                                  type="button"
+                                  onClick={() => setAiPrompt("")}
+                                  className="px-3 py-2 rounded-xl glass-card border border-white/8 text-white/40 hover:text-white text-xs transition-colors"
+                                >
+                                  مسح
+                                </button>
+                              </div>
+
+                              <div className="p-3 rounded-xl glass-card border border-white/8">
+                                <label className="text-white/50 text-xs font-bold mb-2 block">ربط رابط فيديو يوتيوب (اختياري)</label>
+                                <div className="flex gap-2">
+                                  <input
+                                    value={aiVideoLink}
+                                    onChange={e => setAiVideoLink(e.target.value)}
+                                    placeholder="https://www.youtube.com/watch?v=..."
+                                    dir="ltr"
+                                    className="flex-1 px-3 py-2 rounded-xl glass-card border border-white/10 bg-transparent text-white text-sm placeholder-white/25 font-numbers"
+                                  />
+                                  <button
+                                    type="button"
+                                    onClick={linkAiVideoToLecture}
+                                    className="px-3 py-2 rounded-xl border border-[#0EA5E9]/25 bg-[#0EA5E9]/10 text-[#0EA5E9] text-xs font-bold hover:bg-[#0EA5E9]/20 transition-all"
+                                  >
+                                    ربط
+                                  </button>
+                                </div>
+                                <p className="text-white/25 text-[11px] mt-2">بعد الربط يتم تحويل المحتوى إلى فيديو برابط يوتيوب داخل الموقع.</p>
+                              </div>
                             </div>
                           )}
+                        </div>
+
+                        {lectureForm.type === "article" && (
+                          <div className="mt-4 p-4 rounded-xl bg-white/3 border border-white/7">
+                            <div className="flex items-center justify-between mb-3">
+                              <label className="text-white/60 text-xs font-bold">نص المقال</label>
+                              <span className="text-white/30 text-[11px]">حدد النص ثم اختر التنسيق</span>
+                            </div>
+
+                            <div className="flex items-center flex-wrap gap-2 mb-3">
+                              <button
+                                type="button"
+                                onMouseDown={handleArticleToolbarMouseDown}
+                                onClick={() => applyArticleCommand("bold")}
+                                className="px-2.5 py-1.5 rounded-lg glass-card border border-white/8 text-white/60 hover:text-white text-xs font-black transition-colors"
+                                title="عريض"
+                              >
+                                B
+                              </button>
+                              <button
+                                type="button"
+                                onMouseDown={handleArticleToolbarMouseDown}
+                                onClick={() => applyArticleCommand("italic")}
+                                className="px-2.5 py-1.5 rounded-lg glass-card border border-white/8 text-white/60 hover:text-white text-xs italic transition-colors"
+                                title="مائل"
+                              >
+                                I
+                              </button>
+                              <button
+                                type="button"
+                                onMouseDown={handleArticleToolbarMouseDown}
+                                onClick={() => applyArticleCommand("underline")}
+                                className="px-2.5 py-1.5 rounded-lg glass-card border border-white/8 text-white/60 hover:text-white text-xs underline transition-colors"
+                                title="تحته خط"
+                              >
+                                U
+                              </button>
+                              <button
+                                type="button"
+                                onMouseDown={handleArticleToolbarMouseDown}
+                                onClick={() => applyArticleCommand("formatBlock", "h2")}
+                                className="px-2.5 py-1.5 rounded-lg glass-card border border-white/8 text-white/60 hover:text-white text-xs transition-colors"
+                                title="عنوان"
+                              >
+                                H2
+                              </button>
+                              <button
+                                type="button"
+                                onMouseDown={handleArticleToolbarMouseDown}
+                                onClick={() => applyArticleCommand("insertUnorderedList")}
+                                className="px-2.5 py-1.5 rounded-lg glass-card border border-white/8 text-white/60 hover:text-white text-xs transition-colors"
+                                title="قائمة نقطية"
+                              >
+                                • قائمة
+                              </button>
+                              <button
+                                type="button"
+                                onMouseDown={handleArticleToolbarMouseDown}
+                                onClick={() => applyArticleCommand("insertOrderedList")}
+                                className="px-2.5 py-1.5 rounded-lg glass-card border border-white/8 text-white/60 hover:text-white text-xs transition-colors"
+                                title="قائمة رقمية"
+                              >
+                                1. قائمة
+                              </button>
+
+                              <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg glass-card border border-white/8">
+                                <span className="text-white/40 text-[11px]">لون النص</span>
+                                <input
+                                  type="color"
+                                  value={articleTextColor}
+                                  onClick={saveArticleSelection}
+                                  onChange={e => applyArticleTextColor(e.target.value)}
+                                  className="w-6 h-6 rounded border border-white/10 cursor-pointer bg-transparent"
+                                  title="اختيار لون النص"
+                                />
+                              </div>
+
+                              <div className="flex items-center gap-1.5 px-2 py-1 rounded-lg glass-card border border-white/8">
+                                <span className="text-white/40 text-[11px]">تظليل</span>
+                                <input
+                                  type="color"
+                                  value={articleHighlightColor}
+                                  onClick={saveArticleSelection}
+                                  onChange={e => applyArticleHighlightColor(e.target.value)}
+                                  className="w-6 h-6 rounded border border-white/10 cursor-pointer bg-transparent"
+                                  title="اختيار لون التظليل"
+                                />
+                              </div>
+
+                              <button
+                                type="button"
+                                onMouseDown={handleArticleToolbarMouseDown}
+                                onClick={() => applyArticleCommand("removeFormat")}
+                                className="px-2.5 py-1.5 rounded-lg glass-card border border-white/8 text-white/60 hover:text-[#EF4444] text-xs transition-colors"
+                                title="إزالة التنسيق"
+                              >
+                                مسح التنسيق
+                              </button>
+                            </div>
+
+                            <div
+                              ref={articleEditorRef}
+                              contentEditable
+                              suppressContentEditableWarning
+                              onInput={syncArticleFromEditor}
+                              onMouseUp={saveArticleSelection}
+                              onKeyUp={saveArticleSelection}
+                              onBlur={saveArticleSelection}
+                              onFocus={saveArticleSelection}
+                              className="min-h-[220px] px-3 py-3 rounded-xl glass-card border border-white/10 bg-transparent text-white text-sm leading-7 focus:outline-none focus:border-[#00D4AA]/40 [&_ul]:list-disc [&_ul]:pr-6 [&_ol]:list-decimal [&_ol]:pr-6 [&_li]:mb-1"
+                            />
+
+                            {!lectureForm.articleHtml && (
+                              <p className="text-white/25 text-xs mt-2">اكتب نص المقال هنا مع إمكانية تنسيق الفقرات والعناوين.</p>
+                            )}
+                          </div>
+                        )}
+
+                        {/* ── Lecture Metadata: objectives / sections / quiz / resources ── */}
+                        <div className="mt-4 grid grid-cols-1 xl:grid-cols-2 gap-4">
+                          <div className="p-4 rounded-xl bg-white/3 border border-white/7">
+                            <div className="flex items-center justify-between mb-3">
+                              <label className="text-white/60 text-xs font-bold">أهداف المحاضرة</label>
+                              <button
+                                type="button"
+                                onClick={() => setLectureForm(f => ({ ...f, objectives: [...f.objectives, ""] }))}
+                                className="px-2.5 py-1 rounded-lg border border-[#00D4AA]/25 text-[#00D4AA] text-xs hover:bg-[#00D4AA]/15 transition-all"
+                              >
+                                + إضافة هدف
+                              </button>
+                            </div>
+                            <div className="space-y-2">
+                              {lectureForm.objectives.map((objective, idx) => (
+                                <div key={`objective-${idx}`} className="flex items-center gap-2">
+                                  <input
+                                    placeholder={`الهدف ${idx + 1}`}
+                                    value={objective}
+                                    onChange={e => setLectureForm(f => ({
+                                      ...f,
+                                      objectives: f.objectives.map((item, i) => i === idx ? e.target.value : item),
+                                    }))}
+                                    className="flex-1 px-3 py-2 rounded-xl glass-card border border-white/10 bg-transparent text-white text-sm placeholder-white/25"
+                                  />
+                                  {lectureForm.objectives.length > 1 && (
+                                    <button
+                                      type="button"
+                                      onClick={() => setLectureForm(f => ({
+                                        ...f,
+                                        objectives: f.objectives.filter((_, i) => i !== idx),
+                                      }))}
+                                      className="p-2 rounded-lg glass-card border border-white/8 text-white/30 hover:text-[#EF4444] transition-colors"
+                                      title="حذف الهدف"
+                                    >
+                                      <Trash2 className="w-3.5 h-3.5" />
+                                    </button>
+                                  )}
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+
+                          <div className="p-4 rounded-xl bg-white/3 border border-white/7">
+                            <div className="flex items-center justify-between mb-3">
+                              <label className="text-white/60 text-xs font-bold">المصادر</label>
+                              <button
+                                type="button"
+                                onClick={() => setLectureForm(f => ({ ...f, resources: [...f.resources, ""] }))}
+                                className="px-2.5 py-1 rounded-lg border border-[#00D4AA]/25 text-[#00D4AA] text-xs hover:bg-[#00D4AA]/15 transition-all"
+                              >
+                                + إضافة مصدر
+                              </button>
+                            </div>
+                            <div className="space-y-2">
+                              {lectureForm.resources.map((resource, idx) => (
+                                <div key={`resource-${idx}`} className="flex items-center gap-2">
+                                  <input
+                                    placeholder={`المصدر ${idx + 1} (رابط أو اسم مرجع)`}
+                                    value={resource}
+                                    onChange={e => setLectureForm(f => ({
+                                      ...f,
+                                      resources: f.resources.map((item, i) => i === idx ? e.target.value : item),
+                                    }))}
+                                    className="flex-1 px-3 py-2 rounded-xl glass-card border border-white/10 bg-transparent text-white text-sm placeholder-white/25"
+                                  />
+                                  {lectureForm.resources.length > 1 && (
+                                    <button
+                                      type="button"
+                                      onClick={() => setLectureForm(f => ({
+                                        ...f,
+                                        resources: f.resources.filter((_, i) => i !== idx),
+                                      }))}
+                                      className="p-2 rounded-lg glass-card border border-white/8 text-white/30 hover:text-[#EF4444] transition-colors"
+                                      title="حذف المصدر"
+                                    >
+                                      <Trash2 className="w-3.5 h-3.5" />
+                                    </button>
+                                  )}
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="mt-4 p-4 rounded-xl bg-white/3 border border-white/7">
+                          <div className="flex items-center justify-between mb-3">
+                            <label className="text-white/60 text-xs font-bold">أقسام المحاضرة</label>
+                            <button
+                              type="button"
+                              onClick={() => setLectureForm(f => ({ ...f, sections: [...f.sections, { ...EMPTY_SECTION }] }))}
+                              className="px-2.5 py-1 rounded-lg border border-[#00D4AA]/25 text-[#00D4AA] text-xs hover:bg-[#00D4AA]/15 transition-all"
+                            >
+                              + إضافة قسم
+                            </button>
+                          </div>
+                          <div className="space-y-3">
+                            {lectureForm.sections.map((section, sectionIndex) => (
+                              <div key={`section-${sectionIndex}`} className="p-3 rounded-xl glass-card border border-white/8">
+                                <div className="flex items-center justify-between mb-2">
+                                  <span className="text-white/35 text-xs font-bold">قسم {sectionIndex + 1}</span>
+                                  {lectureForm.sections.length > 1 && (
+                                    <button
+                                      type="button"
+                                      onClick={() => setLectureForm(f => ({
+                                        ...f,
+                                        sections: f.sections.filter((_, i) => i !== sectionIndex),
+                                      }))}
+                                      className="p-1.5 rounded-lg text-white/25 hover:text-[#EF4444] transition-colors"
+                                      title="حذف القسم"
+                                    >
+                                      <Trash2 className="w-3.5 h-3.5" />
+                                    </button>
+                                  )}
+                                </div>
+                                <div className="grid grid-cols-1 gap-2">
+                                  <input
+                                    placeholder="عنوان القسم"
+                                    value={section.title}
+                                    onChange={e => setLectureForm(f => ({
+                                      ...f,
+                                      sections: f.sections.map((item, i) => i === sectionIndex ? { ...item, title: e.target.value } : item),
+                                    }))}
+                                    className="px-3 py-2 rounded-xl glass-card border border-white/10 bg-transparent text-white text-sm placeholder-white/25"
+                                  />
+                                  <textarea
+                                    placeholder="محتوى القسم"
+                                    rows={3}
+                                    value={section.content}
+                                    onChange={e => setLectureForm(f => ({
+                                      ...f,
+                                      sections: f.sections.map((item, i) => i === sectionIndex ? { ...item, content: e.target.value } : item),
+                                    }))}
+                                    className="px-3 py-2 rounded-xl glass-card border border-white/10 bg-transparent text-white text-sm placeholder-white/25 resize-none"
+                                  />
+                                  <input
+                                    placeholder="نقطة بارزة (اختياري)"
+                                    value={section.highlight || ""}
+                                    onChange={e => setLectureForm(f => ({
+                                      ...f,
+                                      sections: f.sections.map((item, i) => i === sectionIndex ? { ...item, highlight: e.target.value } : item),
+                                    }))}
+                                    className="px-3 py-2 rounded-xl glass-card border border-white/10 bg-transparent text-white text-sm placeholder-white/25"
+                                  />
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
+                        <div className="mt-4 p-4 rounded-xl bg-white/3 border border-white/7">
+                          <div className="flex items-center justify-between mb-3">
+                            <label className="text-white/60 text-xs font-bold">أسئلة الاختبار</label>
+                            <button
+                              type="button"
+                              onClick={() => setLectureForm(f => ({ ...f, quiz: [...f.quiz, { ...EMPTY_QUIZ }] }))}
+                              className="px-2.5 py-1 rounded-lg border border-[#00D4AA]/25 text-[#00D4AA] text-xs hover:bg-[#00D4AA]/15 transition-all"
+                            >
+                              + إضافة سؤال
+                            </button>
+                          </div>
+                          <div className="space-y-3">
+                            {lectureForm.quiz.map((question, questionIndex) => {
+                              const optionSlots = Array.from({ length: Math.max(4, question.options.length) });
+                              return (
+                                <div key={`quiz-${questionIndex}`} className="p-3 rounded-xl glass-card border border-white/8">
+                                  <div className="flex items-center justify-between mb-2">
+                                    <span className="text-white/35 text-xs font-bold">سؤال {questionIndex + 1}</span>
+                                    {lectureForm.quiz.length > 1 && (
+                                      <button
+                                        type="button"
+                                        onClick={() => setLectureForm(f => ({
+                                          ...f,
+                                          quiz: f.quiz.filter((_, i) => i !== questionIndex),
+                                        }))}
+                                        className="p-1.5 rounded-lg text-white/25 hover:text-[#EF4444] transition-colors"
+                                        title="حذف السؤال"
+                                      >
+                                        <Trash2 className="w-3.5 h-3.5" />
+                                      </button>
+                                    )}
+                                  </div>
+
+                                  <input
+                                    placeholder="نص السؤال"
+                                    value={question.question}
+                                    onChange={e => setLectureForm(f => ({
+                                      ...f,
+                                      quiz: f.quiz.map((item, i) => i === questionIndex ? { ...item, question: e.target.value } : item),
+                                    }))}
+                                    className="w-full px-3 py-2 rounded-xl glass-card border border-white/10 bg-transparent text-white text-sm placeholder-white/25 mb-2"
+                                  />
+
+                                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-2">
+                                    {optionSlots.map((_, optionIndex) => {
+                                      const currentValue = question.options[optionIndex] || "";
+                                      const isCorrect = question.correct === optionIndex;
+                                      return (
+                                        <div key={`quiz-${questionIndex}-option-${optionIndex}`} className="flex items-center gap-2">
+                                          <input
+                                            placeholder={`الخيار ${optionIndex + 1}`}
+                                            value={currentValue}
+                                            onChange={e => setLectureForm(f => ({
+                                              ...f,
+                                              quiz: f.quiz.map((item, i) => {
+                                                if (i !== questionIndex) return item;
+                                                const nextOptions = [...item.options];
+                                                nextOptions[optionIndex] = e.target.value;
+                                                return { ...item, options: nextOptions };
+                                              }),
+                                            }))}
+                                            className="flex-1 px-3 py-2 rounded-xl glass-card border border-white/10 bg-transparent text-white text-sm placeholder-white/25"
+                                          />
+                                          <button
+                                            type="button"
+                                            onClick={() => setLectureForm(f => ({
+                                              ...f,
+                                              quiz: f.quiz.map((item, i) => i === questionIndex ? { ...item, correct: optionIndex } : item),
+                                            }))}
+                                            className={`px-2.5 py-1 rounded-lg text-xs font-bold transition-all ${
+                                              isCorrect
+                                                ? "bg-[#10B981]/15 text-[#10B981] border border-[#10B981]/25"
+                                                : "glass-card border border-white/8 text-white/35 hover:text-white"
+                                            }`}
+                                          >
+                                            صحيح
+                                          </button>
+                                        </div>
+                                      );
+                                    })}
+                                  </div>
+
+                                  <textarea
+                                    placeholder="شرح الإجابة (اختياري)"
+                                    rows={2}
+                                    value={question.explanation}
+                                    onChange={e => setLectureForm(f => ({
+                                      ...f,
+                                      quiz: f.quiz.map((item, i) => i === questionIndex ? { ...item, explanation: e.target.value } : item),
+                                    }))}
+                                    className="w-full px-3 py-2 rounded-xl glass-card border border-white/10 bg-transparent text-white text-sm placeholder-white/25 resize-none"
+                                  />
+                                </div>
+                              );
+                            })}
+                          </div>
                         </div>
 
                         <div className="flex gap-2 mt-4">
@@ -1778,22 +2698,25 @@ export default function AdminDashboard() {
                             )}
                           </div>
                         </div>
-                        {/* Built-in lecture stats */}
-                        {!lecture.custom && (
-                          <div className="mt-3 pt-3 border-t border-white/5 grid grid-cols-2 md:grid-cols-4 gap-3">
-                            {[
-                              { label: "الأقسام", value: (lecture as Lecture).sections.length },
-                              { label: "أسئلة الاختبار", value: (lecture as Lecture).quiz.length },
-                              { label: "الأهداف", value: (lecture as Lecture).objectives.length },
-                              { label: "المصادر", value: (lecture as Lecture).resources.length },
-                            ].map(s => (
-                              <div key={s.label} className="text-center">
-                                <div className="text-white/25 text-xs mb-0.5">{s.label}</div>
-                                <div className="text-white font-numbers text-sm font-bold">{s.value}</div>
-                              </div>
-                            ))}
-                          </div>
-                        )}
+                        {/* Lecture content stats */}
+                        {(() => {
+                          const stats = getLectureContentStats(lecture as Lecture | CustomLecture);
+                          return (
+                            <div className="mt-3 pt-3 border-t border-white/5 grid grid-cols-2 md:grid-cols-4 gap-3">
+                              {[
+                                { label: "الأقسام", value: stats.sections },
+                                { label: "أسئلة الاختبار", value: stats.quiz },
+                                { label: "الأهداف", value: stats.objectives },
+                                { label: "المصادر", value: stats.resources },
+                              ].map(s => (
+                                <div key={s.label} className="text-center">
+                                  <div className="text-white/25 text-xs mb-0.5">{s.label}</div>
+                                  <div className="text-white font-numbers text-sm font-bold">{s.value}</div>
+                                </div>
+                              ))}
+                            </div>
+                          );
+                        })()}
                       </div>
                     ))}
                   </div>
@@ -2683,7 +3606,34 @@ export default function AdminDashboard() {
                     />
                   </div>
 
-                  {/* Section toggles */}
+                  {/* Theme toggle */}
+                  <div>
+                    <label className="text-white/40 text-xs mb-3 block">مظهر التطبيق</label>
+                    <button
+                      onClick={toggleTheme}
+                      className="w-full flex items-center justify-between px-4 py-3 rounded-xl glass-card border border-white/7 hover:border-white/15 transition-all"
+                    >
+                      <div className="flex items-center gap-3">
+                        {theme === "dark" ? (
+                          <Moon className="w-5 h-5 text-[#00D4AA]" />
+                        ) : (
+                          <Sun className="w-5 h-5 text-[#F59E0B]" />
+                        )}
+                        <div className="text-right">
+                          <div className="text-white text-sm font-bold">
+                            {theme === "dark" ? "الوضع المظلم" : "الوضع الفاتح"}
+                          </div>
+                          <div className="text-white/35 text-xs">
+                            {theme === "dark" ? "اضغط للتبديل إلى الوضع الفاتح" : "اضغط للتبديل إلى الوضع المظلم"}
+                          </div>
+                        </div>
+                      </div>
+                      <div className={`w-12 h-6 rounded-full transition-all relative ${theme === "dark" ? "bg-[#00D4AA]" : "bg-[#F59E0B]"}`}>
+                        <div className={`absolute top-1 w-4 h-4 rounded-full bg-white transition-all ${theme === "dark" ? "right-1" : "left-1"}`} />
+                      </div>
+                    </button>
+                  </div>
+
                   <div>
                     <label className="text-white/40 text-xs mb-3 block">الأقسام النشطة</label>
                     <div className="space-y-2">
@@ -2928,24 +3878,99 @@ export default function AdminDashboard() {
                   return null;
                 })()}
 
-                {/* Built-in lecture details */}
-                {!("custom" in previewLecture) && "sections" in previewLecture && (
-                  <div>
-                    <h4 className="text-white font-bold text-sm mb-3">محتوى المحاضرة</h4>
-                    <div className="space-y-2">
-                      {(previewLecture as Lecture).sections.map((section, i) => (
-                        <div key={i} className="glass-card p-3 border border-white/5 rounded-lg">
-                          <div className="flex items-center gap-2">
-                            <div className="w-6 h-6 rounded-lg bg-white/5 flex items-center justify-center text-white/30 text-xs font-numbers font-bold">
-                              {i + 1}
-                            </div>
-                            <span className="text-white text-sm">{section.title}</span>
+                {/* Lecture details */}
+                {(() => {
+                  const lectureDetails = previewLecture as Lecture | CustomLecture;
+                  const stats = getLectureContentStats(lectureDetails);
+                  const articleHtml = sanitizeArticleHtml(
+                    typeof (lectureDetails as { articleHtml?: unknown }).articleHtml === "string"
+                      ? (lectureDetails as { articleHtml: string }).articleHtml
+                      : ""
+                  );
+                  const objectives = Array.isArray((lectureDetails as { objectives?: unknown }).objectives)
+                    ? ((lectureDetails as { objectives: string[] }).objectives)
+                    : [];
+                  const sections = Array.isArray((lectureDetails as { sections?: unknown }).sections)
+                    ? ((lectureDetails as { sections: Pick<LectureSection, "title" | "content" | "highlight">[] }).sections)
+                    : [];
+                  const resources = Array.isArray((lectureDetails as { resources?: unknown }).resources)
+                    ? ((lectureDetails as { resources: string[] }).resources)
+                    : [];
+
+                  if (stats.sections + stats.quiz + stats.objectives + stats.resources === 0 && !articleHtml) {
+                    return null;
+                  }
+
+                  return (
+                    <div>
+                      <h4 className="text-white font-bold text-sm mb-3">تفاصيل المحتوى</h4>
+
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mb-4">
+                        {[
+                          { label: "الأقسام", value: stats.sections },
+                          { label: "الاختبار", value: stats.quiz },
+                          { label: "الأهداف", value: stats.objectives },
+                          { label: "المصادر", value: stats.resources },
+                        ].map(item => (
+                          <div key={item.label} className="glass-card p-2.5 border border-white/7 rounded-lg text-center">
+                            <div className="text-white/25 text-xs">{item.label}</div>
+                            <div className="text-white font-numbers font-bold text-sm">{item.value}</div>
+                          </div>
+                        ))}
+                      </div>
+
+                      {lectureDetails.type === "article" && articleHtml && (
+                        <div className="mb-3">
+                          <p className="text-white/40 text-xs mb-2">نص المقال</p>
+                          <div
+                            className="glass-card p-3 border border-white/7 rounded-lg text-white/80 text-sm leading-7 [&_ul]:list-disc [&_ul]:pr-6 [&_ol]:list-decimal [&_ol]:pr-6 [&_li]:mb-1"
+                            dangerouslySetInnerHTML={{ __html: articleHtml }}
+                          />
+                        </div>
+                      )}
+
+                      {sections.length > 0 && (
+                        <div className="mb-3">
+                          <p className="text-white/40 text-xs mb-2">الأقسام</p>
+                          <div className="space-y-2">
+                            {sections.slice(0, 4).map((section, index) => (
+                              <div key={index} className="glass-card p-3 border border-white/5 rounded-lg">
+                                <div className="flex items-center gap-2">
+                                  <div className="w-6 h-6 rounded-lg bg-white/5 flex items-center justify-center text-white/30 text-xs font-numbers font-bold">
+                                    {index + 1}
+                                  </div>
+                                  <span className="text-white text-sm">{section.title || `قسم ${index + 1}`}</span>
+                                </div>
+                              </div>
+                            ))}
                           </div>
                         </div>
-                      ))}
+                      )}
+
+                      {objectives.length > 0 && (
+                        <div className="mb-3">
+                          <p className="text-white/40 text-xs mb-2">الأهداف</p>
+                          <div className="space-y-1.5">
+                            {objectives.slice(0, 4).map((objective, index) => (
+                              <div key={index} className="text-white/70 text-xs">• {objective}</div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+
+                      {resources.length > 0 && (
+                        <div>
+                          <p className="text-white/40 text-xs mb-2">المصادر</p>
+                          <div className="space-y-1.5">
+                            {resources.slice(0, 4).map((resource, index) => (
+                              <div key={index} className="text-white/70 text-xs">• {resource}</div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     </div>
-                  </div>
-                )}
+                  );
+                })()}
 
                 {previewLecture.featured && (
                   <div className="mt-4 p-3 rounded-xl bg-[#F59E0B]/8 border border-[#F59E0B]/20 text-center">

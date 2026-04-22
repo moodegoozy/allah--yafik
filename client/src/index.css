@@ -325,33 +325,52 @@
    * Many pages were authored with dark-first utility classes (text-white/bg-white/..).
    * These overrides keep legacy pages readable in light mode without rewriting each page.
    */
-  :root:not(.dark) .app-container [class*="text-white/"] {
+  :root:not(.dark) :is(.app-container, .admin-dashboard) [class*="text-white/"] {
     color: var(--muted-foreground) !important;
   }
 
-  :root:not(.dark) .app-container [class*="text-white"] {
+  :root:not(.dark) :is(.app-container, .admin-dashboard) [class*="text-white"] {
     color: var(--foreground) !important;
   }
 
-  :root:not(.dark) .app-container [class*="placeholder-white"]::placeholder {
+  :root:not(.dark) :is(.app-container, .admin-dashboard) [class*="placeholder-white"]::placeholder {
     color: var(--muted-foreground) !important;
     opacity: 0.9;
   }
 
-  :root:not(.dark) .app-container [class*="border-white/"] {
+  :root:not(.dark) :is(.app-container, .admin-dashboard) [class*="border-white/"] {
     border-color: var(--border) !important;
   }
 
-  :root:not(.dark) .app-container [class*="bg-white/"] {
+  :root:not(.dark) :is(.app-container, .admin-dashboard) [class*="bg-white/"] {
     background-color: color-mix(in oklch, var(--card) 92%, var(--foreground) 8%) !important;
   }
 
-  :root:not(.dark) .app-container [class*="bg-black/"] {
+  :root:not(.dark) :is(.app-container, .admin-dashboard) [class*="bg-black/"] {
     background-color: color-mix(in oklch, var(--foreground) 10%, var(--card) 90%) !important;
   }
 
-  :root:not(.dark) .app-container [class*="bg-[#0A0F1E]"] {
+  :root:not(.dark) :is(.app-container, .admin-dashboard) [class*="bg-[#0A0F1E]"] {
     background-color: var(--card) !important;
+  }
+
+  :root:not(.dark) .admin-dashboard {
+    background:
+      radial-gradient(circle at top right, oklch(0.95 0.03 75 / 0.9), transparent 28%),
+      linear-gradient(180deg, oklch(0.99 0.01 260) 0%, oklch(0.96 0.015 255) 100%) !important;
+    color: var(--foreground);
+  }
+
+  :root:not(.dark) .admin-dashboard [class*="bg-[#060B18]"] {
+    background-color: color-mix(in oklch, var(--background) 92%, var(--foreground) 8%) !important;
+  }
+
+  :root:not(.dark) .admin-dashboard [class*="bg-[#111827]"] {
+    background-color: color-mix(in oklch, var(--card) 96%, var(--foreground) 4%) !important;
+  }
+
+  :root:not(.dark) .admin-dashboard [class*="glass-card"] {
+    box-shadow: 0 10px 30px oklch(0 0 0 / 0.05), 0 2px 10px oklch(0 0 0 / 0.04);
   }
 
   /* Pulse Animation */
