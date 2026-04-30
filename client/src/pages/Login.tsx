@@ -109,7 +109,10 @@ export default function Login() {
       const snap = await getDoc(doc(db, "users", credential.user.uid));
       if (snap.exists()) {
         const profile = snap.data();
-        localStorage.setItem("allah_yafik_current_user", JSON.stringify(profile));
+        localStorage.setItem(
+          "allah_yafik_current_user",
+          JSON.stringify(profile)
+        );
         toast.success(`أهلاً بعودتك، ${profile.name}!`);
         navigate("/dashboard");
       } else {
@@ -154,9 +157,7 @@ export default function Login() {
       return;
     }
     if (registerForm.phone && !isValidSaudiPhone(registerForm.phone)) {
-      toast.error(
-        "رقم الجوال غير صحيح. يجب أن يبدأ بـ 05 ويتكون من 10 أرقام"
-      );
+      toast.error("رقم الجوال غير صحيح. يجب أن يبدأ بـ 05 ويتكون من 10 أرقام");
       return;
     }
     if (registerForm.password.length < 8) {
@@ -265,7 +266,9 @@ export default function Login() {
     setLoading(true);
     try {
       await sendPasswordResetEmail(auth, forgotEmail);
-      toast.success("تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني");
+      toast.success(
+        "تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني"
+      );
       setForgotEmail("");
       setMode("login");
     } catch (err: any) {
