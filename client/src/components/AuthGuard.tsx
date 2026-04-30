@@ -28,7 +28,8 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
   const lsRaw = localStorage.getItem("allah_yafik_current_user");
   if (lsRaw) {
     try {
-      if (JSON.parse(lsRaw).role === "admin") localStorage.removeItem("allah_yafik_current_user");
+      if (JSON.parse(lsRaw).role === "admin")
+        localStorage.removeItem("allah_yafik_current_user");
     } catch {}
   }
   const raw =

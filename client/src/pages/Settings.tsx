@@ -837,16 +837,16 @@ export default function Settings() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-end justify-center bg-background/80 backdrop-blur-sm"
+            className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm p-4"
             onClick={() => setActiveDoc(null)}
           >
             <motion.div
-              initial={{ y: 32, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              exit={{ y: 32, opacity: 0 }}
+              initial={{ scale: 0.95, opacity: 0 }}
+              animate={{ scale: 1, opacity: 1 }}
+              exit={{ scale: 0.95, opacity: 0 }}
               transition={{ type: "spring", bounce: 0.2, duration: 0.4 }}
               onClick={e => e.stopPropagation()}
-              className="w-full max-w-lg rounded-t-3xl glass-card border border-border p-5 max-h-[80vh] overflow-y-auto"
+              className="w-full max-w-lg rounded-3xl glass-card border border-border p-5 max-h-[80vh] overflow-y-auto"
             >
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-2">
