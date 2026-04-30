@@ -21,6 +21,14 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
+import {
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  sendPasswordResetEmail,
+  updateProfile,
+} from "firebase/auth";
+import { doc, setDoc, getDoc } from "firebase/firestore";
+import { auth, db } from "@/lib/firebase";
 import { hashPassword, isValidSaudiPhone, isValidEmail } from "@/lib/utils";
 
 const CONTACT_PHONE = "0546192019";
@@ -52,9 +60,6 @@ export default function Login() {
     agreeTerms: false,
   });
   const [forgotEmail, setForgotEmail] = useState("");
-  const [forgotStep, setForgotStep] = useState<"email" | "reset">("email");
-  const [newPassword, setNewPassword] = useState("");
-  const [confirmNewPassword, setConfirmNewPassword] = useState("");
   const [adminPin, setAdminPin] = useState("");
   const [showAdminMode, setShowAdminMode] = useState(false);
   const tapCountRef = useRef(0);
@@ -94,30 +99,32 @@ export default function Login() {
       toast.error("يرجى تعبئة جميع الحقول");
       return;
     }
-    if (!isValidEmail(loginForm.email)) {
-      toast.error("البريد الإلكتروني غير صحيح");
-      return;
-    }
     setLoading(true);
     try {
-      const hashedPassword = await hashPassword(loginForm.password);
-      const users = JSON.parse(
-        localStorage.getItem("allah_yafik_users") || "[]"
+      const credential = await signInWithEmailAndPassword(
+        auth,
+        loginForm.email,
+        loginForm.password
       );
-      const user = users.find(
-        (u: any) =>
-          u.email === loginForm.email && u.passwordHash === hashedPassword
-      );
-      if (user) {
-        const { passwordHash: _, ...safeUser } = user;
-        localStorage.setItem(
-          "allah_yafik_current_user",
-          JSON.stringify(safeUser)
-        );
-        toast.success(`أهلاً بعودتك، ${user.name}!`);
+      const snap = await getDoc(doc(db, "users", credential.user.uid));
+      if (snap.exists()) {
+        const profile = snap.data();
+        localStorage.setItem("allah_yafik_current_user", JSON.stringify(profile));
+        toast.success(`أهلاً بعودتك، ${profile.name}!`);
         navigate("/dashboard");
       } else {
-        toast.error("البريد الإلكترونيلكتروني أو كلمة المرور غير صحيحة");
+        toast.error("حدث خطأ في استرجاع بيانات الحساب");
+      }
+    } catch (err: any) {
+      const code = err?.code ?? "";
+      if (
+        code === "auth/user-not-found" ||
+        code === "auth/wrong-password" ||
+        code === "auth/invalid-credential"
+      ) {
+        toast.error("البريد الإلكتروني أو كلمة المرور غير صحيحة");
+      } else {
+        toast.error("حدث خطأ، يرجى المحاولة لاحقاً");
       }
     } finally {
       setLoading(false);
@@ -148,7 +155,7 @@ export default function Login() {
     }
     if (registerForm.phone && !isValidSaudiPhone(registerForm.phone)) {
       toast.error(
-        "رقم الجوال غير صحيح. يجب أن يبدأ بـ 05 ويتكون من 10 أرقامن يبدأ بـ 05 ويتكون من 10 أرقام"
+        "رقم الجوال غير صحيح. يجب أن يبدأ بـ 05 ويتكون من 10 أرقام"
       );
       return;
     }
@@ -166,26 +173,19 @@ export default function Login() {
     }
     setLoading(true);
     try {
-      const users = JSON.parse(
-        localStorage.getItem("allah_yafik_users") || "[]"
+      const credential = await createUserWithEmailAndPassword(
+        auth,
+        registerForm.email,
+        registerForm.password
       );
-      const emailExists = users.some(
-        (u: any) => u.email === registerForm.email
-      );
-      if (emailExists) {
-        toast.error("البريد الإلكترونيلكتروني مسجل مسبقاً. يرجى تسجيل الدخول");
-        setLoading(false);
-        return;
-      }
-      const hashedPassword = await hashPassword(registerForm.password);
+      await updateProfile(credential.user, { displayName: registerForm.name });
       const age = parseInt(registerForm.age);
       const ageGroup = age <= 17 ? "young" : age <= 25 ? "teenage" : "adult";
-      const newUser = {
-        id: crypto.randomUUID(),
+      const profile = {
+        id: credential.user.uid,
         name: registerForm.name,
         phone: registerForm.phone,
         email: registerForm.email,
-        passwordHash: hashedPassword,
         age,
         ageGroup,
         gender: registerForm.gender,
@@ -196,15 +196,17 @@ export default function Login() {
         achievements: [],
         completedLectures: [],
       };
-      users.push(newUser);
-      localStorage.setItem("allah_yafik_users", JSON.stringify(users));
-      const { passwordHash: _, ...safeUser } = newUser;
-      localStorage.setItem(
-        "allah_yafik_current_user",
-        JSON.stringify(safeUser)
-      );
-      toast.success(`مرحباً ${newUser.name}! تم إنشاء حسابك بنجاح`);
+      await setDoc(doc(db, "users", credential.user.uid), profile);
+      localStorage.setItem("allah_yafik_current_user", JSON.stringify(profile));
+      toast.success(`مرحباً ${registerForm.name}! تم إنشاء حسابك بنجاح`);
       navigate("/mental-health-test");
+    } catch (err: any) {
+      const code = err?.code ?? "";
+      if (code === "auth/email-already-in-use") {
+        toast.error("البريد الإلكتروني مسجل مسبقاً. يرجى تسجيل الدخول");
+      } else {
+        toast.error("حدث خطأ في إنشاء الحساب، يرجى المحاولة لاحقاً");
+      }
     } finally {
       setLoading(false);
     }
@@ -251,7 +253,7 @@ export default function Login() {
     }
   };
 
-  const handleForgot = () => {
+  const handleForgot = async () => {
     if (!forgotEmail) {
       toast.error("يرجى إدخال البريد الإلكتروني");
       return;
@@ -260,40 +262,22 @@ export default function Login() {
       toast.error("البريد الإلكتروني غير صحيح");
       return;
     }
-    const users = JSON.parse(localStorage.getItem("allah_yafik_users") || "[]");
-    const userExists = users.some((u: any) => u.email === forgotEmail);
-    if (!userExists) {
-      toast.error("البريد الإلكتروني غير مسجل");
-      return;
+    setLoading(true);
+    try {
+      await sendPasswordResetEmail(auth, forgotEmail);
+      toast.success("تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني");
+      setForgotEmail("");
+      setMode("login");
+    } catch (err: any) {
+      const code = err?.code ?? "";
+      if (code === "auth/user-not-found") {
+        toast.error("البريد الإلكتروني غير مسجل");
+      } else {
+        toast.error("حدث خطأ، يرجى المحاولة لاحقاً");
+      }
+    } finally {
+      setLoading(false);
     }
-    setForgotStep("reset");
-  };
-
-  const handleResetPassword = async () => {
-    if (!newPassword || !confirmNewPassword) {
-      toast.error("يرجى تعبئة جميع الحقول");
-      return;
-    }
-    if (newPassword.length < 8) {
-      toast.error("كلمة المرور يجب أن تكون ٨ أحرف على الأقل");
-      return;
-    }
-    if (newPassword !== confirmNewPassword) {
-      toast.error("كلمة المرور غير متطابقة");
-      return;
-    }
-    const hashedPassword = await hashPassword(newPassword);
-    const users = JSON.parse(localStorage.getItem("allah_yafik_users") || "[]");
-    const updatedUsers = users.map((u: any) =>
-      u.email === forgotEmail ? { ...u, passwordHash: hashedPassword } : u
-    );
-    localStorage.setItem("allah_yafik_users", JSON.stringify(updatedUsers));
-    toast.success("تم تغيير كلمة المرور بنجاح. يرجى تسجيل الدخول");
-    setForgotStep("email");
-    setForgotEmail("");
-    setNewPassword("");
-    setConfirmNewPassword("");
-    setMode("login");
   };
 
   return (
@@ -812,10 +796,7 @@ export default function Login() {
               <div className="glass-card p-7 border border-border">
                 <div className="flex items-center gap-3 mb-5">
                   <button
-                    onClick={() => {
-                      setMode("login");
-                      setForgotStep("email");
-                    }}
+                    onClick={() => setMode("login")}
                     className="text-muted-foreground hover:text-foreground transition-colors"
                   >
                     <ArrowLeft className="w-5 h-5" />
@@ -825,94 +806,42 @@ export default function Login() {
                       استعادة كلمة المرور
                     </h2>
                     <p className="text-muted-foreground text-xs">
-                      {forgotStep === "email"
-                        ? "أدخل بريدك الإلكتروني المسجل"
-                        : "أدخل كلمة المرور الجديدة"}
+                      سنرسل رابط إعادة التعيين إلى بريدك
                     </p>
                   </div>
                 </div>
                 <div className="space-y-4">
-                  {forgotStep === "email" ? (
-                    <>
-                      <div>
-                        <label className="text-muted-foreground text-xs font-bold mb-1.5 block">
-                          البريد الإلكتروني المسجل
-                        </label>
-                        <div className="relative">
-                          <Mail className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/70" />
-                          <input
-                            value={forgotEmail}
-                            onChange={e => setForgotEmail(e.target.value)}
-                            placeholder="example@email.com"
-                            className="w-full bg-secondary/50 border border-border rounded-xl pr-10 pl-4 py-3 text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:border-primary/40 text-sm"
-                            dir="ltr"
-                          />
-                        </div>
-                      </div>
-                      <button
-                        onClick={handleForgot}
-                        className="w-full py-3.5 rounded-xl font-black text-primary-foreground transition-all hover:scale-105"
-                        style={{
-                          background:
-                            "linear-gradient(135deg, oklch(0.75 0.18 175), oklch(0.68 0.16 230))",
-                        }}
-                      >
-                        التالي
-                      </button>
-                    </>
-                  ) : (
-                    <>
-                      <div>
-                        <label className="text-muted-foreground text-xs font-bold mb-1.5 block">
-                          كلمة المرور الجديدة
-                        </label>
-                        <div className="relative">
-                          <Lock className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/70" />
-                          <input
-                            type={showPass ? "text" : "password"}
-                            value={newPassword}
-                            onChange={e => setNewPassword(e.target.value)}
-                            placeholder="٨ أحرف على الأقل"
-                            className="w-full bg-secondary/50 border border-border rounded-xl pr-10 pl-10 py-3 text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:border-primary/40 text-sm"
-                            dir="ltr"
-                          />
-                          <button
-                            onClick={() => setShowPass(!showPass)}
-                            className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground/70 hover:text-muted-foreground"
-                          >
-                            {showPass ? (
-                              <EyeOff className="w-4 h-4" />
-                            ) : (
-                              <Eye className="w-4 h-4" />
-                            )}
-                          </button>
-                        </div>
-                      </div>
-                      <div>
-                        <label className="text-muted-foreground text-xs font-bold mb-1.5 block">
-                          تأكيد كلمة المرور الجديدة
-                        </label>
-                        <input
-                          type="password"
-                          value={confirmNewPassword}
-                          onChange={e => setConfirmNewPassword(e.target.value)}
-                          placeholder="أعد كتابة كلمة المرور"
-                          className="w-full bg-secondary/50 border border-border rounded-xl p-3 text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:border-primary/40 text-sm"
-                          dir="ltr"
-                        />
-                      </div>
-                      <button
-                        onClick={handleResetPassword}
-                        className="w-full py-3.5 rounded-xl font-black text-primary-foreground transition-all hover:scale-105"
-                        style={{
-                          background:
-                            "linear-gradient(135deg, oklch(0.75 0.18 175), oklch(0.68 0.16 230))",
-                        }}
-                      >
-                        تغيير كلمة المرور
-                      </button>
-                    </>
-                  )}
+                  <div>
+                    <label className="text-muted-foreground text-xs font-bold mb-1.5 block">
+                      البريد الإلكتروني المسجل
+                    </label>
+                    <div className="relative">
+                      <Mail className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/70" />
+                      <input
+                        value={forgotEmail}
+                        onChange={e => setForgotEmail(e.target.value)}
+                        onKeyDown={e => e.key === "Enter" && handleForgot()}
+                        placeholder="example@email.com"
+                        className="w-full bg-secondary/50 border border-border rounded-xl pr-10 pl-4 py-3 text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:border-primary/40 text-sm"
+                        dir="ltr"
+                      />
+                    </div>
+                  </div>
+                  <button
+                    onClick={handleForgot}
+                    disabled={loading}
+                    className="w-full py-3.5 rounded-xl font-black text-primary-foreground transition-all hover:scale-105 disabled:opacity-60 disabled:scale-100 flex items-center justify-center gap-2"
+                    style={{
+                      background:
+                        "linear-gradient(135deg, oklch(0.75 0.18 175), oklch(0.68 0.16 230))",
+                    }}
+                  >
+                    {loading ? (
+                      <div className="w-5 h-5 border-2 border-background/30 border-t-foreground rounded-full animate-spin" />
+                    ) : (
+                      "إرسال رابط إعادة التعيين"
+                    )}
+                  </button>
                 </div>
               </div>
             </motion.div>

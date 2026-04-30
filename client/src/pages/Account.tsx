@@ -31,6 +31,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { hashPassword, isValidSaudiPhone, isValidEmail } from "@/lib/utils";
+import { logoutUser } from "@/lib/firebase";
 
 const ageGroupConfig: Record<
   string,
@@ -204,8 +205,8 @@ export default function Account() {
     }
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem("allah_yafik_current_user");
+  const handleLogout = async () => {
+    await logoutUser();
     toast.success("تم تسجيل الخروج");
     navigate("/login");
   };

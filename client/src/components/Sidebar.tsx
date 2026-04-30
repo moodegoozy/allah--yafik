@@ -82,8 +82,9 @@ export default function Sidebar() {
     () => typeof window !== "undefined" && window.innerWidth < 1024
   );
 
-  const handleLogout = () => {
-    localStorage.removeItem("allah_yafik_current_user");
+  const handleLogout = async () => {
+    const { logoutUser } = await import("@/lib/firebase");
+    await logoutUser();
     navigate("/login");
   };
 

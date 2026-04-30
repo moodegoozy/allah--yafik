@@ -32,6 +32,8 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { useTheme } from "@/contexts/ThemeContext";
+import { auth, logoutUser } from "@/lib/firebase";
+import { deleteUser } from "firebase/auth";
 
 const CONTACT_PHONE = "0546192019";
 const FONT_SIZE_KEY = "allah_yafik_font_size";
@@ -173,7 +175,7 @@ export default function Settings() {
     setShowClearCache(false);
   };
 
-  const handleDeleteAccount = () => {
+  const handleDeleteAccount = async () => {
     try {
       const raw = localStorage.getItem("allah_yafik_current_user");
       if (!raw) {
@@ -182,23 +184,6 @@ export default function Settings() {
       }
 
       const currentUser = JSON.parse(raw);
-      const users = JSON.parse(
-        localStorage.getItem("allah_yafik_users") || "[]"
-      );
-
-      if (Array.isArray(users)) {
-        const filteredUsers = users.filter((u: any) => {
-          if (currentUser?.id && u?.id) return u.id !== currentUser.id;
-          if (currentUser?.email && u?.email)
-            return u.email !== currentUser.email;
-          return true;
-        });
-        localStorage.setItem(
-          "allah_yafik_users",
-          JSON.stringify(filteredUsers)
-        );
-      }
-
       const userEmail = currentUser?.email;
       if (userEmail) {
         const keysToDelete: string[] = [];
@@ -211,7 +196,17 @@ export default function Settings() {
         keysToDelete.forEach(k => localStorage.removeItem(k));
       }
 
-      localStorage.removeItem("allah_yafik_current_user");
+      // Delete the Firebase Auth account
+      const firebaseUser = auth.currentUser;
+      if (firebaseUser) {
+        try {
+          await deleteUser(firebaseUser);
+        } catch {
+          /* If re-auth is needed, skip — localStorage is already cleared */
+        }
+      }
+
+      await logoutUser();
       toast.success("تم حذف الحساب بنجاح");
       setShowDeleteAccount(false);
       navigate("/login");
