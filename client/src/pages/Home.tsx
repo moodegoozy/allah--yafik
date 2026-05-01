@@ -4,6 +4,7 @@
  * الهدف: الوقاية من الإدمان قبل الوقوع فيه
  */
 import { useEffect, useState } from "react";
+import { onAuthStateChanged } from "firebase/auth";
 import { motion } from "framer-motion";
 import { Link } from "wouter";
 import { doc, onSnapshot } from "firebase/firestore";
@@ -32,6 +33,7 @@ import {
 import { db as firestoreDb } from "@/lib/firebase";
 import { lecturesData } from "@/data/lecturesData";
 import { ageGroupLabels, type AgeGroup } from "@/data/mentalHealthTestData";
+import { auth, getUserProfile } from "@/lib/firebase";
 
 const CONTACT_PHONE = "0546192019";
 
@@ -771,35 +773,42 @@ export default function Home() {
     useState<AppreciationCardContent>(getAppreciationContent);
 
   useEffect(() => {
-    const loadHomeState = () => {
+    const loadHomeState = async () => {
       setGreeting(getGreeting());
       setPartnersSectionEnabled(getPartnersSectionEnabled());
       setAppreciationContent(getAppreciationContent());
+    };
 
+    loadHomeState();
+
+    const unsubscribe = onAuthStateChanged(auth, async firebaseUser => {
       try {
-        const raw = localStorage.getItem("allah_yafik_current_user");
-        const user = raw ? (JSON.parse(raw) as CurrentUser) : null;
-        setCurrentUser(user);
+        if (!firebaseUser) {
+          setCurrentUser(null);
+          setQuote(getRandomItem(homeConfigs.guest.quotes));
+          return;
+        }
 
-        const audience = getHomeAudience(user?.ageGroup);
+        const profile = (await getUserProfile(firebaseUser.uid)) as CurrentUser | null;
+        setCurrentUser(profile);
+
+        const audience = getHomeAudience(profile?.ageGroup);
         const quotePool = [
           ...homeConfigs[audience].quotes,
-          ...(isGender(user?.gender) ? genderQuotes[user.gender] : []),
+          ...(isGender(profile?.gender) ? genderQuotes[profile.gender] : []),
         ];
         setQuote(getRandomItem(quotePool));
       } catch {
         setCurrentUser(null);
         setQuote(getRandomItem(homeConfigs.guest.quotes));
       }
-    };
+    });
 
-    loadHomeState();
     window.addEventListener("focus", loadHomeState);
-    window.addEventListener("storage", loadHomeState);
 
     return () => {
+      unsubscribe();
       window.removeEventListener("focus", loadHomeState);
-      window.removeEventListener("storage", loadHomeState);
     };
   }, []);
 

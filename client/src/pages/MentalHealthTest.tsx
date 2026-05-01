@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
+import { onAuthStateChanged } from "firebase/auth";
 import {
   type AgeGroup,
   type TestResult,
@@ -25,6 +26,7 @@ import {
   getTestQuestions,
   calculateTestResult,
 } from "@/data/mentalHealthTestData";
+import { auth, getUserProfile, saveUserProfile } from "@/lib/firebase";
 
 const CONTACT_PHONE = "0546192019";
 
@@ -42,17 +44,24 @@ export default function MentalHealthTest() {
   const [ageGroup, setAgeGroup] = useState<AgeGroup>("adult");
 
   useEffect(() => {
-    const raw = localStorage.getItem("allah_yafik_current_user");
-    if (!raw) {
-      navigate("/login");
-      return;
-    }
-    const user = JSON.parse(raw);
-    if (user.testCompleted) {
-      navigate("/dashboard");
-      return;
-    }
-    if (user.ageGroup) setAgeGroup(user.ageGroup as AgeGroup);
+    const unsubscribe = onAuthStateChanged(auth, async firebaseUser => {
+      if (!firebaseUser) {
+        navigate("/login");
+        return;
+      }
+
+      const profile = await getUserProfile(firebaseUser.uid);
+      if (!profile) return;
+
+      if (profile.testCompleted) {
+        navigate("/dashboard");
+        return;
+      }
+
+      if (profile.ageGroup) setAgeGroup(profile.ageGroup as AgeGroup);
+    });
+
+    return unsubscribe;
   }, [navigate]);
 
   const questions = getTestQuestions(ageGroup);
@@ -71,25 +80,15 @@ export default function MentalHealthTest() {
       const testResult = calculateTestResult(newAnswers, questions);
       setResult(testResult);
 
-      // Save result to user
-      const raw = localStorage.getItem("allah_yafik_current_user");
-      if (raw) {
-        const user = JSON.parse(raw);
-        user.testCompleted = true;
-        user.testResult = testResult;
-        localStorage.setItem("allah_yafik_current_user", JSON.stringify(user));
+      const currentUser = auth.currentUser;
+      if (!currentUser) return;
 
-        // Also update in users array
-        const users = JSON.parse(
-          localStorage.getItem("allah_yafik_users") || "[]"
-        );
-        const idx = users.findIndex((u: any) => u.id === user.id);
-        if (idx !== -1) {
-          users[idx].testCompleted = true;
-          users[idx].testResult = testResult;
-          localStorage.setItem("allah_yafik_users", JSON.stringify(users));
-        }
-      }
+      saveUserProfile(currentUser.uid, {
+        testCompleted: true,
+        testResult,
+      }).catch(() => {
+        toast.error("تعذر حفظ النتيجة، تحقق من الاتصال بالإنترنت");
+      });
     }
   };
 

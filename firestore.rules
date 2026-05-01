@@ -10,22 +10,35 @@ service cloud.firestore {
       return isSignedIn() && request.auth.uid == userId;
     }
 
-    // User profile + user-scoped app data (including local storage mirror)
+    function isAdmin() {
+      return isSignedIn()
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == "admin";
+    }
+
     match /users/{userId} {
-      allow read, write: if isOwner(userId);
+      allow read: if isOwner(userId) || isAdmin();
+
+      allow create: if isOwner(userId)
+        && request.resource.data.role == "user";
+
+      allow update: if isAdmin() || (
+        isOwner(userId)
+        && request.resource.data.role == resource.data.role
+        && request.resource.data.id == resource.data.id
+      );
+
+      allow delete: if isOwner(userId) || isAdmin();
 
       match /{document=**} {
-        allow read, write: if isOwner(userId);
+        allow read, write: if isOwner(userId) || isAdmin();
       }
     }
 
-    // Platform configuration document used by Home/Admin
     match /app_settings/{docId} {
       allow read: if true;
       allow write: if isSignedIn();
     }
 
-    // Deny everything else by default
     match /{document=**} {
       allow read, write: if false;
     }

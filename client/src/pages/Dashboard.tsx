@@ -5,6 +5,7 @@
  * يعرض محتوى مختلف حسب الفئة العمرية: ناشئين / شباب / بالغين
  */
 import { Link } from "wouter";
+import { useEffect, useState } from "react";
 import {
   Shield,
   TrendingUp,
@@ -20,8 +21,10 @@ import {
   GraduationCap,
 } from "lucide-react";
 import { RadialBarChart, RadialBar } from "recharts";
+import { onAuthStateChanged } from "firebase/auth";
 import type { AgeGroup, TestResult } from "@/data/mentalHealthTestData";
 import { ageGroupLabels } from "@/data/mentalHealthTestData";
+import { auth, getUserProfile } from "@/lib/firebase";
 
 // ==================== Per-age-group data ====================
 
@@ -126,9 +129,26 @@ const titleByAge: Record<AgeGroup, string> = {
 };
 
 export default function Dashboard() {
-  // Read current user from localStorage
-  const raw = localStorage.getItem("allah_yafik_current_user");
-  const user = raw ? JSON.parse(raw) : null;
+  const [user, setUser] = useState<Record<string, any> | null>(null);
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async firebaseUser => {
+      if (!firebaseUser) {
+        setUser(null);
+        return;
+      }
+
+      try {
+        const profile = await getUserProfile(firebaseUser.uid);
+        setUser(profile);
+      } catch {
+        setUser(null);
+      }
+    });
+
+    return unsubscribe;
+  }, []);
+
   const ageGroup: AgeGroup = user?.ageGroup ?? "teenage";
   const testResult: TestResult | null = user?.testResult ?? null;
   const userName: string = user?.name ?? "مستخدم";

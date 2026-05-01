@@ -30,8 +30,14 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
-import { hashPassword, isValidSaudiPhone, isValidEmail } from "@/lib/utils";
-import { logoutUser } from "@/lib/firebase";
+import {
+  EmailAuthProvider,
+  onAuthStateChanged,
+  reauthenticateWithCredential,
+  updatePassword,
+} from "firebase/auth";
+import { isValidEmail } from "@/lib/utils";
+import { auth, getUserProfile, logoutUser, saveUserProfile } from "@/lib/firebase";
 
 const ageGroupConfig: Record<
   string,
@@ -50,34 +56,8 @@ const genderConfig: Record<
   female: { label: "أنثى", color: "#EC4899", emoji: "♀️" },
 };
 
-const RECOVERY_KEY_PREFIX = "allah_yafik_recovery_goals";
-
-function getUserRecoveryKey(): string {
-  try {
-    const raw = localStorage.getItem("allah_yafik_current_user");
-    if (raw) {
-      const user = JSON.parse(raw);
-      if (user.email) return `${RECOVERY_KEY_PREFIX}_${user.email}`;
-    }
-  } catch {}
-  return RECOVERY_KEY_PREFIX;
-}
-
-function getRecoveryAchievementCount(): number {
-  try {
-    const raw = localStorage.getItem(getUserRecoveryKey());
-    if (!raw) return 0;
-    const data: Record<number, boolean[]> = JSON.parse(raw);
-    // 4 phases, each with 5 goals — a phase counts as an achievement when all 5 goals are done
-    let count = 0;
-    for (let phaseId = 1; phaseId <= 4; phaseId++) {
-      const goals = data[phaseId] || [];
-      if (goals.length >= 5 && goals.every(Boolean)) count++;
-    }
-    return count;
-  } catch {
-    return 0;
-  }
+function getRecoveryAchievementCount() {
+  return 0;
 }
 
 export default function Account() {
@@ -111,19 +91,28 @@ export default function Account() {
   ];
 
   useEffect(() => {
-    const stored = localStorage.getItem("allah_yafik_current_user");
-    if (stored) {
-      const parsed = JSON.parse(stored);
-      setUser(parsed);
+    const unsubscribe = onAuthStateChanged(auth, async firebaseUser => {
+      if (!firebaseUser) {
+        navigate("/login");
+        return;
+      }
+
+      const profile = await getUserProfile(firebaseUser.uid);
+      if (!profile) {
+        navigate("/mental-health-test");
+        return;
+      }
+
+      setUser(profile);
       setEditForm({
-        name: parsed.name || "",
-        email: parsed.email || "",
-        gender: parsed.gender || "",
-        addictionType: parsed.addictionType || "",
+        name: String(profile.name || ""),
+        email: String(profile.email || firebaseUser.email || ""),
+        gender: String(profile.gender || ""),
+        addictionType: String(profile.addictionType || ""),
       });
-    } else {
-      navigate("/login");
-    }
+    });
+
+    return unsubscribe;
   }, [navigate]);
 
   if (!user) return null;
@@ -131,7 +120,7 @@ export default function Account() {
   const ageCfg = ageGroupConfig[user.ageGroup] || ageGroupConfig.adult;
   const genderMeta = genderConfig[user.gender] || null;
 
-  const handleSaveProfile = () => {
+  const handleSaveProfile = async () => {
     if (!editForm.name.trim()) {
       toast.error("الاسم مطلوب");
       return;
@@ -141,18 +130,6 @@ export default function Account() {
       return;
     }
 
-    // Update in users array
-    const users = JSON.parse(localStorage.getItem("allah_yafik_users") || "[]");
-    const idx = users.findIndex((u: any) => u.id === user.id);
-    if (idx !== -1) {
-      users[idx].name = editForm.name.trim();
-      users[idx].email = editForm.email.trim();
-      users[idx].gender = editForm.gender;
-      users[idx].addictionType = editForm.addictionType;
-      localStorage.setItem("allah_yafik_users", JSON.stringify(users));
-    }
-
-    // Update current user
     const updated = {
       ...user,
       name: editForm.name.trim(),
@@ -160,7 +137,7 @@ export default function Account() {
       gender: editForm.gender,
       addictionType: editForm.addictionType,
     };
-    localStorage.setItem("allah_yafik_current_user", JSON.stringify(updated));
+    await saveUserProfile(user.id, updated);
     setUser(updated);
     setEditing(false);
     toast.success("تم تحديث البيانات بنجاح");
@@ -185,21 +162,31 @@ export default function Account() {
     }
     setLoading(true);
     try {
-      const currentHash = await hashPassword(passwordForm.current);
-      const users = JSON.parse(
-        localStorage.getItem("allah_yafik_users") || "[]"
-      );
-      const idx = users.findIndex((u: any) => u.id === user.id);
-      if (idx === -1 || users[idx].passwordHash !== currentHash) {
-        toast.error("كلمة المرور الحالية غير صحيحة");
+      const firebaseUser = auth.currentUser;
+      if (!firebaseUser || !firebaseUser.email) {
+        toast.error("انتهت الجلسة، يرجى تسجيل الدخول مجدداً");
+        navigate("/login");
         return;
       }
-      const newHash = await hashPassword(passwordForm.newPass);
-      users[idx].passwordHash = newHash;
-      localStorage.setItem("allah_yafik_users", JSON.stringify(users));
+
+      const credential = EmailAuthProvider.credential(
+        firebaseUser.email,
+        passwordForm.current
+      );
+      await reauthenticateWithCredential(firebaseUser, credential);
+      await updatePassword(firebaseUser, passwordForm.newPass);
+
+      if (auth.currentUser && auth.currentUser.uid) {
+        await saveUserProfile(auth.currentUser.uid, {
+          passwordUpdatedAt: new Date().toISOString(),
+        });
+      }
+
       setChangingPassword(false);
       setPasswordForm({ current: "", newPass: "", confirm: "" });
       toast.success("تم تغيير كلمة المرور بنجاح");
+    } catch {
+        toast.error("كلمة المرور الحالية غير صحيحة");
     } finally {
       setLoading(false);
     }
@@ -212,17 +199,15 @@ export default function Account() {
   };
 
   const handleRetakeTest = () => {
-    // Reset test so AuthGuard redirects to test
-    const users = JSON.parse(localStorage.getItem("allah_yafik_users") || "[]");
-    const idx = users.findIndex((u: any) => u.id === user.id);
-    if (idx !== -1) {
-      users[idx].testCompleted = false;
-      delete users[idx].testResult;
-      localStorage.setItem("allah_yafik_users", JSON.stringify(users));
-    }
     const updated = { ...user, testCompleted: false };
     delete updated.testResult;
-    localStorage.setItem("allah_yafik_current_user", JSON.stringify(updated));
+    saveUserProfile(user.id, {
+      testCompleted: false,
+      testResult: null,
+    }).catch(() => {
+      toast.error("تعذر تحديث حالة الاختبار");
+    });
+    setUser(updated);
     navigate("/mental-health-test");
   };
 

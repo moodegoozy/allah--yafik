@@ -1,9 +1,9 @@
 /**
  * Login - صفحة تسجيل الدخول وإنشاء الحساب
  * Design: Dark Luxury Wellness - "الله يعافيك"
- * Features: تسجيل دخول، إنشاء حساب، حفظ بيانات في localStorage
+ * Features: تسجيل دخول، إنشاء حساب، حفظ بيانات في Firestore
  */
-import { useState, useRef } from "react";
+import { useState } from "react";
 import { useLocation } from "wouter";
 import {
   Sparkles,
@@ -27,17 +27,17 @@ import {
   sendPasswordResetEmail,
   updateProfile,
 } from "firebase/auth";
-import { doc, setDoc, getDoc } from "firebase/firestore";
-import { auth, db } from "@/lib/firebase";
+import {
+  auth,
+  db,
+  getUserProfile,
+  saveUserProfile,
+} from "@/lib/firebase";
 import { hashPassword, isValidSaudiPhone, isValidEmail } from "@/lib/utils";
 
 const CONTACT_PHONE = "0546192019";
 
-// SHA-256 hash of the admin PIN — never store the raw PIN in code
-const ADMIN_PIN_HASH =
-  "f2a13f6230405e7a898ea123b738c84040a98e2434f818b0d56375627bb023c0";
-
-type Mode = "login" | "register" | "forgot" | "admin";
+type Mode = "login" | "register" | "forgot";
 type Gender = "male" | "female";
 
 function getStoredUsers(): any[] {
@@ -73,24 +73,6 @@ export default function Login() {
     agreeTerms: false,
   });
   const [forgotEmail, setForgotEmail] = useState("");
-  const [adminPin, setAdminPin] = useState("");
-  const [showAdminMode, setShowAdminMode] = useState(false);
-  const tapCountRef = useRef(0);
-  const tapTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const handleLogoTap = () => {
-    tapCountRef.current += 1;
-    if (tapTimerRef.current) clearTimeout(tapTimerRef.current);
-    tapTimerRef.current = setTimeout(() => {
-      tapCountRef.current = 0;
-    }, 3000);
-    if (tapCountRef.current >= 5) {
-      tapCountRef.current = 0;
-      if (tapTimerRef.current) clearTimeout(tapTimerRef.current);
-      setShowAdminMode(true);
-      setMode("admin");
-    }
-  };
 
   const addictionTypes = [
     "مخدرات",
@@ -143,17 +125,36 @@ export default function Login() {
         loginForm.email,
         loginForm.password
       );
-      const snap = await getDoc(doc(db, "users", credential.user.uid));
-      if (snap.exists()) {
-        const profile = snap.data();
-        localStorage.setItem(
-          "allah_yafik_current_user",
-          JSON.stringify(profile)
-        );
-        toast.success(`أهلاً بعودتك، ${profile.name}!`);
-        navigate("/dashboard");
+      const profile = await getUserProfile(credential.user.uid);
+      if (profile) {
+        const normalizedRole =
+          typeof profile.role === "string" && profile.role.trim()
+            ? profile.role
+            : "user";
+
+        // Backfill legacy accounts created before role support.
+        if (!profile.role) {
+          await saveUserProfile(credential.user.uid, { role: "user" });
+        }
+
+        if (normalizedRole === "admin") {
+          toast.success(`مرحباً بعودتك يا ${profile.name} - لوحة الإدارة جاهزة`);
+          navigate("/admin");
+        } else {
+          toast.success(`أهلاً بعودتك، ${profile.name}!`);
+          navigate("/dashboard");
+        }
       } else {
-        toast.error("حدث خطأ في استرجاع بيانات الحساب");
+        await saveUserProfile(credential.user.uid, {
+          id: credential.user.uid,
+          name: credential.user.displayName || "مستخدم",
+          email: credential.user.email || loginForm.email,
+          role: "user",
+          testCompleted: false,
+          joinDate: new Date().toISOString(),
+        });
+        toast.success("تم تسجيل الدخول بنجاح");
+        navigate("/mental-health-test");
       }
     } catch (err: any) {
       const code = err?.code ?? "";
@@ -267,6 +268,7 @@ export default function Login() {
         name: registerForm.name,
         phone: registerForm.phone,
         email: registerForm.email,
+        role: "user",
         age,
         ageGroup,
         gender: registerForm.gender,
@@ -277,8 +279,7 @@ export default function Login() {
         achievements: [],
         completedLectures: [],
       };
-      await setDoc(doc(db, "users", credential.user.uid), profile);
-      localStorage.setItem("allah_yafik_current_user", JSON.stringify(profile));
+      await saveUserProfile(credential.user.uid, profile);
       toast.success(`مرحباً ${registerForm.name}! تم إنشاء حسابك بنجاح`);
       navigate("/mental-health-test");
     } catch (err: any) {
@@ -290,52 +291,6 @@ export default function Login() {
       }
     } finally {
       setLoading(false);
-    }
-  };
-
-  const handleAdminLogin = async () => {
-    if (!adminPin) {
-      toast.error("يرجى إدخال رمز الدخول");
-      return;
-    }
-    setLoading(true);
-    try {
-      const hashed = await hashPassword(adminPin);
-      if (hashed === ADMIN_PIN_HASH) {
-        if (auth && !auth.currentUser) {
-          toast.error("سجّل دخولك بحساب موثّق أولاً قبل تفعيل وضع الإدارة");
-          return;
-        }
-
-        // Check if already logged in — promote existing user
-        const raw =
-          sessionStorage.getItem("allah_yafik_current_user") ||
-          localStorage.getItem("allah_yafik_current_user");
-        const existing = raw ? JSON.parse(raw) : null;
-        const adminUser = existing
-          ? { ...existing, role: "admin" }
-          : { name: "المشرف", phone: "", role: "admin", testCompleted: true };
-        // Admin session in sessionStorage only — auto-clears on tab/browser close
-        sessionStorage.setItem(
-          "allah_yafik_current_user",
-          JSON.stringify(adminUser)
-        );
-        // Remove any stale admin record that may exist in localStorage
-        const lsRaw = localStorage.getItem("allah_yafik_current_user");
-        if (lsRaw) {
-          try {
-            if (JSON.parse(lsRaw).role === "admin")
-              localStorage.removeItem("allah_yafik_current_user");
-          } catch {}
-        }
-        toast.success("مرحباً بك في لوحة الإدارة");
-        navigate("/admin");
-      } else {
-        toast.error("رمز الدخول غير صحيح");
-      }
-    } finally {
-      setLoading(false);
-      setAdminPin("");
     }
   };
 
@@ -396,8 +351,7 @@ export default function Login() {
         {/* Logo */}
         <div className="text-center mb-8">
           <div
-            className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-sky-500 flex items-center justify-center mx-auto mb-4 glow-teal cursor-default select-none"
-            onClick={handleLogoTap}
+            className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-sky-500 flex items-center justify-center mx-auto mb-4 glow-teal"
             aria-hidden="true"
           >
             <Sparkles className="w-8 h-8 text-primary-foreground" />
@@ -517,92 +471,13 @@ export default function Login() {
               {/* Guest Access */}
               <button
                 onClick={() => {
-                  localStorage.setItem(
-                    "allah_yafik_current_user",
-                    JSON.stringify({
-                      name: "زائر",
-                      phone: "",
-                      soberDays: 0,
-                      role: "guest",
-                    })
-                  );
+                  toast.info("تم فتح التصفح العام بدون تخزين محلي");
                   navigate("/");
                 }}
                 className="w-full mt-3 py-3 rounded-xl glass-card border border-border text-muted-foreground hover:text-foreground/70 font-bold text-sm transition-all"
               >
                 تصفح كزائر
               </button>
-            </motion.div>
-          )}
-
-          {/* Admin Login — revealed only via secret logo tap (5× in 3s) */}
-          {mode === "admin" && showAdminMode && (
-            <motion.div
-              key="admin"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -20 }}
-            >
-              <div className="glass-card p-7 border border-border">
-                <div className="flex items-center gap-3 mb-5">
-                  <button
-                    onClick={() => {
-                      setMode("login");
-                      setAdminPin("");
-                    }}
-                    className="text-muted-foreground hover:text-foreground transition-colors"
-                  >
-                    <ArrowLeft className="w-5 h-5" />
-                  </button>
-                  <div>
-                    <h2 className="text-foreground font-black text-xl">
-                      لوحة الإدارة
-                    </h2>
-                    <p className="text-muted-foreground text-xs">
-                      أدخل رمز المشرف للمتابعة
-                    </p>
-                  </div>
-                </div>
-
-                <div className="space-y-4">
-                  <div>
-                    <label className="text-muted-foreground text-xs font-bold mb-1.5 block">
-                      رمز الدخول
-                    </label>
-                    <div className="relative">
-                      <Lock className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground/70" />
-                      <input
-                        type="password"
-                        value={adminPin}
-                        onChange={e => setAdminPin(e.target.value)}
-                        onKeyDown={e => e.key === "Enter" && handleAdminLogin()}
-                        placeholder="أدخل رمز المشرف"
-                        className="w-full bg-secondary/50 border border-border rounded-xl pr-10 pl-4 py-3 text-foreground placeholder:text-muted-foreground/40 focus:outline-none focus:border-accent/40 text-sm"
-                        dir="ltr"
-                        autoFocus
-                      />
-                    </div>
-                  </div>
-                  <button
-                    onClick={handleAdminLogin}
-                    disabled={loading}
-                    className="w-full py-3.5 rounded-xl font-black text-primary-foreground transition-all hover:scale-105 disabled:opacity-60 disabled:scale-100 flex items-center justify-center gap-2"
-                    style={{
-                      background:
-                        "linear-gradient(135deg, oklch(0.80 0.16 85), oklch(0.63 0.24 29))",
-                    }}
-                  >
-                    {loading ? (
-                      <div className="w-5 h-5 border-2 border-background/30 border-t-foreground rounded-full animate-spin" />
-                    ) : (
-                      <>
-                        <Shield className="w-5 h-5" />
-                        دخول
-                      </>
-                    )}
-                  </button>
-                </div>
-              </div>
             </motion.div>
           )}
 

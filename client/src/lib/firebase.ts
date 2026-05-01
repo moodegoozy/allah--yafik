@@ -4,15 +4,17 @@ import {
   signOut as firebaseSignOut,
   type Auth,
 } from "firebase/auth";
-import { getFirestore, type Firestore } from "firebase/firestore";
+import { doc, getDoc, getFirestore, setDoc } from "firebase/firestore";
+import type { Firestore } from "firebase/firestore";
 
 const firebaseConfig = {
-  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
-  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
-  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
-  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
-  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  apiKey: "AIzaSyBvNzGHDlQuRaOtV-f6fwFGjrsbbMruoyk",
+  authDomain: "meem-38f4b.firebaseapp.com",
+  projectId: "meem-38f4b",
+  storageBucket: "meem-38f4b.firebasestorage.app",
+  messagingSenderId: "924259262459",
+  appId: "1:924259262459:web:aeaec9223eb89dee9e755e",
+  measurementId: "G-FHC9C119PH",
 };
 
 export const isFirebaseConfigured = Boolean(
@@ -38,8 +40,34 @@ if (isFirebaseConfigured) {
   console.warn("Firebase env vars are missing. Running in local mode.");
 }
 
+let adminPinSessionActive = false;
+
+export function enableAdminPinSession() {
+  adminPinSessionActive = true;
+}
+
+export function clearAdminPinSession() {
+  adminPinSessionActive = false;
+}
+
+export function hasAdminPinSession() {
+  return adminPinSessionActive;
+}
+
+export async function getUserProfile(uid: string) {
+  if (!db) return null;
+  const userDoc = await getDoc(doc(db, "users", uid));
+  return userDoc.exists() ? userDoc.data() : null;
+}
+
+export async function saveUserProfile(uid: string, profile: Record<string, unknown>) {
+  if (!db) return;
+  await setDoc(doc(db, "users", uid), profile, { merge: true });
+}
+
 /** Sign out current Firebase user and clear local session data */
 export async function logoutUser() {
+  clearAdminPinSession();
   if (auth) {
     try {
       await firebaseSignOut(auth);
