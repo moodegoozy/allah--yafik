@@ -1,6 +1,10 @@
-import { initializeApp } from "firebase/app";
-import { getAuth, signOut as firebaseSignOut } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
+import { initializeApp, type FirebaseApp } from "firebase/app";
+import {
+  getAuth,
+  signOut as firebaseSignOut,
+  type Auth,
+} from "firebase/auth";
+import { getFirestore, type Firestore } from "firebase/firestore";
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -11,13 +15,38 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
-const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
-export const db = getFirestore(app);
+export const isFirebaseConfigured = Boolean(
+  firebaseConfig.apiKey &&
+    firebaseConfig.authDomain &&
+    firebaseConfig.projectId &&
+    firebaseConfig.appId
+);
+
+let app: FirebaseApp | null = null;
+export let auth: Auth | null = null;
+export let db: Firestore | null = null;
+
+if (isFirebaseConfigured) {
+  try {
+    app = initializeApp(firebaseConfig);
+    auth = getAuth(app);
+    db = getFirestore(app);
+  } catch (error) {
+    console.warn("Firebase initialization failed. Falling back to local mode.", error);
+  }
+} else {
+  console.warn("Firebase env vars are missing. Running in local mode.");
+}
 
 /** Sign out current Firebase user and clear local session data */
 export async function logoutUser() {
-  await firebaseSignOut(auth);
+  if (auth) {
+    try {
+      await firebaseSignOut(auth);
+    } catch {
+      // Ignore sign-out failures in local/offline mode.
+    }
+  }
   localStorage.removeItem("allah_yafik_current_user");
   sessionStorage.removeItem("allah_yafik_current_user");
 }

@@ -36,14 +36,23 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
   // On mount: sync Firebase auth state with localStorage.
   // Admin users authenticate via PIN (sessionStorage only) — not Firebase Auth.
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async firebaseUser => {
+    if (!auth || !db) {
+      setAuthReady(true);
+      return;
+    }
+
+    const firestore = db;
+
+    const unsubscribe = onAuthStateChanged(
+      auth,
+      async firebaseUser => {
       if (firebaseUser) {
         // Firebase says a user is logged in.
         // If localStorage is empty (e.g. cleared by user), restore profile from Firestore.
         const raw = localStorage.getItem("allah_yafik_current_user");
         if (!raw) {
           try {
-            const snap = await getDoc(doc(db, "users", firebaseUser.uid));
+            const snap = await getDoc(doc(firestore, "users", firebaseUser.uid));
             if (snap.exists()) {
               localStorage.setItem(
                 "allah_yafik_current_user",
@@ -68,7 +77,12 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
         }
       }
       setAuthReady(true);
-    });
+      },
+      () => {
+        // If Firebase auth fails (e.g. invalid API key), keep app usable via localStorage auth.
+        setAuthReady(true);
+      }
+    );
     return unsubscribe;
   }, []);
 
@@ -88,6 +102,7 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
   const isPublic = PUBLIC_ROUTES.includes(location);
   const isProtected = PROTECTED_ROUTES.some(r => location.startsWith(r));
   const isTestPage = location === "/mental-health-test";
+  const hasFirebaseSession = !auth || !!auth.currentUser;
 
   // Wait for Firebase to confirm auth state before applying guards.
   if (!authReady) return null;
@@ -103,6 +118,8 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
     redirect = "/mental-health-test";
   } else if (location.startsWith("/admin") && user?.role !== "admin") {
     redirect = "/dashboard";
+  } else if (location.startsWith("/admin") && !hasFirebaseSession) {
+    redirect = "/login";
   }
 
   if (redirect) {

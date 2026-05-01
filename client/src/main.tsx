@@ -1,5 +1,6 @@
 import { createRoot } from "react-dom/client";
 import App from "./App";
+import { initFirestoreLocalStorageSync } from "./lib/firestoreLocalStorageSync";
 import "./index.css";
 
 function initAnalytics() {
@@ -20,5 +21,6 @@ function initAnalytics() {
 }
 
 initAnalytics();
+initFirestoreLocalStorageSync();
 
 createRoot(document.getElementById("root")!).render(<App />);

@@ -6,6 +6,7 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Link } from "wouter";
+import { doc, onSnapshot } from "firebase/firestore";
 import {
   Award,
   BarChart3,
@@ -28,6 +29,7 @@ import {
   Users,
   type LucideIcon,
 } from "lucide-react";
+import { db as firestoreDb } from "@/lib/firebase";
 import { lecturesData } from "@/data/lecturesData";
 import { ageGroupLabels, type AgeGroup } from "@/data/mentalHealthTestData";
 
@@ -131,6 +133,63 @@ const supportCircles = [
   { icon: "🕌", label: "إرشاد", desc: "قيم", color: "#F59E0B" },
   { icon: "🤝", label: "مجتمع", desc: "مساندة", color: "#10B981" },
 ];
+
+const ADMIN_SETTINGS_KEY = "allah_yafik_admin_settings";
+const FIRESTORE_SETTINGS_COLLECTION = "app_settings";
+const FIRESTORE_SETTINGS_DOC = "platform";
+
+function extractPartnersEnabledFromSettings(raw: unknown): boolean {
+  if (!raw || typeof raw !== "object") return false;
+
+  const settings = raw as { sectionsEnabled?: unknown };
+  if (!settings.sectionsEnabled || typeof settings.sectionsEnabled !== "object") {
+    return false;
+  }
+
+  const sectionsEnabled = settings.sectionsEnabled as { partners?: unknown };
+  return sectionsEnabled.partners === true;
+}
+
+function syncPartnersToggleToLocalStorage(partnersEnabled: boolean) {
+  try {
+    const raw = localStorage.getItem(ADMIN_SETTINGS_KEY);
+    const parsed = raw ? JSON.parse(raw) : {};
+    const baseSettings =
+      parsed && typeof parsed === "object"
+        ? (parsed as Record<string, unknown>)
+        : {};
+
+    const existingSections =
+      baseSettings.sectionsEnabled &&
+      typeof baseSettings.sectionsEnabled === "object"
+        ? (baseSettings.sectionsEnabled as Record<string, unknown>)
+        : {};
+
+    const mergedSettings: Record<string, unknown> = {
+      ...baseSettings,
+      sectionsEnabled: {
+        ...existingSections,
+        partners: partnersEnabled,
+      },
+    };
+
+    localStorage.setItem(ADMIN_SETTINGS_KEY, JSON.stringify(mergedSettings));
+  } catch {
+    // Ignore cache sync failures; UI state is already updated.
+  }
+}
+
+function getPartnersSectionEnabled(): boolean {
+  try {
+    const raw = localStorage.getItem(ADMIN_SETTINGS_KEY);
+    if (!raw) return false;
+
+    const parsed = JSON.parse(raw);
+    return extractPartnersEnabledFromSettings(parsed);
+  } catch {
+    return false;
+  }
+}
 
 const homeConfigs: Record<HomeAudience, HomeConfig> = {
   guest: {
@@ -641,10 +700,14 @@ export default function Home() {
   const [greeting, setGreeting] = useState(getGreeting());
   const [currentUser, setCurrentUser] = useState<CurrentUser | null>(null);
   const [quote, setQuote] = useState<Quote>(homeConfigs.guest.quotes[0]);
+  const [partnersSectionEnabled, setPartnersSectionEnabled] = useState(
+    getPartnersSectionEnabled
+  );
 
   useEffect(() => {
     const loadHomeState = () => {
       setGreeting(getGreeting());
+      setPartnersSectionEnabled(getPartnersSectionEnabled());
 
       try {
         const raw = localStorage.getItem("allah_yafik_current_user");
@@ -673,6 +736,36 @@ export default function Home() {
     };
   }, []);
 
+  useEffect(() => {
+    if (!firestoreDb) return;
+
+    const settingsRef = doc(
+      firestoreDb,
+      FIRESTORE_SETTINGS_COLLECTION,
+      FIRESTORE_SETTINGS_DOC
+    );
+
+    const unsubscribe = onSnapshot(
+      settingsRef,
+      snapshot => {
+        const partnersEnabled = snapshot.exists()
+          ? extractPartnersEnabledFromSettings(snapshot.data())
+          : false;
+
+        setPartnersSectionEnabled(partnersEnabled);
+        syncPartnersToggleToLocalStorage(partnersEnabled);
+      },
+      error => {
+        console.warn(
+          "Failed to subscribe to platform settings from Firestore.",
+          error
+        );
+      }
+    );
+
+    return unsubscribe;
+  }, []);
+
   const userAgeGroup = isAgeGroup(currentUser?.ageGroup)
     ? currentUser.ageGroup
     : null;
@@ -699,11 +792,14 @@ export default function Home() {
   const isChild = audience === "child";
   const isTeen = audience === "teen";
   const isAdult = audience === "adult";
-  const visibleQuickActions = isChild
+  const baseQuickActions = isChild
     ? config.quickActions.slice(0, 4)
     : isAdult
       ? config.quickActions.slice(0, 4)
       : config.quickActions;
+  const visibleQuickActions = partnersSectionEnabled
+    ? baseQuickActions
+    : baseQuickActions.filter(action => action.path !== "/partners");
   const visibleSpotlightCards = isChild
     ? config.spotlightCards.slice(0, 3)
     : isAdult
@@ -1310,40 +1406,42 @@ export default function Home() {
           </div>
         </motion.div>
 
-        <div className="px-4 mt-5">
-          <div className="flex items-center justify-between mb-3">
-            <h2 className="text-foreground font-black text-sm">
-              {config.supportTitle}
-            </h2>
-            <Link href="/partners">
-              <span className="text-primary text-xs font-bold">عرض الكل</span>
-            </Link>
-          </div>
-          <div className="flex gap-2 overflow-x-auto pb-1">
-            {visibleSupportCircles.map((partner, idx) => (
-              <motion.div
-                key={partner.label}
-                initial={{ opacity: 0, x: 10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: idx * 0.05 }}
-                className={`flex-shrink-0 flex flex-col items-center gap-1.5 rounded-2xl glass-card border border-border ${isChild ? "p-3.5 w-24" : isAdult ? "p-3.5 w-24" : "p-3 w-20"}`}
-              >
-                <span className="text-2xl">{partner.icon}</span>
-                <span className="text-foreground/70 font-bold text-[10px] text-center">
-                  {partner.label}
-                </span>
-                {!isChild && !isAdult && (
-                  <span
-                    className="text-xs font-bold"
-                    style={{ color: partner.color }}
-                  >
-                    {partner.desc}
+        {partnersSectionEnabled && (
+          <div className="px-4 mt-5">
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-foreground font-black text-sm">
+                {config.supportTitle}
+              </h2>
+              <Link href="/partners">
+                <span className="text-primary text-xs font-bold">عرض الكل</span>
+              </Link>
+            </div>
+            <div className="flex gap-2 overflow-x-auto pb-1">
+              {visibleSupportCircles.map((partner, idx) => (
+                <motion.div
+                  key={partner.label}
+                  initial={{ opacity: 0, x: 10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: idx * 0.05 }}
+                  className={`flex-shrink-0 flex flex-col items-center gap-1.5 rounded-2xl glass-card border border-border ${isChild ? "p-3.5 w-24" : isAdult ? "p-3.5 w-24" : "p-3 w-20"}`}
+                >
+                  <span className="text-2xl">{partner.icon}</span>
+                  <span className="text-foreground/70 font-bold text-[10px] text-center">
+                    {partner.label}
                   </span>
-                )}
-              </motion.div>
-            ))}
+                  {!isChild && !isAdult && (
+                    <span
+                      className="text-xs font-bold"
+                      style={{ color: partner.color }}
+                    >
+                      {partner.desc}
+                    </span>
+                  )}
+                </motion.div>
+              ))}
+            </div>
           </div>
-        </div>
+        )}
 
         <div className="px-4 mt-5">
           <motion.div
@@ -1378,6 +1476,29 @@ export default function Home() {
             </Link>
           </motion.div>
         </div>
+
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.34 }}
+          className="mx-4 mt-4"
+        >
+          <div className="p-4 rounded-2xl glass-card border border-border">
+            <div className="flex items-center gap-2 mb-3">
+              <div className="w-7 h-7 rounded-lg bg-primary/15 flex items-center justify-center">
+                <Heart className="w-4 h-4 text-primary" />
+              </div>
+              <h3 className="text-foreground font-black text-sm">
+                وقفة شكر وتقدير
+              </h3>
+            </div>
+            <div className="space-y-1 text-foreground/80 text-sm leading-relaxed">
+              <p>جامعة جازان</p>
+              <p>كلية الفنون والعلوم الإنسانية</p>
+              <p>قسم علم النفس</p>
+            </div>
+          </div>
+        </motion.div>
 
         <motion.div
           initial={{ opacity: 0 }}

@@ -197,7 +197,7 @@ export default function Settings() {
       }
 
       // Delete the Firebase Auth account
-      const firebaseUser = auth.currentUser;
+      const firebaseUser = auth?.currentUser;
       if (firebaseUser) {
         try {
           await deleteUser(firebaseUser);

@@ -1,8 +1,33 @@
 rules_version = '2';
+
 service cloud.firestore {
   match /databases/{database}/documents {
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    // User profile + user-scoped app data (including local storage mirror)
+    match /users/{userId} {
+      allow read, write: if isOwner(userId);
+
+      match /{document=**} {
+        allow read, write: if isOwner(userId);
+      }
+    }
+
+    // Platform configuration document used by Home/Admin
+    match /app_settings/{docId} {
+      allow read: if true;
+      allow write: if isSignedIn();
+    }
+
+    // Deny everything else by default
     match /{document=**} {
-      allow read, write: if true;
+      allow read, write: if false;
     }
   }
 }

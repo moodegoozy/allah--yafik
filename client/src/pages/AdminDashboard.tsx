@@ -54,7 +54,9 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { Link } from "wouter";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 import { useTheme } from "@/contexts/ThemeContext";
+import { db as firestoreDb } from "@/lib/firebase";
 import {
   lecturesData,
   type Lecture,
@@ -287,13 +289,15 @@ const DEFAULT_SETTINGS: PlatformSettings = {
     exercises: true,
     community: true,
     chat: false,
-    partners: true,
+    partners: false,
     assessment: true,
     achievements: true,
   },
 };
 
 const SETTINGS_KEY = "allah_yafik_admin_settings";
+const FIRESTORE_SETTINGS_COLLECTION = "app_settings";
+const FIRESTORE_SETTINGS_DOC = "platform";
 
 // ─── IndexedDB for file storage ──────────────────────────────────────────────
 
@@ -366,14 +370,62 @@ function loadSettings(): PlatformSettings {
   try {
     const raw = localStorage.getItem(SETTINGS_KEY);
     if (!raw) return DEFAULT_SETTINGS;
-    return { ...DEFAULT_SETTINGS, ...JSON.parse(raw) };
+
+    const parsed = JSON.parse(raw) as Partial<PlatformSettings>;
+    return {
+      ...DEFAULT_SETTINGS,
+      ...parsed,
+      sectionsEnabled: {
+        ...DEFAULT_SETTINGS.sectionsEnabled,
+        ...(parsed.sectionsEnabled ?? {}),
+      },
+    };
   } catch {
     return DEFAULT_SETTINGS;
   }
 }
 
-function saveSettings(s: PlatformSettings) {
+async function loadSettingsFromFirestore(): Promise<PlatformSettings | null> {
+  if (!firestoreDb) return null;
+
+  try {
+    const snap = await getDoc(
+      doc(firestoreDb, FIRESTORE_SETTINGS_COLLECTION, FIRESTORE_SETTINGS_DOC)
+    );
+    if (!snap.exists()) return null;
+
+    const parsed = snap.data() as Partial<PlatformSettings>;
+    const merged: PlatformSettings = {
+      ...DEFAULT_SETTINGS,
+      ...parsed,
+      sectionsEnabled: {
+        ...DEFAULT_SETTINGS.sectionsEnabled,
+        ...(parsed.sectionsEnabled ?? {}),
+      },
+    };
+
+    localStorage.setItem(SETTINGS_KEY, JSON.stringify(merged));
+    return merged;
+  } catch (error) {
+    console.warn("Failed to load platform settings from Firestore.", error);
+    return null;
+  }
+}
+
+async function saveSettings(s: PlatformSettings) {
   localStorage.setItem(SETTINGS_KEY, JSON.stringify(s));
+
+  if (!firestoreDb) return;
+
+  try {
+    await setDoc(
+      doc(firestoreDb, FIRESTORE_SETTINGS_COLLECTION, FIRESTORE_SETTINGS_DOC),
+      s,
+      { merge: true }
+    );
+  } catch (error) {
+    console.warn("Failed to save platform settings to Firestore.", error);
+  }
 }
 
 const CUSTOM_LECTURES_KEY = "allah_yafik_custom_lectures";
@@ -654,6 +706,23 @@ export default function AdminDashboard() {
   const [editingSettings, setEditingSettings] = useState(false);
   const [settingsDraft, setSettingsDraft] = useState<PlatformSettings>(settings);
 
+  useEffect(() => {
+    let mounted = true;
+
+    const hydrateSettings = async () => {
+      const remoteSettings = await loadSettingsFromFirestore();
+      if (!mounted || !remoteSettings) return;
+      setSettings(remoteSettings);
+      setSettingsDraft(remoteSettings);
+    };
+
+    void hydrateSettings();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
   // Content CRUD state
   const [customLectures, setCustomLectures] = useState<CustomLecture[]>(loadCustomLectures);
   const [stories, setStories] = useState<StoryItem[]>(loadStories);
@@ -896,8 +965,8 @@ export default function AdminDashboard() {
     toast.success("تم تصدير التقرير");
   };
 
-  const saveSettingsHandler = () => {
-    saveSettings(settingsDraft);
+  const saveSettingsHandler = async () => {
+    await saveSettings(settingsDraft);
     setSettings(settingsDraft);
     setEditingSettings(false);
     toast.success("تم حفظ الإعدادات");

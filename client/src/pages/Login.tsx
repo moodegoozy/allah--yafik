@@ -40,6 +40,19 @@ const ADMIN_PIN_HASH =
 type Mode = "login" | "register" | "forgot" | "admin";
 type Gender = "male" | "female";
 
+function getStoredUsers(): any[] {
+  try {
+    const raw = localStorage.getItem("allah_yafik_users");
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveStoredUsers(users: any[]) {
+  localStorage.setItem("allah_yafik_users", JSON.stringify(users));
+}
+
 export default function Login() {
   const [, navigate] = useLocation();
   const [mode, setMode] = useState<Mode>("login");
@@ -101,6 +114,30 @@ export default function Login() {
     }
     setLoading(true);
     try {
+      if (!auth || !db) {
+        const users = getStoredUsers();
+        const target = users.find(
+          (u: any) =>
+            (u.email || "").toLowerCase() === loginForm.email.trim().toLowerCase()
+        );
+        if (!target) {
+          toast.error("البريد الإلكتروني أو كلمة المرور غير صحيحة");
+          return;
+        }
+
+        const passwordHash = await hashPassword(loginForm.password);
+        if (target.passwordHash !== passwordHash) {
+          toast.error("البريد الإلكتروني أو كلمة المرور غير صحيحة");
+          return;
+        }
+
+        const { passwordHash: _, ...profile } = target;
+        localStorage.setItem("allah_yafik_current_user", JSON.stringify(profile));
+        toast.success(`أهلاً بعودتك، ${profile.name}!`);
+        navigate("/dashboard");
+        return;
+      }
+
       const credential = await signInWithEmailAndPassword(
         auth,
         loginForm.email,
@@ -174,6 +211,49 @@ export default function Login() {
     }
     setLoading(true);
     try {
+      if (!auth || !db) {
+        const users = getStoredUsers();
+        const normalizedEmail = registerForm.email.trim().toLowerCase();
+        const exists = users.some(
+          (u: any) => (u.email || "").toLowerCase() === normalizedEmail
+        );
+        if (exists) {
+          toast.error("البريد الإلكتروني مسجل مسبقاً. يرجى تسجيل الدخول");
+          return;
+        }
+
+        const age = parseInt(registerForm.age);
+        const ageGroup = age <= 17 ? "young" : age <= 25 ? "teenage" : "adult";
+        const passwordHash = await hashPassword(registerForm.password);
+        const profile = {
+          id: `local_${Date.now()}`,
+          name: registerForm.name,
+          phone: registerForm.phone,
+          email: registerForm.email,
+          age,
+          ageGroup,
+          gender: registerForm.gender,
+          testCompleted: false,
+          addictionType: registerForm.addictionType,
+          soberDays: parseInt(registerForm.soberDays) || 0,
+          joinDate: new Date().toISOString(),
+          achievements: [],
+          completedLectures: [],
+          passwordHash,
+        };
+
+        users.push(profile);
+        saveStoredUsers(users);
+        const { passwordHash: _, ...sessionProfile } = profile;
+        localStorage.setItem(
+          "allah_yafik_current_user",
+          JSON.stringify(sessionProfile)
+        );
+        toast.success(`مرحباً ${registerForm.name}! تم إنشاء حسابك بنجاح`);
+        navigate("/mental-health-test");
+        return;
+      }
+
       const credential = await createUserWithEmailAndPassword(
         auth,
         registerForm.email,
@@ -222,6 +302,11 @@ export default function Login() {
     try {
       const hashed = await hashPassword(adminPin);
       if (hashed === ADMIN_PIN_HASH) {
+        if (auth && !auth.currentUser) {
+          toast.error("سجّل دخولك بحساب موثّق أولاً قبل تفعيل وضع الإدارة");
+          return;
+        }
+
         // Check if already logged in — promote existing user
         const raw =
           sessionStorage.getItem("allah_yafik_current_user") ||
@@ -265,6 +350,23 @@ export default function Login() {
     }
     setLoading(true);
     try {
+      if (!auth) {
+        const users = getStoredUsers();
+        const exists = users.some(
+          (u: any) =>
+            (u.email || "").toLowerCase() === forgotEmail.trim().toLowerCase()
+        );
+        if (!exists) {
+          toast.error("البريد الإلكتروني غير مسجل");
+          return;
+        }
+
+        toast.info("الإرسال عبر البريد غير متاح حالياً في وضع التطوير المحلي");
+        setForgotEmail("");
+        setMode("login");
+        return;
+      }
+
       await sendPasswordResetEmail(auth, forgotEmail);
       toast.success(
         "تم إرسال رابط إعادة تعيين كلمة المرور إلى بريدك الإلكتروني"

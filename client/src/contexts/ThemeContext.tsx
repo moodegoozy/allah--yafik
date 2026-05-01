@@ -10,6 +10,7 @@ interface ThemeContextType {
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 const STORAGE_KEY = "allah_yafik_theme";
+const EXPLICIT_STORAGE_KEY = "allah_yafik_theme_explicit";
 
 function getSystemTheme(): Theme {
   if (typeof window !== "undefined" && window.matchMedia("(prefers-color-scheme: dark)").matches) {
@@ -32,8 +33,13 @@ export function ThemeProvider({
   const [theme, setTheme] = useState<Theme>(() => {
     if (!switchable) return defaultTheme ?? "dark";
 
+    const hasExplicitPreference =
+      localStorage.getItem(EXPLICIT_STORAGE_KEY) === "true";
     const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored === "light" || stored === "dark") return stored;
+    if (hasExplicitPreference && (stored === "light" || stored === "dark")) {
+      return stored;
+    }
+
     return defaultTheme ?? getSystemTheme();
   });
 
@@ -54,6 +60,8 @@ export function ThemeProvider({
 
   const toggleTheme = () => {
     if (!switchable) return;
+
+    localStorage.setItem(EXPLICIT_STORAGE_KEY, "true");
     setTheme(prev => (prev === "light" ? "dark" : "light"));
   };
 
