@@ -138,6 +138,22 @@ const ADMIN_SETTINGS_KEY = "allah_yafik_admin_settings";
 const FIRESTORE_SETTINGS_COLLECTION = "app_settings";
 const FIRESTORE_SETTINGS_DOC = "platform";
 
+type AppreciationCardContent = {
+  enabled: boolean;
+  title: string;
+  lines: [string, string, string];
+};
+
+const DEFAULT_APPRECIATION_CONTENT: AppreciationCardContent = {
+  enabled: true,
+  title: "وقفة شكر وتقدير",
+  lines: [
+    "جامعة جازان",
+    "كلية الفنون والعلوم الإنسانية",
+    "قسم علم النفس",
+  ],
+};
+
 function extractPartnersEnabledFromSettings(raw: unknown): boolean {
   if (!raw || typeof raw !== "object") return false;
 
@@ -150,7 +166,42 @@ function extractPartnersEnabledFromSettings(raw: unknown): boolean {
   return sectionsEnabled.partners === true;
 }
 
-function syncPartnersToggleToLocalStorage(partnersEnabled: boolean) {
+function extractAppreciationFromSettings(raw: unknown): AppreciationCardContent {
+  if (!raw || typeof raw !== "object") return DEFAULT_APPRECIATION_CONTENT;
+
+  const settings = raw as { appreciation?: unknown };
+  if (!settings.appreciation || typeof settings.appreciation !== "object") {
+    return DEFAULT_APPRECIATION_CONTENT;
+  }
+
+  const appreciation = settings.appreciation as {
+    enabled?: unknown;
+    title?: unknown;
+    lines?: unknown;
+  };
+  const lines = Array.isArray(appreciation.lines) ? appreciation.lines : [];
+
+  return {
+    enabled:
+      typeof appreciation.enabled === "boolean"
+        ? appreciation.enabled
+        : DEFAULT_APPRECIATION_CONTENT.enabled,
+    title:
+      typeof appreciation.title === "string"
+        ? appreciation.title
+        : DEFAULT_APPRECIATION_CONTENT.title,
+    lines: [
+      typeof lines[0] === "string" ? lines[0] : DEFAULT_APPRECIATION_CONTENT.lines[0],
+      typeof lines[1] === "string" ? lines[1] : DEFAULT_APPRECIATION_CONTENT.lines[1],
+      typeof lines[2] === "string" ? lines[2] : DEFAULT_APPRECIATION_CONTENT.lines[2],
+    ],
+  };
+}
+
+function syncHomeSettingsToLocalStorage(
+  partnersEnabled: boolean,
+  appreciationContent: AppreciationCardContent
+) {
   try {
     const raw = localStorage.getItem(ADMIN_SETTINGS_KEY);
     const parsed = raw ? JSON.parse(raw) : {};
@@ -171,6 +222,7 @@ function syncPartnersToggleToLocalStorage(partnersEnabled: boolean) {
         ...existingSections,
         partners: partnersEnabled,
       },
+      appreciation: appreciationContent,
     };
 
     localStorage.setItem(ADMIN_SETTINGS_KEY, JSON.stringify(mergedSettings));
@@ -188,6 +240,18 @@ function getPartnersSectionEnabled(): boolean {
     return extractPartnersEnabledFromSettings(parsed);
   } catch {
     return false;
+  }
+}
+
+function getAppreciationContent(): AppreciationCardContent {
+  try {
+    const raw = localStorage.getItem(ADMIN_SETTINGS_KEY);
+    if (!raw) return DEFAULT_APPRECIATION_CONTENT;
+
+    const parsed = JSON.parse(raw);
+    return extractAppreciationFromSettings(parsed);
+  } catch {
+    return DEFAULT_APPRECIATION_CONTENT;
   }
 }
 
@@ -703,11 +767,14 @@ export default function Home() {
   const [partnersSectionEnabled, setPartnersSectionEnabled] = useState(
     getPartnersSectionEnabled
   );
+  const [appreciationContent, setAppreciationContent] =
+    useState<AppreciationCardContent>(getAppreciationContent);
 
   useEffect(() => {
     const loadHomeState = () => {
       setGreeting(getGreeting());
       setPartnersSectionEnabled(getPartnersSectionEnabled());
+      setAppreciationContent(getAppreciationContent());
 
       try {
         const raw = localStorage.getItem("allah_yafik_current_user");
@@ -751,9 +818,13 @@ export default function Home() {
         const partnersEnabled = snapshot.exists()
           ? extractPartnersEnabledFromSettings(snapshot.data())
           : false;
+        const nextAppreciation = snapshot.exists()
+          ? extractAppreciationFromSettings(snapshot.data())
+          : DEFAULT_APPRECIATION_CONTENT;
 
         setPartnersSectionEnabled(partnersEnabled);
-        syncPartnersToggleToLocalStorage(partnersEnabled);
+        setAppreciationContent(nextAppreciation);
+        syncHomeSettingsToLocalStorage(partnersEnabled, nextAppreciation);
       },
       error => {
         console.warn(
@@ -1477,28 +1548,33 @@ export default function Home() {
           </motion.div>
         </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.34 }}
-          className="mx-4 mt-4"
-        >
-          <div className="p-4 rounded-2xl glass-card border border-border">
-            <div className="flex items-center gap-2 mb-3">
-              <div className="w-7 h-7 rounded-lg bg-primary/15 flex items-center justify-center">
-                <Heart className="w-4 h-4 text-primary" />
+        {appreciationContent.enabled && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.34 }}
+            className="mx-4 mt-4"
+          >
+            <div className="p-4 rounded-2xl glass-card border border-border">
+              <div className="flex items-center gap-2 mb-3">
+                <div className="w-7 h-7 rounded-lg bg-primary/15 flex items-center justify-center">
+                  <Heart className="w-4 h-4 text-primary" />
+                </div>
+                <h3 className="text-foreground font-black text-sm">
+                  {appreciationContent.title}
+                </h3>
               </div>
-              <h3 className="text-foreground font-black text-sm">
-                وقفة شكر وتقدير
-              </h3>
+              <div className="space-y-1 text-foreground/80 text-sm leading-relaxed">
+                {appreciationContent.lines
+                  .map(line => line.trim())
+                  .filter(Boolean)
+                  .map(line => (
+                    <p key={line}>{line}</p>
+                  ))}
+              </div>
             </div>
-            <div className="space-y-1 text-foreground/80 text-sm leading-relaxed">
-              <p>جامعة جازان</p>
-              <p>كلية الفنون والعلوم الإنسانية</p>
-              <p>قسم علم النفس</p>
-            </div>
-          </div>
-        </motion.div>
+          </motion.div>
+        )}
 
         <motion.div
           initial={{ opacity: 0 }}

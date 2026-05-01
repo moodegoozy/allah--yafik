@@ -98,6 +98,11 @@ interface PlatformSettings {
   emergencyPhone3: string;
   welcomeMessage: string;
   sectionsEnabled: Record<string, boolean>;
+  appreciation: {
+    enabled: boolean;
+    title: string;
+    lines: [string, string, string];
+  };
 }
 
 interface StoryItem {
@@ -293,6 +298,15 @@ const DEFAULT_SETTINGS: PlatformSettings = {
     assessment: true,
     achievements: true,
   },
+  appreciation: {
+    enabled: true,
+    title: "وقفة شكر وتقدير",
+    lines: [
+      "جامعة جازان",
+      "كلية الفنون والعلوم الإنسانية",
+      "قسم علم النفس",
+    ],
+  },
 };
 
 const SETTINGS_KEY = "allah_yafik_admin_settings";
@@ -372,12 +386,43 @@ function loadSettings(): PlatformSettings {
     if (!raw) return DEFAULT_SETTINGS;
 
     const parsed = JSON.parse(raw) as Partial<PlatformSettings>;
+
+    const parsedAppreciation =
+      parsed.appreciation && typeof parsed.appreciation === "object"
+        ? parsed.appreciation
+        : null;
+    const parsedLines =
+      parsedAppreciation && Array.isArray(parsedAppreciation.lines)
+        ? parsedAppreciation.lines
+        : [];
+
+    const normalizedLines: [string, string, string] = [
+      typeof parsedLines[0] === "string"
+        ? parsedLines[0]
+        : DEFAULT_SETTINGS.appreciation.lines[0],
+      typeof parsedLines[1] === "string"
+        ? parsedLines[1]
+        : DEFAULT_SETTINGS.appreciation.lines[1],
+      typeof parsedLines[2] === "string"
+        ? parsedLines[2]
+        : DEFAULT_SETTINGS.appreciation.lines[2],
+    ];
+
     return {
       ...DEFAULT_SETTINGS,
       ...parsed,
       sectionsEnabled: {
         ...DEFAULT_SETTINGS.sectionsEnabled,
         ...(parsed.sectionsEnabled ?? {}),
+      },
+      appreciation: {
+        enabled:
+          parsedAppreciation?.enabled ?? DEFAULT_SETTINGS.appreciation.enabled,
+        title:
+          typeof parsedAppreciation?.title === "string"
+            ? parsedAppreciation.title
+            : DEFAULT_SETTINGS.appreciation.title,
+        lines: normalizedLines,
       },
     };
   } catch {
@@ -395,12 +440,43 @@ async function loadSettingsFromFirestore(): Promise<PlatformSettings | null> {
     if (!snap.exists()) return null;
 
     const parsed = snap.data() as Partial<PlatformSettings>;
+
+    const parsedAppreciation =
+      parsed.appreciation && typeof parsed.appreciation === "object"
+        ? parsed.appreciation
+        : null;
+    const parsedLines =
+      parsedAppreciation && Array.isArray(parsedAppreciation.lines)
+        ? parsedAppreciation.lines
+        : [];
+
+    const normalizedLines: [string, string, string] = [
+      typeof parsedLines[0] === "string"
+        ? parsedLines[0]
+        : DEFAULT_SETTINGS.appreciation.lines[0],
+      typeof parsedLines[1] === "string"
+        ? parsedLines[1]
+        : DEFAULT_SETTINGS.appreciation.lines[1],
+      typeof parsedLines[2] === "string"
+        ? parsedLines[2]
+        : DEFAULT_SETTINGS.appreciation.lines[2],
+    ];
+
     const merged: PlatformSettings = {
       ...DEFAULT_SETTINGS,
       ...parsed,
       sectionsEnabled: {
         ...DEFAULT_SETTINGS.sectionsEnabled,
         ...(parsed.sectionsEnabled ?? {}),
+      },
+      appreciation: {
+        enabled:
+          parsedAppreciation?.enabled ?? DEFAULT_SETTINGS.appreciation.enabled,
+        title:
+          typeof parsedAppreciation?.title === "string"
+            ? parsedAppreciation.title
+            : DEFAULT_SETTINGS.appreciation.title,
+        lines: normalizedLines,
       },
     };
 
@@ -3733,6 +3809,87 @@ export default function AdminDashboard() {
                           </button>
                         );
                       })}
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="text-white/40 text-xs mb-3 block">
+                      وقفة الشكر في الرئيسية
+                    </label>
+
+                    <button
+                      onClick={() =>
+                        editingSettings &&
+                        setSettingsDraft(d => ({
+                          ...d,
+                          appreciation: {
+                            ...d.appreciation,
+                            enabled: !d.appreciation.enabled,
+                          },
+                        }))
+                      }
+                      disabled={!editingSettings}
+                      className="w-full flex items-center justify-between px-4 py-3 rounded-xl glass-card border border-white/7 disabled:opacity-60"
+                    >
+                      <span className="text-white text-sm">إظهار بطاقة الشكر</span>
+                      {(editingSettings
+                        ? settingsDraft.appreciation.enabled
+                        : settings.appreciation.enabled) ? (
+                        <ToggleRight className="w-6 h-6 text-[#00D4AA]" />
+                      ) : (
+                        <ToggleLeft className="w-6 h-6 text-white/20" />
+                      )}
+                    </button>
+
+                    <div className="mt-3 space-y-3">
+                      <div>
+                        <span className="text-white/25 text-xs">عنوان البطاقة</span>
+                        <input
+                          type="text"
+                          value={editingSettings ? settingsDraft.appreciation.title : settings.appreciation.title}
+                          onChange={e =>
+                            setSettingsDraft(d => ({
+                              ...d,
+                              appreciation: {
+                                ...d.appreciation,
+                                title: e.target.value,
+                              },
+                            }))
+                          }
+                          disabled={!editingSettings}
+                          className="w-full mt-1 px-4 py-2.5 rounded-xl glass-card border border-white/10 bg-transparent text-white text-sm disabled:opacity-40"
+                        />
+                      </div>
+
+                      {(editingSettings
+                        ? settingsDraft.appreciation.lines
+                        : settings.appreciation.lines
+                      ).map((line, index) => (
+                        <div key={index}>
+                          <span className="text-white/25 text-xs">
+                            السطر {index + 1}
+                          </span>
+                          <input
+                            type="text"
+                            value={line}
+                            onChange={e =>
+                              setSettingsDraft(d => {
+                                const nextLines: [string, string, string] = [...d.appreciation.lines];
+                                nextLines[index] = e.target.value;
+                                return {
+                                  ...d,
+                                  appreciation: {
+                                    ...d.appreciation,
+                                    lines: nextLines,
+                                  },
+                                };
+                              })
+                            }
+                            disabled={!editingSettings}
+                            className="w-full mt-1 px-4 py-2.5 rounded-xl glass-card border border-white/10 bg-transparent text-white text-sm disabled:opacity-40"
+                          />
+                        </div>
+                      ))}
                     </div>
                   </div>
                 </div>
