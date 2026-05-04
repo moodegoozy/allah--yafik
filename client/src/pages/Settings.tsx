@@ -32,8 +32,9 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import { toast } from "sonner";
 import { useTheme } from "@/contexts/ThemeContext";
-import { auth, logoutUser } from "@/lib/firebase";
+import { auth, db, logoutUser } from "@/lib/firebase";
 import { deleteUser } from "firebase/auth";
+import { collection, deleteDoc, doc, getDocs, writeBatch } from "firebase/firestore";
 
 const CONTACT_PHONE = "0546192019";
 const FONT_SIZE_KEY = "allah_yafik_font_size";
@@ -184,7 +185,41 @@ export default function Settings() {
       }
 
       const currentUser = JSON.parse(raw);
+      const uid = auth?.currentUser?.uid || currentUser?.id;
       const userEmail = currentUser?.email;
+
+      if (db && uid) {
+        try {
+          // Remove profile document.
+          await deleteDoc(doc(db, "users", uid));
+
+          // Remove synchronized localStorage subcollection in chunks.
+          const syncCollection = collection(db, "users", uid, "local_storage_sync_items");
+          const syncSnapshot = await getDocs(syncCollection);
+          if (!syncSnapshot.empty) {
+            let batch = writeBatch(db);
+            let count = 0;
+
+            for (const item of syncSnapshot.docs) {
+              batch.delete(item.ref);
+              count += 1;
+
+              if (count >= 400) {
+                await batch.commit();
+                batch = writeBatch(db);
+                count = 0;
+              }
+            }
+
+            if (count > 0) {
+              await batch.commit();
+            }
+          }
+        } catch {
+          // Keep flow resilient; user can still sign out and request manual deletion by email.
+        }
+      }
+
       if (userEmail) {
         const keysToDelete: string[] = [];
         for (let i = 0; i < localStorage.length; i++) {
@@ -207,7 +242,7 @@ export default function Settings() {
       }
 
       await logoutUser();
-      toast.success("تم حذف الحساب بنجاح");
+      toast.success("تم استلام طلب حذف الحساب، وسيتم إنهاء جميع البيانات خلال مدة لا تتجاوز 30 يوماً");
       setShowDeleteAccount(false);
       navigate("/login");
     } catch {

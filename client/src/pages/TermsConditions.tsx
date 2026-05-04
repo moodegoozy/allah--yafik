@@ -2,7 +2,6 @@
  * TermsConditions — الشروط والأحكام
  * Public route — required for Google Play Store listing
  */
-import { useLocation } from "wouter";
 import { ArrowRight, FileText, UserCheck, AlertTriangle, Ban, RefreshCw, Scale } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -60,11 +59,13 @@ const sections = [
   },
   {
     icon: RefreshCw,
-    title: "إنهاء الخدمة",
+    title: "إنهاء الخدمة وحذف الحساب",
     content: [
-      "يمكنك حذف حسابك في أي وقت من إعدادات التطبيق.",
+      "يمكنك حذف حسابك في أي وقت من داخل التطبيق: الإعدادات ← البيانات ← حذف الحساب.",
       "نحتفظ بالحق في إيقاف أي حساب يخالف هذه الشروط.",
-      "عند إنهاء الحساب تُحذف جميع بياناتك الشخصية خلال 30 يوماً.",
+      "نبدأ معالجة طلب حذف الحساب فوراً، ويكتمل حذف البيانات التشغيلية خلال مدة لا تتجاوز 30 يوماً.",
+      "قد تستمر النسخ الاحتياطية أو السجلات الأمنية لمدة تصل إلى 90 يوماً قبل الإزالة التلقائية.",
+      "إذا تعذّر الحذف الفوري تقنياً، يمكن طلب الإزالة عبر البريد: privacy@allah-yaafek.app",
     ],
   },
   {

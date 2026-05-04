@@ -62,7 +62,9 @@ function Router() {
       <Route path="/rehab-assessment" component={RehabAssessment} />
       <Route path="/mental-health-test" component={MentalHealthTest} />
       <Route path="/privacy-policy" component={PrivacyPolicy} />
+      <Route path="/privacy-policy.html" component={PrivacyPolicy} />
       <Route path="/terms" component={TermsConditions} />
+      <Route path="/terms.html" component={TermsConditions} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

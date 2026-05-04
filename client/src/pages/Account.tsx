@@ -91,6 +91,11 @@ export default function Account() {
   ];
 
   useEffect(() => {
+    if (!auth) {
+      navigate("/login");
+      return;
+    }
+
     const unsubscribe = onAuthStateChanged(auth, async firebaseUser => {
       if (!firebaseUser) {
         navigate("/login");
@@ -162,7 +167,7 @@ export default function Account() {
     }
     setLoading(true);
     try {
-      const firebaseUser = auth.currentUser;
+      const firebaseUser = auth?.currentUser;
       if (!firebaseUser || !firebaseUser.email) {
         toast.error("انتهت الجلسة، يرجى تسجيل الدخول مجدداً");
         navigate("/login");
@@ -176,7 +181,7 @@ export default function Account() {
       await reauthenticateWithCredential(firebaseUser, credential);
       await updatePassword(firebaseUser, passwordForm.newPass);
 
-      if (auth.currentUser && auth.currentUser.uid) {
+      if (auth?.currentUser && auth.currentUser.uid) {
         await saveUserProfile(auth.currentUser.uid, {
           passwordUpdatedAt: new Date().toISOString(),
         });

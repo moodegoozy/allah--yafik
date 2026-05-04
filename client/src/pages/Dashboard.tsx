@@ -132,6 +132,11 @@ export default function Dashboard() {
   const [user, setUser] = useState<Record<string, any> | null>(null);
 
   useEffect(() => {
+    if (!auth) {
+      setUser(null);
+      return;
+    }
+
     const unsubscribe = onAuthStateChanged(auth, async firebaseUser => {
       if (!firebaseUser) {
         setUser(null);

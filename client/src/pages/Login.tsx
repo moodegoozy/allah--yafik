@@ -742,7 +742,7 @@ export default function Login() {
                     <p className="text-muted-foreground text-xs leading-relaxed">
                       أوافق على{" "}
                       <a
-                        href="/terms"
+                        href="/terms.html"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="underline hover:text-foreground transition-colors"
@@ -751,7 +751,7 @@ export default function Login() {
                       </a>{" "}
                       و{" "}
                       <a
-                        href="/privacy-policy"
+                        href="/privacy-policy.html"
                         target="_blank"
                         rel="noopener noreferrer"
                         className="underline hover:text-foreground transition-colors"

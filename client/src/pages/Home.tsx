@@ -781,6 +781,15 @@ export default function Home() {
 
     loadHomeState();
 
+    if (!auth) {
+      setCurrentUser(null);
+      setQuote(getRandomItem(homeConfigs.guest.quotes));
+      window.addEventListener("focus", loadHomeState);
+      return () => {
+        window.removeEventListener("focus", loadHomeState);
+      };
+    }
+
     const unsubscribe = onAuthStateChanged(auth, async firebaseUser => {
       try {
         if (!firebaseUser) {

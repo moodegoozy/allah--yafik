@@ -44,6 +44,11 @@ export default function MentalHealthTest() {
   const [ageGroup, setAgeGroup] = useState<AgeGroup>("adult");
 
   useEffect(() => {
+    if (!auth) {
+      navigate("/login");
+      return;
+    }
+
     const unsubscribe = onAuthStateChanged(auth, async firebaseUser => {
       if (!firebaseUser) {
         navigate("/login");
@@ -80,7 +85,7 @@ export default function MentalHealthTest() {
       const testResult = calculateTestResult(newAnswers, questions);
       setResult(testResult);
 
-      const currentUser = auth.currentUser;
+      const currentUser = auth?.currentUser;
       if (!currentUser) return;
 
       saveUserProfile(currentUser.uid, {
