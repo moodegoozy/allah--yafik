@@ -374,22 +374,22 @@ export default function Lectures() {
               {
                 icon: Video,
                 label: "محاضرة متاحة",
-                value: "١٦٧",
+                value: String(allLectures.length),
                 color: "#00D4AA",
               },
               {
                 icon: Users,
-                label: "مستفيد",
-                value: "٨٥,٠٠٠+",
+                label: "متابعة المحتوى",
+                value: "مستمرة",
                 color: "#F59E0B",
               },
               {
                 icon: Star,
-                label: "متوسط التقييم",
-                value: "٤.٨",
+                label: "جودة المحتوى",
+                value: "مراجعة دورية",
                 color: "#8B5CF6",
               },
-              { icon: Globe, label: "لغة", value: "٣", color: "#EC4899" },
+              { icon: Globe, label: "لغة", value: "العربية", color: "#EC4899" },
             ].map((s, i) => (
               <div
                 key={i}
