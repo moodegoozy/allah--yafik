@@ -29,6 +29,8 @@ import RehabPlan from "./pages/RehabPlan";
 import RehabAssessment from "./pages/RehabAssessment";
 import MentalHealthTest from "./pages/MentalHealthTest";
 import Settings from "./pages/Settings";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import TermsConditions from "./pages/TermsConditions";
 import SOSButton from "./components/SOSButton";
 import BottomNav from "./components/BottomNav";
 
@@ -59,6 +61,8 @@ function Router() {
       <Route path="/rehab-plan" component={RehabPlan} />
       <Route path="/rehab-assessment" component={RehabAssessment} />
       <Route path="/mental-health-test" component={MentalHealthTest} />
+      <Route path="/privacy-policy" component={PrivacyPolicy} />
+      <Route path="/terms" component={TermsConditions} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>

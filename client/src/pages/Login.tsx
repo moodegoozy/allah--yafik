@@ -740,8 +740,25 @@ export default function Login() {
                       )}
                     </button>
                     <p className="text-muted-foreground text-xs leading-relaxed">
-                      أوافق على شروط الاستخدام وسياسة الخصوصية. بياناتي محفوظة
-                      بسرية تامة ولن تُشارك مع أي جهة.
+                      أوافق على{" "}
+                      <a
+                        href="/terms"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="underline hover:text-foreground transition-colors"
+                      >
+                        شروط الاستخدام
+                      </a>{" "}
+                      و{" "}
+                      <a
+                        href="/privacy-policy"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="underline hover:text-foreground transition-colors"
+                      >
+                        سياسة الخصوصية
+                      </a>
+                      . بياناتي محفوظة بسرية تامة ولن تُشارك مع أي جهة.
                     </p>
                   </div>
 
