@@ -30,6 +30,7 @@ import RehabAssessment from "./pages/RehabAssessment";
 import MentalHealthTest from "./pages/MentalHealthTest";
 import Settings from "./pages/Settings";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
+import DeleteAccount from "./pages/DeleteAccount";
 import SOSButton from "./components/SOSButton";
 import BottomNav from "./components/BottomNav";
 
@@ -56,6 +57,7 @@ function Router() {
       <Route path="/account" component={Account} />
       <Route path="/settings" component={Settings} />
       <Route path="/privacy-policy" component={PrivacyPolicy} />
+      <Route path="/delete-account" component={DeleteAccount} />
       <Route path="/admin" component={AdminDashboard} />
       {/* <Route path="/chat" component={Chat} /> */}
       <Route path="/rehab-plan" component={RehabPlan} />
@@ -74,6 +76,8 @@ function App() {
     typeof window !== "undefined" ? window.location.pathname : "/";
   const isPrivacyPolicy =
     path === "/privacy-policy" || path.startsWith("/privacy-policy/");
+  const isDeleteAccount =
+    path === "/delete-account" || path.startsWith("/delete-account/");
 
   return (
     <ErrorBoundary>
@@ -82,6 +86,8 @@ function App() {
           <Toaster richColors position="top-center" />
           {isPrivacyPolicy ? (
             <PrivacyPolicy />
+          ) : isDeleteAccount ? (
+            <DeleteAccount />
           ) : (
             <>
               <AuthGuard>

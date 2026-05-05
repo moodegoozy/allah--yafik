@@ -8,7 +8,14 @@ import {
 } from "@/lib/firebase";
 
 /** Routes accessible without login */
-const PUBLIC_ROUTES = ["/", "/login", "/404", "/settings", "/privacy-policy"];
+const PUBLIC_ROUTES = [
+  "/",
+  "/login",
+  "/404",
+  "/settings",
+  "/privacy-policy",
+  "/delete-account",
+];
 
 /** Routes that require a full (non-guest) account */
 const PROTECTED_ROUTES = [
