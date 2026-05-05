@@ -176,7 +176,7 @@ const upcomingLive = [
     title: "ندوة: الوقاية المجتمعية من المخدرات",
     date: "١٥ مارس ٢٠٢٦",
     time: "٨:٠٠ مساءً",
-    speaker: "فريق الله يعافيك",
+    speaker: "فريق صون",
     platform: "مباشر عبر التطبيق",
     color: "#00D4AA",
     registered: "٣٤٠",

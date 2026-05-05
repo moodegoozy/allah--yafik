@@ -1,6 +1,6 @@
 /**
  * Login - صفحة تسجيل الدخول وإنشاء الحساب
- * Design: Dark Luxury Wellness - "الله يعافيك"
+ * Design: Dark Luxury Wellness - "صون"
  * Features: تسجيل دخول، إنشاء حساب، حفظ بيانات في Firestore
  */
 import { useState } from "react";
@@ -350,14 +350,13 @@ export default function Login() {
       <div className="w-full max-w-md relative z-10">
         {/* Logo */}
         <div className="text-center mb-8">
-          <div
-            className="w-16 h-16 rounded-2xl bg-gradient-to-br from-primary to-sky-500 flex items-center justify-center mx-auto mb-4 glow-teal"
-            aria-hidden="true"
-          >
-            <Sparkles className="w-8 h-8 text-primary-foreground" />
-          </div>
-          <h1 className="text-3xl font-black text-foreground mb-1">
-            الله يعافيك
+          <img
+            src="/logo10.png"
+            alt="شعار صون"
+            className="w-32 h-32 object-contain mx-auto mb-4 drop-shadow-[0_0_24px_rgba(0,212,170,0.35)]"
+          />
+          <h1 className="text-4xl font-black text-primary mb-1">
+            صون
           </h1>
           <p className="text-primary text-sm">برنامج الوقاية من الإدمان</p>
         </div>

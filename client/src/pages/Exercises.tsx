@@ -1,6 +1,6 @@
 /**
  * Exercises - تمارين الوقاية
- * Design: Dark Luxury Wellness - الله يعافيك
+ * Design: Dark Luxury Wellness - صون
  * الهدف: تمارين بناء الحصانة ومهارات الرفض الوقائية
  */
 import { useState, useEffect } from "react";

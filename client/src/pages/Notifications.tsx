@@ -1,6 +1,6 @@
 ﻿/**
  * Notifications - نظام الإشعارات والتذكيرات اليومية
- * Design: Dark Luxury Wellness - "الله يعافيك"
+ * Design: Dark Luxury Wellness - "صون"
  * Features: جدولة تذكيرات، إشعارات مخصصة، سجل الإشعارات
  */
 import { useState } from "react";

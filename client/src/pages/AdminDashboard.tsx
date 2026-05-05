@@ -1,6 +1,6 @@
 /**
  * AdminDashboard - لوحة إدارة المشرف الشاملة
- * Design: Dark Luxury Wellness - "الله يعافيك"
+ * Design: Dark Luxury Wellness - "صون"
  * Features: إحصائيات حقيقية من localStorage، إدارة المحتوى، تصدير CSV، إعدادات المنصة
  */
 import { useState, useEffect, useMemo, useCallback, useRef } from "react";
@@ -287,7 +287,7 @@ const DEFAULT_SETTINGS: PlatformSettings = {
   emergencyPhone1: "0546192019",
   emergencyPhone2: "920033360",
   emergencyPhone3: "911",
-  welcomeMessage: "مرحباً بك في الله يعافيك — معاً نحو حياة أفضل",
+  welcomeMessage: "مرحباً بك في صون — معاً نحو حياة أفضل",
   sectionsEnabled: {
     lectures: true,
     recovery: true,
@@ -1193,7 +1193,7 @@ export default function AdminDashboard() {
       "type يجب أن تكون واحدة من: video, audio, workshop, article.",
       "quiz يجب أن تكون مصفوفة أسئلة وفي كل سؤال options فيها 4 خيارات و correct رقم الفهرس الصحيح.",
       "articleHtml يكون HTML نظيف يدعم فقرات وعناوين وقوائم.",
-      "اجعل المحتوى عربي مناسب لمنصة الله يعافيك.",
+      "اجعل المحتوى عربي مناسب لمنصة صون.",
     ].join("\n");
 
     const userPrompt = [
@@ -1551,12 +1551,14 @@ export default function AdminDashboard() {
       <div className="md:hidden sticky top-0 z-40 bg-[#0A0F1E] border-b border-white/5">
         <div className="flex items-center justify-between px-4 py-3">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-[#F59E0B] to-[#EF4444] flex items-center justify-center">
-              <Shield className="w-4 h-4 text-white" />
-            </div>
+            <img
+              src="/logo10.png"
+              alt="شعار صون"
+              className="w-11 h-11 object-contain"
+            />
             <div>
               <h1 className="text-white font-black text-sm">لوحة الإدارة</h1>
-              <p className="text-[#F59E0B] text-[10px]">الله يعافيك</p>
+              <p className="text-[#00D4AA] text-[11px] font-bold">صون</p>
             </div>
           </div>
           <div className="flex items-center gap-2">
@@ -1596,12 +1598,14 @@ export default function AdminDashboard() {
       {/* Desktop Sidebar */}
       <aside className="hidden md:flex fixed right-0 top-0 h-full w-60 bg-[#0A0F1E] border-l border-white/5 z-30 flex-col">
         <div className="flex items-center gap-3 p-5 border-b border-white/5">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-[#F59E0B] to-[#EF4444] flex items-center justify-center">
-            <Shield className="w-5 h-5 text-white" />
-          </div>
+          <img
+            src="/logo10.png"
+            alt="شعار صون"
+            className="w-12 h-12 object-contain"
+          />
           <div>
             <h1 className="text-white font-black text-sm">لوحة الإدارة</h1>
-            <p className="text-[#F59E0B] text-xs">الله يعافيك</p>
+            <p className="text-[#00D4AA] text-xs font-bold">صون</p>
           </div>
         </div>
 

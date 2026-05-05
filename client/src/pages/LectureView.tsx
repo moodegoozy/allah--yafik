@@ -1,5 +1,5 @@
 /*
- * Design: Dark Luxury Wellness - "الله يعافيك"
+ * Design: Dark Luxury Wellness - "صون"
  * صفحة عرض المحاضرة التفاعلية - AI-Powered Content
  * Features: محتوى علمي كامل، اختبار تفاعلي، تقدم القراءة، إحصائيات
  */
@@ -818,7 +818,7 @@ export default function LectureView() {
                 هل تحتاج دعماً شخصياً؟
               </h3>
               <p className="text-muted-foreground text-[11px] mb-3">
-                فريق "الله يعافيك" متاح للمساعدة والإرشاد
+                فريق "صون" متاح للمساعدة والإرشاد
               </p>
               <a
                 href={`tel:${CONTACT_PHONE}`}

@@ -1,6 +1,6 @@
 /**
  * AudioPlayer - مشغّل صوت تفاعلي للمحاضرات
- * Design: Dark Luxury Wellness - "الله يعافيك"
+ * Design: Dark Luxury Wellness - "صون"
  * Features: تشغيل/إيقاف، شريط تقدم، سرعة التشغيل، تقليب الصوت
  */
 import { useState, useRef, useEffect } from "react";

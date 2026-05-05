@@ -1,6 +1,6 @@
 /**
  * Achievements - صفحة الإنجازات والشهادات المحفوظة
- * Design: Dark Luxury Wellness - "الله يعافيك"
+ * Design: Dark Luxury Wellness - "صون"
  * Features: شهادات مكتملة، إنجازات، إحصائيات التعلم، محاضرات مكتملة
  */
 import { useState, useEffect, useCallback } from "react";
@@ -169,7 +169,7 @@ export default function Achievements() {
   const doneGoals = allAchievements.reduce((s, a) => s + (a.progress ?? 0), 0);
 
   const handleShareCert = (cert: (typeof completedLectures)[0]) => {
-    const text = `🎓 حصلت على شهادة إتمام محاضرة "${cert.title}" من برنامج الله يعافيك!\n\nرقم الشهادة: ${cert.certId}\n📞 0546192019`;
+    const text = `🎓 حصلت على شهادة إتمام محاضرة "${cert.title}" من برنامج صون!\n\nرقم الشهادة: ${cert.certId}\n📞 0546192019`;
     navigator.clipboard.writeText(text);
     toast.success("تم نسخ الشهادة للمشاركة!");
   };

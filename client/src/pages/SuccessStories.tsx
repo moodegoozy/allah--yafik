@@ -1,6 +1,6 @@
 /**
  * SuccessStories - قصص الوعي والوقاية
- * Design: Dark Luxury Wellness - "الله يعافيك"
+ * Design: Dark Luxury Wellness - "صون"
  * الهدف: قصص أشخاص نجحوا في الوقاية وتجنب الإدمان
  */
 import { useState } from "react";

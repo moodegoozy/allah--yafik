@@ -1,6 +1,6 @@
 /**
  * LectureSummaryExport - تصدير ملخص المحاضرة ومشاركتها
- * Design: Dark Luxury Wellness - "الله يعافيك"
+ * Design: Dark Luxury Wellness - "صون"
  * Features: نسخ الملخص، مشاركة عبر الشبكات، طباعة
  */
 import { useState } from "react";
@@ -41,7 +41,7 @@ ${keyTakeaways.map((k, i) => `${i + 1}. ${k}`).join("\n")}
 
 🏷 الوسوم: ${tags.join(" · ")}
 
-📱 برنامج الله يعافيك - للوقاية من الإدمان
+📱 برنامج صون - للوقاية من الإدمان
 📞 0546192019`;
 
   const handleCopy = async () => {
@@ -93,7 +93,7 @@ ${keyTakeaways.map((k, i) => `${i + 1}. ${k}`).join("\n")}
           <h2>🏷 الوسوم</h2>
           <div class="tags">${tags.map(t => `<span class="tag">${t}</span>`).join("")}</div>
         </div>
-        <div class="footer">برنامج الله يعافيك للوقاية من الإدمان | 0546192019</div>
+        <div class="footer">برنامج صون للوقاية من الإدمان | 0546192019</div>
       </body>
       </html>
     `;

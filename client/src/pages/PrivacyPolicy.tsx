@@ -1,187 +1,127 @@
 /**
- * PrivacyPolicy — سياسة الخصوصية
- * Public route — required for Google Play Store listing
+ * PrivacyPolicy - صفحة سياسة الخصوصية (عامة)
+ * Design: Dark Luxury Wellness - "صون"
  */
-import { ArrowRight, Shield, Lock, Eye, Database, Bell, Mail, Clock, Trash2 } from "lucide-react";
+import { useLocation } from "wouter";
 import { motion } from "framer-motion";
-
-const sections = [
-  {
-    icon: Database,
-    title: "البيانات التي نجمعها",
-    content: [
-      "الاسم والبريد الإلكتروني عند التسجيل.",
-      "العمر والجنس ونوع الإدمان المُعلَن (اختياري).",
-      "بيانات التقدم في برنامج التعافي المُدخَلة يدوياً.",
-      "إحصائيات استخدام التطبيق (عدد أيام الصحو، المحاضرات المكتملة).",
-      "لا نجمع بيانات الموقع الجغرافي الدقيق أو جهات الاتصال أو الرسائل الخاصة.",
-    ],
-  },
-  {
-    icon: Eye,
-    title: "كيف نستخدم بياناتك",
-    content: [
-      "تقديم خدمات التطبيق وتخصيص تجربة التعافي.",
-      "تتبع تقدمك وإرسال تذكيرات تحفيزية.",
-      "تحسين خوارزميات التوصية بالمحتوى.",
-      "لا نبيع بياناتك لأي طرف ثالث تحت أي ظرف.",
-      "لا نستخدم بياناتك لأغراض إعلانية مع جهات خارجية.",
-    ],
-  },
-  {
-    icon: Database,
-    title: "مشاركة البيانات ومعالجو الخدمة",
-    content: [
-      "نستخدم Firebase من Google لتقديم المصادقة وتخزين بيانات الحساب.",
-      "قد تتم معالجة البيانات عبر مزودي البنية التحتية المرتبطين بـ Google Cloud.",
-      "لا نبيع بياناتك ولا نؤجرها لأي طرف ثالث.",
-      "أي مشاركة تكون فقط لتشغيل الخدمة أو للالتزام القانوني عند الطلب الرسمي.",
-    ],
-  },
-  {
-    icon: Clock,
-    title: "مدة الاحتفاظ بالبيانات",
-    content: [
-      "نحتفظ ببيانات الحساب ما دام الحساب نشطاً.",
-      "عند طلب حذف الحساب، نبدأ إجراءات الحذف فوراً، ويكتمل حذف البيانات التشغيلية خلال مدة لا تتجاوز 30 يوماً.",
-      "قد تبقى نسخ احتياطية أو سجلات أمنية لمدة تصل إلى 90 يوماً ثم تُزال تلقائياً.",
-      "بعد انتهاء فترات الاحتفاظ، لا نحتفظ ببيانات تعريفية شخصية مرتبطة بالحساب المحذوف.",
-    ],
-  },
-  {
-    icon: Trash2,
-    title: "حذف البيانات وكيفية الطلب",
-    content: [
-      "يمكنك حذف حسابك من داخل التطبيق عبر: الإعدادات ← البيانات ← حذف الحساب.",
-      "تشمل عملية الحذف بيانات الجلسة المحلية وبيانات الحساب المخزنة في Firebase Auth وFirestore حسب الإمكانات التقنية المتاحة.",
-      "إذا تعذر الحذف الفوري (مثل طلب إعادة توثيق)، يمكنك مراسلتنا على privacy@allah-yaafek.app لاستكمال الطلب.",
-      "نلتزم بإكمال طلبات حذف البيانات خلال مدة لا تتجاوز 30 يوماً من تاريخ الطلب.",
-    ],
-  },
-  {
-    icon: Lock,
-    title: "حماية بياناتك",
-    content: [
-      "جميع البيانات مشفَّرة أثناء النقل عبر بروتوكول HTTPS.",
-      "كلمات المرور مشفَّرة ولا يمكن لأحد الاطلاع عليها.",
-      "نطبق مبدأ أقل صلاحية ممكنة للوصول إلى البيانات.",
-      "نراجع إعدادات الأمان بشكل دوري لتحسين الحماية.",
-    ],
-  },
-  {
-    icon: Bell,
-    title: "الإشعارات",
-    content: [
-      "نرسل إشعارات تحفيزية وتذكيرات يومية إذا منحتنا الإذن.",
-      "يمكنك إيقاف الإشعارات في أي وقت من إعدادات جهازك أو التطبيق.",
-      "لا نرسل إشعارات تجارية أو إعلانية.",
-    ],
-  },
-  {
-    icon: Shield,
-    title: "حقوقك",
-    content: [
-      "الحق في الاطلاع على بياناتك الشخصية المخزَّنة.",
-      "الحق في تصحيح أي معلومات غير دقيقة.",
-      "الحق في حذف حسابك وجميع بياناتك نهائياً.",
-      "الحق في سحب موافقتك على استخدام بياناتك في أي وقت.",
-      "للتواصل بشأن بياناتك: privacy@allah-yaafek.app",
-    ],
-  },
-  {
-    icon: Mail,
-    title: "التواصل معنا",
-    content: [
-      "إذا كان لديك أي استفسار حول سياسة الخصوصية يمكنك التواصل عبر:",
-      "البريد الإلكتروني: privacy@allah-yaafek.app",
-      "سنرد على استفساراتك خلال 7 أيام عمل.",
-    ],
-  },
-];
+import { ArrowRight } from "lucide-react";
 
 export default function PrivacyPolicy() {
+  const [, navigate] = useLocation();
+
+  const sections: { title: string; text: string }[] = [
+    {
+      title: "ما البيانات التي نخزنها؟",
+      text: "بيانات الحساب (الاسم، البريد، العمر، الجنس)، نتائج التقييم، تقدّمك في الخطط الوقائية والإنجازات، وإعداداتك الشخصية داخل التطبيق.",
+    },
+    {
+      title: "كيف نستخدم البيانات؟",
+      text: "نستخدم البيانات داخل التطبيق فقط: تخصيص المحتوى، حفظ تقدّمك، وتقديم توصيات مناسبة لفئتك العمرية واحتياجاتك.",
+    },
+    {
+      title: "أين تُحفظ البيانات؟",
+      text: "تُحفظ بياناتك بشكل أساسي على جهازك (Local Storage)، ويتم مزامنة بعض الإعدادات والمحتوى مع Firestore عبر حسابك الموثّق فقط.",
+    },
+    {
+      title: "مشاركة البيانات",
+      text: "لا نشارك بياناتك الشخصية مع أي طرف ثالث ضمن النسخة الحالية من التطبيق. لا تُستخدم بياناتك لأي إعلانات.",
+    },
+    {
+      title: "حقوق المستخدم",
+      text: "يمكنك تصدير بياناتك أو حذف بيانات التتبع أو حذف الحساب نهائياً في أي وقت من صفحة الإعدادات.",
+    },
+    {
+      title: "أمان البيانات",
+      text: "نعتمد على قواعد أمان Firestore التي تقصر القراءة والكتابة على صاحب الحساب فقط، مع فحص دوري لإعدادات الأمان.",
+    },
+    {
+      title: "حالات الطوارئ",
+      text: "في حالات الخطر على الحياة، يُنصح دائماً بالتواصل مع الجهات الرسمية (911) أو خط دعم صون 0546192019.",
+    },
+    {
+      title: "التحديثات",
+      text: "قد نقوم بتحديث هذه السياسة لتحسين الخدمة. سيظل أحدث إصدار متاحاً دوماً على هذه الصفحة.",
+    },
+  ];
+
   return (
-    <div className="min-h-screen bg-background" dir="rtl">
-      {/* Header */}
-      <div
-        className="sticky top-0 z-10 border-b border-border/40 backdrop-blur-xl"
-        style={{ background: "oklch(0.1 0.04 255 / 0.9)" }}
-      >
-        <div className="max-w-2xl mx-auto px-4 py-4 flex items-center gap-3">
+    <div className="min-h-screen bg-background relative overflow-hidden">
+      <div className="orb orb-teal w-96 h-96 -top-32 -right-32 opacity-15" />
+      <div className="orb orb-gold w-72 h-72 -bottom-20 -left-20 opacity-10" />
+
+      <div className="relative z-10 max-w-3xl mx-auto px-4 py-8 md:py-12">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-8">
           <button
-            onClick={() => window.history.back()}
-            className="text-muted-foreground hover:text-foreground transition-colors p-1"
+            onClick={() => {
+              if (window.history.length > 1) {
+                window.history.back();
+              } else {
+                navigate("/");
+              }
+            }}
+            className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
           >
             <ArrowRight className="w-5 h-5" />
+            <span className="text-sm">رجوع</span>
           </button>
-          <div>
-            <h1 className="text-foreground font-black text-lg leading-tight">سياسة الخصوصية</h1>
-            <p className="text-muted-foreground text-xs">Privacy Policy</p>
-          </div>
-        </div>
-      </div>
 
-      <div className="max-w-2xl mx-auto px-4 py-8 space-y-6">
-        {/* Intro */}
+          <div className="w-12 h-12" aria-hidden="true" />
+        </div>
+
+        {/* Title */}
         <motion.div
-          initial={{ opacity: 0, y: 16 }}
+          initial={{ opacity: 0, y: 12 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ type: "spring", bounce: 0.2, duration: 0.4 }}
-          className="glass-card p-6 border border-border"
+          className="text-center mb-8"
         >
-          <div className="flex items-center gap-3 mb-3">
-            <div
-              className="w-10 h-10 rounded-xl flex items-center justify-center shrink-0"
-              style={{ background: "oklch(0.75 0.18 175 / 0.15)" }}
-            >
-              <Shield className="w-5 h-5" style={{ color: "oklch(0.75 0.18 175)" }} />
-            </div>
-            <h2 className="text-foreground font-black text-lg">خصوصيتك أمانة</h2>
-          </div>
-          <p className="text-muted-foreground text-sm leading-relaxed">
-            نحن في <strong className="text-foreground">الله يعافيك</strong> نُدرك حساسية المعلومات المتعلقة بمسيرة التعافي، ونلتزم بحماية خصوصيتك بأعلى المعايير. هذه السياسة توضح ما نجمعه وكيف نستخدمه وكيف نحميه.
-          </p>
-          <p className="text-muted-foreground/60 text-xs mt-3">
-            آخر تحديث: مايو 2026
+          <img
+            src="/logo10.png"
+            alt="شعار صون"
+            className="w-28 h-28 md:w-32 md:h-32 mx-auto mb-4 object-contain drop-shadow-[0_0_24px_rgba(0,212,170,0.35)]"
+          />
+          <h1 className="text-3xl md:text-4xl font-black text-foreground mb-2">
+            سياسة الخصوصية
+          </h1>
+          <p className="text-muted-foreground text-sm">
+            منصة صون — للوقاية من الإدمان
           </p>
         </motion.div>
 
-        {/* Sections */}
-        {sections.map((section, i) => (
-          <motion.div
-            key={section.title}
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ type: "spring", bounce: 0.2, duration: 0.4, delay: i * 0.05 }}
-            className="glass-card p-6 border border-border"
-          >
-            <div className="flex items-center gap-3 mb-4">
-              <div
-                className="w-9 h-9 rounded-lg flex items-center justify-center shrink-0"
-                style={{ background: "oklch(0.75 0.18 175 / 0.1)" }}
-              >
-                <section.icon className="w-4 h-4" style={{ color: "oklch(0.75 0.18 175)" }} />
-              </div>
-              <h3 className="text-foreground font-bold text-base">{section.title}</h3>
-            </div>
-            <ul className="space-y-2">
-              {section.content.map((item, j) => (
-                <li key={j} className="flex items-start gap-2 text-muted-foreground text-sm leading-relaxed">
-                  <span
-                    className="mt-1.5 w-1.5 h-1.5 rounded-full shrink-0"
-                    style={{ background: "oklch(0.75 0.18 175)" }}
-                  />
-                  {item}
-                </li>
-              ))}
-            </ul>
-          </motion.div>
-        ))}
+        {/* Intro */}
+        <div className="glass-card border border-border rounded-2xl p-5 mb-6">
+          <p className="text-muted-foreground text-sm leading-relaxed text-right">
+            نحترم خصوصيتك ونلتزم بحماية بياناتك. توضّح هذه السياسة كيف نجمع
+            بياناتك، ولماذا نستخدمها، وما هي حقوقك تجاهها داخل منصة{" "}
+            <span className="text-primary font-bold">صون</span>.
+          </p>
+        </div>
 
-        {/* Footer note */}
-        <p className="text-center text-muted-foreground/50 text-xs pb-8">
-          باستخدامك للتطبيق فأنت توافق على هذه السياسة.
-        </p>
+        {/* Sections */}
+        <div className="space-y-4">
+          {sections.map((s, i) => (
+            <motion.div
+              key={s.title}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.04, duration: 0.3 }}
+              className="glass-card border border-border rounded-2xl p-5 text-right"
+            >
+              <h2 className="text-foreground font-black text-base mb-2">
+                {s.title}
+              </h2>
+              <p className="text-muted-foreground text-sm leading-relaxed">
+                {s.text}
+              </p>
+            </motion.div>
+          ))}
+        </div>
+
+        {/* Footer */}
+        <div className="mt-10 text-center text-muted-foreground/70 text-xs">
+          آخر تحديث: مايو 2026 · للتواصل بشأن الخصوصية: 0546192019
+        </div>
       </div>
     </div>
   );

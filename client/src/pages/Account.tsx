@@ -1,6 +1,6 @@
 /**
  * Account - صفحة حسابي
- * Design: Mobile-First Dark Luxury - "الله يعافيك"
+ * Design: Mobile-First Dark Luxury - "صون"
  * Features: عرض وتعديل البيانات، نتائج الاختبار، الإنجازات، تسجيل خروج
  */
 import { useState, useEffect } from "react";

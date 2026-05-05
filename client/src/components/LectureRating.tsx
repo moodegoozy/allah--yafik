@@ -1,6 +1,6 @@
 /**
  * LectureRating - نظام تقييم المحاضرة والتوصيات الذكية
- * Design: Dark Luxury Wellness - "الله يعافيك"
+ * Design: Dark Luxury Wellness - "صون"
  */
 import { useState } from "react";
 import { Star, ThumbsUp, MessageSquare, ChevronLeft, Sparkles } from "lucide-react";

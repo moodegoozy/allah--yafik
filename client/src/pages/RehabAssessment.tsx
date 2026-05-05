@@ -1,6 +1,6 @@
 /**
  * RehabAssessment - التقييم الوقائي الذكي
- * Design: Mobile-First PWA - "الله يعافيك"
+ * Design: Mobile-First PWA - "صون"
  * Features: تقييم وقائي علمي، توليد خطة وقائية مخصصة، مستوى الوعي
  */
 import { useState } from "react";

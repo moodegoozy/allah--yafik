@@ -1,6 +1,6 @@
 /**
  * JoinPartner - نموذج طلب انضمام المؤسسات الشريكة
- * Design: Dark Luxury Wellness - "الله يعافيك"
+ * Design: Dark Luxury Wellness - "صون"
  * Features: نموذج تفاعلي متعدد الخطوات، تصنيف المؤسسات، تأكيد الإرسال
  */
 import { useState } from "react";
@@ -247,7 +247,7 @@ export default function JoinPartner() {
                 </h2>
                 <p className="text-foreground/55 mb-2">
                   شكراً لاهتمامك بالانضمام لبرنامج{" "}
-                  <strong className="text-foreground">الله يعافيك</strong>
+                  <strong className="text-foreground">صون</strong>
                 </p>
                 <p className="text-muted-foreground text-sm mb-8">
                   سيتواصل معك فريقنا خلال{" "}
@@ -755,7 +755,7 @@ export default function JoinPartner() {
                       <AlertCircle className="w-4 h-4 text-accent mt-0.5 flex-shrink-0" />
                       <p className="text-muted-foreground text-xs leading-relaxed">
                         بإرسال هذا الطلب، أنت توافق على مشاركة بيانات مؤسستك مع
-                        فريق برنامج "الله يعافيك" لأغراض الشراكة فقط. ستتلقى
+                        فريق برنامج "صون" لأغراض الشراكة فقط. ستتلقى
                         رداً خلال ٢٤ ساعة.
                       </p>
                     </div>

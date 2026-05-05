@@ -8,15 +8,7 @@ import {
 } from "@/lib/firebase";
 
 /** Routes accessible without login */
-const PUBLIC_ROUTES = [
-  "/",
-  "/login",
-  "/404",
-  "/privacy-policy",
-  "/privacy-policy.html",
-  "/terms",
-  "/terms.html",
-];
+const PUBLIC_ROUTES = ["/", "/login", "/404", "/settings", "/privacy-policy"];
 
 /** Routes that require a full (non-guest) account */
 const PROTECTED_ROUTES = [
@@ -71,9 +63,19 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
   }, []);
 
   const adminAccess = hasAdminPinSession() || user?.role === "admin";
-  const isPublic = PUBLIC_ROUTES.includes(location);
-  const isProtected = PROTECTED_ROUTES.some(r => location.startsWith(r));
-  const isTestPage = location === "/mental-health-test";
+  const normalizedLocation =
+    location.length > 1 && location.endsWith("/")
+      ? location.slice(0, -1)
+      : location;
+  const isPublic =
+    PUBLIC_ROUTES.includes(normalizedLocation) ||
+    normalizedLocation.startsWith("/privacy-policy") ||
+    normalizedLocation.startsWith("/terms") ||
+    normalizedLocation.startsWith("/help");
+  const isProtected = PROTECTED_ROUTES.some(r =>
+    normalizedLocation.startsWith(r)
+  );
+  const isTestPage = normalizedLocation === "/mental-health-test";
   const hasFirebaseSession = !auth || !!auth.currentUser;
 
   if (!authReady) return null;
@@ -91,7 +93,10 @@ export default function AuthGuard({ children }: { children: React.ReactNode }) {
     !isPublic
   ) {
     redirect = "/mental-health-test";
-  } else if (location.startsWith("/admin") && !adminAccess) {
+  } else if (
+    normalizedLocation.startsWith("/admin") &&
+    !adminAccess
+  ) {
     redirect = isAuthenticated ? "/dashboard" : "/login";
   } else if (!isAuthenticated && isProtected && !adminAccess) {
     redirect = "/login";

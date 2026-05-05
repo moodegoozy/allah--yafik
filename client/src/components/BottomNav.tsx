@@ -1,6 +1,6 @@
 /**
  * BottomNav - شريط التنقل السفلي للجوال
- * Design: Modern Minimalist - "الله يعافيك"
+ * Design: Modern Minimalist - "صون"
  * الهدف: الوقاية من الإدمان
  */
 import { Link, useLocation } from "wouter";

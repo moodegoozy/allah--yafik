@@ -30,7 +30,6 @@ import RehabAssessment from "./pages/RehabAssessment";
 import MentalHealthTest from "./pages/MentalHealthTest";
 import Settings from "./pages/Settings";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
-import TermsConditions from "./pages/TermsConditions";
 import SOSButton from "./components/SOSButton";
 import BottomNav from "./components/BottomNav";
 
@@ -56,15 +55,12 @@ function Router() {
       <Route path="/login" component={Login} />
       <Route path="/account" component={Account} />
       <Route path="/settings" component={Settings} />
+      <Route path="/privacy-policy" component={PrivacyPolicy} />
       <Route path="/admin" component={AdminDashboard} />
       {/* <Route path="/chat" component={Chat} /> */}
       <Route path="/rehab-plan" component={RehabPlan} />
       <Route path="/rehab-assessment" component={RehabAssessment} />
       <Route path="/mental-health-test" component={MentalHealthTest} />
-      <Route path="/privacy-policy" component={PrivacyPolicy} />
-      <Route path="/privacy-policy.html" component={PrivacyPolicy} />
-      <Route path="/terms" component={TermsConditions} />
-      <Route path="/terms.html" component={TermsConditions} />
       <Route path="/404" component={NotFound} />
       <Route component={NotFound} />
     </Switch>
@@ -72,16 +68,29 @@ function Router() {
 }
 
 function App() {
+  // Public-only short-circuit: render privacy policy outside AuthGuard so it
+  // never redirects to /login regardless of auth state.
+  const path =
+    typeof window !== "undefined" ? window.location.pathname : "/";
+  const isPrivacyPolicy =
+    path === "/privacy-policy" || path.startsWith("/privacy-policy/");
+
   return (
     <ErrorBoundary>
       <ThemeProvider defaultTheme="light">
         <TooltipProvider>
           <Toaster richColors position="top-center" />
-          <AuthGuard>
-            <Router />
-          </AuthGuard>
-          <BottomNav />
-          <SOSButton />
+          {isPrivacyPolicy ? (
+            <PrivacyPolicy />
+          ) : (
+            <>
+              <AuthGuard>
+                <Router />
+              </AuthGuard>
+              <BottomNav />
+              <SOSButton />
+            </>
+          )}
         </TooltipProvider>
       </ThemeProvider>
     </ErrorBoundary>

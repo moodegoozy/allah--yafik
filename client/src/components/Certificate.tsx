@@ -1,6 +1,6 @@
 /**
  * Certificate - شهادة إتمام المحاضرة الرقمية
- * Design: Dark Luxury Wellness - "الله يعافيك"
+ * Design: Dark Luxury Wellness - "صون"
  * Features: شهادة جميلة قابلة للطباعة، رقم تسلسلي، تاريخ، نتيجة الاختبار
  */
 import { useRef } from "react";
@@ -53,10 +53,10 @@ export default function Certificate({
   };
 
   const handleShare = async () => {
-    const text = `حصلت على شهادة إتمام محاضرة "${lectureTitle}" من برنامج الله يعافيك بتقدير ${grade} (${percentage}%) 🎓\n\nرقم الشهادة: ${certId}`;
+    const text = `حصلت على شهادة إتمام محاضرة "${lectureTitle}" من برنامج صون بتقدير ${grade} (${percentage}%) 🎓\n\nرقم الشهادة: ${certId}`;
     if (navigator.share) {
       try {
-        await navigator.share({ title: "شهادة إتمام - الله يعافيك", text });
+        await navigator.share({ title: "شهادة إتمام - صون", text });
       } catch {
         navigator.clipboard.writeText(text);
         toast.success("تم نسخ نص الشهادة للمشاركة");
@@ -152,7 +152,7 @@ export default function Certificate({
                   </div>
                   <div className="h-px flex-1" style={{ background: `linear-gradient(to left, transparent, ${color}50)` }} />
                 </div>
-                <div className="text-muted-foreground/70 text-xs tracking-widest uppercase mb-1">برنامج الله يعافيك</div>
+                <div className="text-muted-foreground/70 text-xs tracking-widest uppercase mb-1">برنامج صون</div>
                 <h2 className="text-2xl font-black text-foreground">شهادة إتمام</h2>
                 <div className="text-muted-foreground text-xs mt-1">Certificate of Completion</div>
               </div>

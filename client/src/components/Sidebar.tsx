@@ -1,6 +1,6 @@
 /*
  * Design: Modern Minimalist Sidebar
- * الهدف: الوقاية من الإدمان — "الله يعافيك"
+ * الهدف: الوقاية من الإدمان — "صون"
  */
 import { Link, useLocation } from "wouter";
 import {
@@ -107,13 +107,15 @@ export default function Sidebar() {
       >
         {/* Logo */}
         <div className="flex items-center gap-3 p-5 border-b border-sidebar-border">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-primary to-[oklch(0.60_0.17_200)] flex items-center justify-center flex-shrink-0">
-            <Shield className="w-5 h-5 text-primary-foreground" />
-          </div>
+          <img
+            src="/logo10.png"
+            alt="شعار صون"
+            className="w-12 h-12 object-contain flex-shrink-0"
+          />
           {!collapsed && (
             <div className="flex-1 min-w-0">
-              <h1 className="text-foreground font-black text-sm leading-tight">
-                الله يعافيك
+              <h1 className="text-primary font-black text-base leading-tight">
+                صون
               </h1>
               <p className="text-primary text-xs opacity-80">
                 برنامج الوقاية من الإدمان

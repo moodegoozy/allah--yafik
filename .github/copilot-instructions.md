@@ -2,7 +2,7 @@
 
 ## Overview
 
-**Allah Yafik** (الله يعافيك) is an Arabic-first addiction prevention and rehabilitation SPA.
+**Allah Yafik** (صون) is an Arabic-first addiction prevention and rehabilitation SPA.
 
 Default all user-facing content to Arabic with RTL layout awareness.
 
@@ -31,7 +31,7 @@ Use links instead of duplicating long inventories:
 | `pnpm check` | TypeScript type check (`tsc --noEmit`) |
 | `pnpm format` | Prettier formatting |
 
-No test framework is configured. Run `pnpm check` to validate changes.
+No automated test workflow is currently relied on in this repository. Run `pnpm check` to validate code changes.
 
 **Build output:** Client → `dist/public/`, Server → `dist/index.js`
 
@@ -78,10 +78,10 @@ Feature/page/component inventories live in `CHANGELOG.md` and should not be dupl
 - **Animations:** Framer Motion spring defaults — `{ type: "spring", bounce: 0.2, duration: 0.4 }`; tap feedback `whileTap={{ scale: 0.85 }}`
 - **localStorage keys:** Always prefix with `allah_yafik_` (e.g., `allah_yafik_current_user`, `allah_yafik_users`, `allah_yafik_recovery_goals`)
 - **User-scoped localStorage:** Use email-suffixed keys where already established patterns require per-user data (for example recovery goals)
-- **Auth:** localStorage-based, three roles (`user`, `guest`, `admin`). `AuthGuard` wraps all routes with public/protected split
+- **Auth:** Firebase Auth + Firestore profile is the primary path, with local fallback when Firebase is unavailable. `AuthGuard` enforces public/protected routes and admin gating.
 - **Forms:** Most use local `useState` + manual validation; React Hook Form + Zod available but lightly used
 - **Styling:** Reuse existing `index.css` tokens/utilities (`glass-card`, gradient/glow helpers, app-container/page-content) before introducing new patterns
-- **Theme:** Dark is default. Do not re-enable theme switching unless explicitly requested
+- **Theme:** Current runtime default is `light` in `App.tsx`; preserve existing theme behavior unless explicitly requested
 - **Large media uploads:** Use IndexedDB patterns from `pages/AdminDashboard.tsx`, not localStorage data URLs
 
 ## Environment Variables
@@ -115,10 +115,10 @@ Keep this file concise and global. Put area-specific rules in scoped instruction
 - **Wouter is patched** to collect routes into `window.__WOUTER_ROUTES__[]` — don't remove the patch
 - **Wouter only** — do not add react-router patterns
 - **Manus debug collector** in `vite.config.ts` streams browser logs to server files — development tooling, not app logic
-- **No backend API routes** — server only serves the SPA; all data is client-side static
-- **If adding API routes** in `server/index.ts`, place them before static middleware and SPA catch-all
+- **Server is SPA-first** — keep static middleware and SPA catch-all ordering intact; if adding API routes, register them before static/catch-all
 - `tailwindcss>nanoid` pinned to 3.3.7 for compatibility
-- **Firebase configured but unused** — `firebase.json` exists for hosting config; no Firebase SDK in code
+- **Firebase is used in auth/data flows** — preserve local fallback behavior for dev/offline/misconfigured env scenarios
+- **`/chat` route is currently commented in `App.tsx`** — avoid assuming the page is routable unless explicitly restored
 - **Prettier prose-wrap: preserve** — important for Arabic text; don't change
 
 ## Key References
@@ -127,7 +127,8 @@ Keep this file concise and global. Put area-specific rules in scoped instruction
 - `ideas.md` — visual direction and design rationale
 - `client/src/App.tsx` — route map and app shell
 - `client/src/components/AuthGuard.tsx` — route access rules and role gating
-- `client/src/pages/Login.tsx` — auth and localStorage user model
+- `client/src/pages/Login.tsx` — auth flows (Firebase primary + local fallback)
+- `client/src/lib/firebase.ts` — Firebase initialization, profile helpers, admin PIN session helpers
 - `client/src/pages/Recovery.tsx` — per-user persistence pattern
 - `client/src/index.css` — design tokens and reusable utility classes
 - `server/index.ts` — SPA server behavior and API insertion point

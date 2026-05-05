@@ -1,6 +1,6 @@
 /**
  * Assessment - صفحة التقييم الوقائي الشخصي
- * Design: Dark Luxury Wellness - "الله يعافيك"
+ * Design: Dark Luxury Wellness - "صون"
  * Features: اختبار علمي متعدد الأبعاد، نتيجة تفصيلية، خطة عمل مخصصة
  */
 import { useState } from "react";

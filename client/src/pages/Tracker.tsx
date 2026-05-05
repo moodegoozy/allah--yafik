@@ -1,6 +1,6 @@
 /**
  * Tracker - التتبع الوقائي اليومي
- * Design: Dark Luxury Wellness - الله يعافيك
+ * Design: Dark Luxury Wellness - صون
  * الهدف: تتبع الوعي والأنشطة الوقائية اليومية
  */
 import { useState } from "react";

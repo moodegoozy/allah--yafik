@@ -1,6 +1,6 @@
 /**
  * Chat - نظام الدردشة المباشرة
- * Design: Dark Luxury Wellness - "الله يعافيك"
+ * Design: Dark Luxury Wellness - "صون"
  * Features: دردشة مع متخصصين، مجموعات دعم، رسائل طوارئ
  */
 import { useState, useRef, useEffect } from "react";

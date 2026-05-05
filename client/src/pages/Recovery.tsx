@@ -1,6 +1,6 @@
 /**
  * Recovery - خطتي الوقائية
- * Design: Dark Luxury Wellness - الله يعافيك
+ * Design: Dark Luxury Wellness - صون
  * الهدف: الوقاية من الإدمان قبل الوقوع فيه
  */
 import { useState, useEffect } from "react";

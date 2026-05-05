@@ -1,7 +1,7 @@
 /**
  * MentalHealthTest — اختبار الصحة النفسية والوعي والاستقرار
  * Age-adaptive test: young (1-17), teenage (18-25), adult (26+)
- * Design: Dark Luxury Wellness - "الله يعافيك"
+ * Design: Dark Luxury Wellness - "صون"
  */
 import { useState, useEffect } from "react";
 import { useLocation } from "wouter";

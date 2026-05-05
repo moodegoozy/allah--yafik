@@ -40,7 +40,7 @@ Create a new page for the Allah Yafik platform following project conventions.
 ```tsx
 /**
  * {PascalName} — {Arabic title}
- * Design: Dark Luxury Wellness — الله يعافيك
+ * Design: Dark Luxury Wellness — صون
  */
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";

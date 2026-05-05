@@ -1,6 +1,6 @@
 /**
  * Community - مجتمع الوعي والوقاية
- * Design: Dark Luxury Wellness - "الله يعافيك"
+ * Design: Dark Luxury Wellness - "صون"
  * الهدف: مجتمع داعم للوقاية من الإدمان
  */
 import { useState } from "react";

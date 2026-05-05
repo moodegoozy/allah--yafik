@@ -1,6 +1,6 @@
 /**
  * Settings - صفحة الإعدادات
- * Design: Mobile-First Dark Luxury - "الله يعافيك"
+ * Design: Mobile-First Dark Luxury - "صون"
  * Features: المظهر، الخط، الإشعارات، الخصوصية، البيانات، عام
  */
 import { useState, useEffect } from "react";
@@ -653,7 +653,7 @@ export default function Settings() {
                               </div>
                               <div className="flex-1">
                                 <div className="text-foreground text-sm font-bold">
-                                  الله يعافيك
+                                  صون
                                 </div>
                                 <div className="text-muted-foreground text-xs">
                                   منصة الوقاية من الإدمان — الإصدار ١.٠
@@ -907,7 +907,7 @@ export default function Settings() {
                 <div className="space-y-3 text-right">
                   <p className="text-muted-foreground text-sm leading-relaxed">
                     نحترم خصوصيتك. يتم حفظ بياناتك محلياً على جهازك لتحسين
-                    تجربتك داخل منصة الله يعافيك.
+                    تجربتك داخل منصة صون.
                   </p>
                   <DocItem
                     title="ما البيانات التي نخزنها؟"

@@ -1,6 +1,6 @@
 /**
  * Home - الصفحة الرئيسية
- * Design: Mobile-First PWA Dark Luxury - "الله يعافيك"
+ * Design: Mobile-First PWA Dark Luxury - "صون"
  * الهدف: الوقاية من الإدمان قبل الوقوع فيه
  */
 import { useEffect, useState } from "react";
@@ -109,7 +109,7 @@ const genderQuotes: Record<Gender, Quote[]> = {
   male: [
     {
       text: "القوة الحقيقية ليست في التحدي الأعمى، بل في قرار واعٍ يحمي مستقبلك.",
-      author: "برنامج الله يعافيك",
+      author: "برنامج صون",
     },
     {
       text: "ضبط النفس مهارة تبني شخصية قوية وتمنع القرارات الاندفاعية.",
@@ -119,7 +119,7 @@ const genderQuotes: Record<Gender, Quote[]> = {
   female: [
     {
       text: "حماية حدودك الشخصية قوة ووعي، وليست قسوة.",
-      author: "برنامج الله يعافيك",
+      author: "برنامج صون",
     },
     {
       text: "كل قرار واعٍ اليوم يحميك ويحمي من حولك غداً.",
@@ -311,7 +311,7 @@ const homeConfigs: Record<HomeAudience, HomeConfig> = {
     quotes: [
       {
         text: "الوقاية خير من ألف علاج — حصّن نفسك قبل أن تحتاج للعلاج",
-        author: "برنامج الله يعافيك",
+        author: "برنامج صون",
       },
       {
         text: "العلم بالمخاطر هو أول خطوة في طريق الوقاية",
@@ -319,7 +319,7 @@ const homeConfigs: Record<HomeAudience, HomeConfig> = {
       },
       {
         text: "الشباب الواعي هو درع المجتمع ضد الإدمان",
-        author: "برنامج الله يعافيك",
+        author: "برنامج صون",
       },
     ],
     quickActions: [
@@ -428,7 +428,7 @@ const homeConfigs: Record<HomeAudience, HomeConfig> = {
     quotes: [
       {
         text: "الشجاع هو من يطلب المساعدة عندما يحتاجها.",
-        author: "برنامج الله يعافيك",
+        author: "برنامج صون",
       },
       {
         text: "من عرف الخطر مبكراً استطاع أن يحمي نفسه بسهولة.",
@@ -545,7 +545,7 @@ const homeConfigs: Record<HomeAudience, HomeConfig> = {
     quotes: [
       {
         text: "قوتك الحقيقية تظهر عندما تختار الصح رغم الضغط.",
-        author: "برنامج الله يعافيك",
+        author: "برنامج صون",
       },
       {
         text: "لا تجعل لحظة اندفاع تحدد شكل مستقبلك.",
@@ -662,7 +662,7 @@ const homeConfigs: Record<HomeAudience, HomeConfig> = {
     quotes: [
       {
         text: "الوقاية الناجحة تبدأ بقرار هادئ وواضح يستمر كل يوم.",
-        author: "برنامج الله يعافيك",
+        author: "برنامج صون",
       },
       {
         text: "الأسرة الواعية تقلل الخطر قبل أن يظهر.",
@@ -924,8 +924,13 @@ export default function Home() {
           <div className="min-w-0">
             <p className="text-muted-foreground text-xs">{displayName}</p>
             <div className="flex items-center gap-2 mt-0.5 flex-wrap">
-              <h1 className="text-foreground font-black text-lg">
-                الله يعافيك
+              <img
+                src="/logo10.png"
+                alt="شعار صون"
+                className="w-10 h-10 object-contain"
+              />
+              <h1 className="text-primary font-black text-xl">
+                صون
               </h1>
               {ageMeta && (
                 <span

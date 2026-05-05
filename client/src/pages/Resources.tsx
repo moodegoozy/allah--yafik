@@ -1,6 +1,6 @@
 /**
  * Resources - الموارد الوقائية
- * Design: Dark Luxury Wellness - "الله يعافيك"
+ * Design: Dark Luxury Wellness - "صون"
  * الهدف: مقالات وأدوات الوقاية من الإدمان
  */
 import { useState } from "react";
@@ -79,7 +79,7 @@ const articles = [
 ];
 
 const emergencyContacts = [
-  { name: "برنامج الله يعافيك", number: CONTACT_PHONE, icon: "🛡️", color: "#00D4AA", desc: "تواصل مباشر مع المتخصصين" },
+  { name: "برنامج صون", number: CONTACT_PHONE, icon: "🛡️", color: "#00D4AA", desc: "تواصل مباشر مع المتخصصين" },
   { name: "هيئة مكافحة المخدرات", number: "1955", icon: "🚨", color: "#EF4444", desc: "الخط الساخن الوطني" },
   { name: "الصحة النفسية", number: "920033360", icon: "🧠", color: "#8B5CF6", desc: "دعم نفسي متخصص" },
   { name: "خط الطوارئ", number: "911", icon: "🆘", color: "#F59E0B", desc: "للحالات الطارئة" },

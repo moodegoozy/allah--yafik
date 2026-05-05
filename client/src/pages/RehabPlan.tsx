@@ -1,6 +1,6 @@
 /**
  * RehabPlan - نظام خطط التعافي التأهيلي
- * Design: Mobile-First PWA - "الله يعافيك"
+ * Design: Mobile-First PWA - "صون"
  * Features: ٤ مراحل علمية، جدول يومي تفاعلي، تتبع التقدم، خطة مخصصة
  */
 import { useState, useEffect } from "react";
